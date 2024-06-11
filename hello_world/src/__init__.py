@@ -1,2 +1,2 @@
-from .cane import *
+from .settings import *
 from .factory import *
