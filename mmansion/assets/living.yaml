@@ -1,0 +1,17 @@
+sprites:
+  door_hall:
+    animations:
+      closed:
+        frames:
+          - tex: [3,138,26,104]
+      open:
+        frames:
+          - tex: [73,138,26,104]
+  door_library:
+    animations:
+      closed:
+        frames:
+          - tex: [30,138,42,111]
+      open:
+        frames:
+          - tex: [100,138,42,111]

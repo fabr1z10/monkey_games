@@ -1,0 +1,136 @@
+start:
+  size: [320, 136]
+  batch: start
+  walkarea:
+    poly: [0,0,320,0,320,20,0,20]
+  items:
+    - bg:
+        batch: start
+        quad: [0, 0, 320, 136]
+    - bg:
+        batch: start
+        quad: [1,137,106,73]
+      area:
+        poly: [-1,-1,106,-1,106,1,-1,1]
+      pos: [0, 9,0]
+      auto_depth: True
+housefront:
+  size: [1280, 136]
+  batch: housefront
+  walkarea:
+    poly: [0,0,1280,0,1280,16,574,16,574,5,537,5,518,42,773,41,773,47,176,47,176,42,432,42,404,5,378,5,378,16,0,16]
+  items:
+    - bg:
+        batch: housefront
+        quad: [0,0,1280,136]
+        z: -1
+    - bg:
+        batch: housefront
+        quad: [94,139,257,95]
+      pos: [168,41,0]
+      auto_depth: True
+    - bg:
+        batch: housefront
+        quad: [93,237,248,73]
+      area:
+        poly: [0,-1,249,-1,249,1,0,1]
+      pos: [1032,10,0]
+      auto_depth: True
+entrance_hall:
+  size: [ 640, 136 ]
+  batch: entrancehall
+  walkarea:
+    poly: [0,0,640,0,640,2,553,31,400,31,389,25,324,25,324,27,359,52,374,78,370,110,346,136,298,136,322,110,322,78,274,36,274,25,219,25,215,31,142,31,134,25,103,25,101,31,88,31,0,2]
+  items:
+    - bg:
+        batch: entrancehall
+        quad: [0,0,640,136]
+        z: -1
+    - bg:   # handrail right
+        batch: entrancehall
+        quad: [5,138,56,77]
+      pos: [ 328,26,0 ]
+      auto_depth: True
+    - bg:   # vase right
+        batch: entrancehall
+        quad: [68,138,30,44]
+      pos: [368,25.9,0]
+      auto_depth: True
+    - bg:   # handrail left
+        batch: entrancehall
+        quad: [102,138,58,57]
+      pos: [ 262,79,0 ]
+      auto_depth: True
+kitchen:
+  size: [ 640, 136 ]
+  batch: kitchen
+  walkarea:
+    poly: [0,0,640,0,640,3,574,24,178,24,173,32,87,32,0,3]
+  items:
+    - bg:
+        batch: kitchen
+        quad: [0,0,640,136]
+        z: -1
+dining:
+  size: [1032,136]
+  batch: dining
+  walkarea:
+    poly: [0,0,1032, 0,1032,18,968,40,62,40,0,18]
+    holes:
+      - poly: [93,7,923,7,907,24,109,24]
+  items:
+    - bg:
+        batch: dining
+        quad: [0,0,1032,136]
+        z: -1
+    - bg:   # table & chairs
+        batch: dining
+        quad: [2,138,824,74]
+      pos: [96,8]
+      auto_depth: True
+pantry:
+  size: [320, 136]
+  batch: pantry
+  walkarea:
+    poly: [0,0,320,0,320,11,257,32,226,32,226,29,162,29,158,32,47,32,0,16]
+  items:
+    - bg:
+        batch: pantry
+        quad: [0, 0, 320, 136]
+reactor:
+  size: [656, 136]
+  batch: reactor
+  walkarea:
+    poly: [0,0,656,0,656,19,626,29,606,29,586,136,562,136,562,29,522,29,516,16,108,16,108,24,336,24,336,32,55,32,0,14]
+  items:
+    - bg:
+        batch: reactor
+        quad: [0, 0, 656, 136]
+    - bg:
+        batch: reactor
+        quad: [1,137,72,104]
+      pos: [544,32]
+      auto_depth: True
+    - bg:
+        batch: reactor
+        quad: [79,137,376,120]
+      pos: [112, 16]
+      auto_depth: True
+living:
+  size: [640, 136]
+  batch: living
+  walkarea:
+    poly: [0,0,640,0,640,2,553,31,384,31,384,22,244,22,244,31,156,31,156,21,98,21,98,31,87,31,0,3]
+  items:
+    - bg:
+        batch: living
+        quad: [0,0,640,136]
+library:
+  size: [640, 136]
+  batch: library
+  walkarea:
+    poly: [0,0,570,0,547,11,514,11,514,18,566,18,549,40,384,40,380,14,266,14,253,40,87,40,0,10]
+  items:
+    - bg:
+        batch: library
+        quad: [0,0,640,136]
