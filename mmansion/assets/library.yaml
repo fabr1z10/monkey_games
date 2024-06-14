@@ -4,6 +4,15 @@ palettes:
     000000: 000000
     6953f5: 000000
 sprites:
+  door:
+    animations:
+      open:
+        frames:
+          - tex: [3,138,42,104]
+      closed:
+        frames:
+          - tex: [195,138,42,104]
+
   lamp1:
     animations:
       default:

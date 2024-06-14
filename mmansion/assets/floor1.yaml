@@ -1,0 +1,25 @@
+sprites:
+  door_left:
+    animations:
+      closed:
+        frames:
+          - tex: [3,216,26,103]
+      open:
+        frames:
+          - tex: [31,216,26,103]
+  door_right:
+    animations:
+      closed:
+        frames:
+          - tex: [86,216,26,103]
+      open:
+        frames:
+          - tex: [58,216,26,103]
+  door_mid:
+    animations:
+      closed:
+        frames:
+          - tex: [113,216,56,85]
+      open:
+        frames:
+          - tex: [170,216,56,85]

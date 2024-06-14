@@ -134,3 +134,106 @@ library:
     - bg:
         batch: library
         quad: [0,0,640,136]
+floor:
+  size: [664, 136]
+  batch: floor
+  walkarea:
+    poly: [0,0,664,0,664,13,648,18,639,18,581,130,541,130,599,18,576,18,523,32,40,32,0,18]
+    holes:
+      - poly: [3,7,121,7,120,10,4,10]
+  items:
+    - bg:
+        batch: floor
+        quad: [0,0,664,136]
+    - bg:
+        batch: floor
+        quad: [2,138,116,80]
+      pos: [4,8]
+      auto_depth: True
+first_floor:
+  size: [640, 136]
+  batch: floor1
+  walkarea:
+    poly: [0,3,640,3,640,12,553,40,86,40,0,12]
+  items:
+    - bg:
+        batch: floor1
+        quad: [0,0,640,136]
+    - bg:
+        batch: floor1
+        quad: [0,147,640,67]
+      z: 1
+artroom:
+  size: [320, 136]
+  batch: artroom
+  walkarea:
+    poly: [0,0,320,0,320,26,306,32,214,32,210,40,38,40,0,26]
+    holes:
+      - poly: [118,8,194,8,194,10,118,10]
+      - poly: [14,0,60,0,60,6,14,6]
+  items:
+    - bg:
+        batch: artroom
+        quad: [0,0,320,136]
+    - bg:
+        batch: artroom
+        quad: [2,137,72,104]
+      pos: [120,8]
+      auto_depth: True
+    - bg:
+        batch: artroom
+        quad: [78,161,42,22]
+      pos: [16, 3]
+      auto_depth: True
+tv:
+  size: [320,136]
+  batch: tv
+  items:
+    - bg:
+        batch: tv
+        quad: [0,0,320,136]
+    - bg:
+        batch: tv
+        quad: [1,137,22,5]
+      pos: [128,54]
+      z: 2
+music_room:
+  size: [464, 136]
+  batch: music
+  walkarea:
+    poly: [0,0,464,0,464,18,427,30,320,30,319,27,262,27,259,32,55,32,0,14]
+    holes:
+      - poly: [62,3,245,3,245,19,62,19]
+  items:
+    - bg:
+        batch: music
+        quad: [0,0,464,136]
+    - bg:  # piano
+        batch: music
+        quad: [2,137,178,63]
+      pos: [62,3]
+      auto_depth: True
+    - bg:
+        batch: music
+        quad: [218,140,54,26]
+      pos: [338,0]
+      z: 1
+staircase:
+  size: [640,136]
+  batch: staircase
+  walkarea:
+    poly: [0,0,640,0,640,5,597,16,469,16,427,32,144,32,135,21,92,21,72,15,65,15,117,136,66,136,14,15,12,15,0,12]
+  items:
+    - bg:
+        batch: staircase
+        quad: [0,0,640,136]
+    - bg:
+        batch: staircase
+        quad: [4,138,28,128]
+      pos: [158,8]
+      auto_depth: True
+    - bg:
+        batch: staircase
+        quad: [35,138,30,128]
+      pos: [350, 8]
+      auto_depth: True

@@ -3,7 +3,21 @@ import yaml
 from sys import exit
 from . import settings
 from . import ui
+from . import scripts
 from . import data
+
+def cko(obj,player):
+    settings.ui_enabled = False
+    def ciao():
+        settings.ui_enabled = True
+    settings.ui_enabled = False
+    script = monkey.Script(id="__player")
+    print(player.id,player.x,player.y)
+    script.add(monkey.actions.Walk(player.id, (player.x - 50, player.y)))
+    script.add(monkey.actions.Turn(player.id, 'e'))
+    script.add(monkey.actions.CallFunc(ciao))
+    monkey.play(script)
+
 
 def evaluate(node):
     if isinstance(node, str) and node[0] == '@':
@@ -11,6 +25,9 @@ def evaluate(node):
     return node
 
 def ciao(x, y):
+    if not settings.ui_enabled:
+        return
+
     print('go to --> ',x, y)
     ui.check_delayed_func()
     script = monkey.Script(id="__player")
@@ -91,7 +108,9 @@ def makeDebugPath(poly):
 
 
 def addWalkArea(room_info, room, game_node):
-    wa = room_info['walkarea']
+    wa = room_info.get('walkarea', None)
+    if not wa:
+        return
     poly = wa['poly']
     walkArea = monkey.WalkArea(poly, 2)
     game_node.add(makeDebugPath(poly))
@@ -147,10 +166,18 @@ def createItem(desc, item):
         addMouseArea(desc, node, item)
     if desc.get('type', '') == 'character':
         dir = desc.get('direction')
-        node.add_component(monkey.components.WalkableCharacter(200, z_func=z_func, direction=dir))
+        use_directional_anim = desc.get('use_anim_dir', True)
+        node.add_component(monkey.components.WalkableCharacter(200, z_func=z_func, direction=dir, anim_dir=use_directional_anim))
+        node.add_component(monkey.components.Collider(1, 2|4, 0, monkey.shapes.Point(), batch='line'))
     if item == settings.characters[settings.player]:
         data.tag_to_id['player'] = node.id
         node.add_component(monkey.components.Follow(0))
+    if 'collider' in desc:
+        print('fff')
+        collider = monkey.components.Collider(2, 1, 1, monkey.shapes.AABB(0,10,0,136), batch='line')
+        collider.setResponse(0, on_enter=cko)
+        node.add_component(collider)
+
     hasLight = getattr(data, "light_" + settings.room, True)
     if not hasLight:
         node.setPalette('dark')
@@ -197,9 +224,18 @@ def create_room(room):
     room.add_runner(mm)
     room.add_runner(monkey.Scheduler())
 
+    ce = monkey.CollisionEngine2D(80, 80)
+    room.add_runner(ce)
+
 
     game_node = monkey.Node()
     text_node = monkey.Node()
+    ui_node = monkey.Node()
+    msg_node = monkey.Node()
+    text_node.add(ui_node)
+    text_node.add(msg_node)
+
+
 
     room.add_batch('text', monkey.SpriteBatch(max_elements=10000, cam=1, sheet='petscii'))
     room.add_batch('sprites', monkey.SpriteBatch(max_elements=10000, cam=0, sheet='sprites'))
@@ -217,14 +253,14 @@ def create_room(room):
         t.add_component(monkey.components.MouseArea(monkey.shapes.AABB(0, box_size[0], -8, -8+box_size[1]), 0, 1,
             on_enter=ui.on_enter_verb, on_leave=ui.on_leave_verb, on_click=on_click, batch='line_ui'))
         t.set_position(value['pos'][0], value['pos'][1], 0)
-        text_node.add(t)
+        ui_node.add(t)
     # first item in inventory is placed in (1, 21)
 
     inventory = monkey.Node()
     settings.id_inv = inventory.id
-    text_node.add(inventory)
+    ui_node.add(inventory)
     new_kid_selector = monkey.Node()
-    text_node.add(new_kid_selector)
+    ui_node.add(new_kid_selector)
     ui.refresh_inventory()
 
 
@@ -234,10 +270,12 @@ def create_room(room):
     cact = monkey.Text('text', 'c64', data.strings[settings.verbs[settings.default_verb]['text']], pal='purple')
     cact.set_position(1, 53, 0)
     data.tag_to_id['label_action'] = cact.id
-    text_node.add(cact)
+    ui_node.add(cact)
 
     settings.id_game = game_node.id
     settings.id_text = text_node.id
+    settings.id_ui = ui_node.id
+    settings.id_msg = msg_node.id
     settings.id_newkid = new_kid_selector.id
 
 
@@ -263,21 +301,22 @@ def create_room(room):
     # place dynamic items
 
     print (' -- adding dynamic items...')
-    for item, desc in data.items.items():
+    for item, desc in data.items['items'].items():
         create = evaluate(desc.get('create', True))
         if not create:
             continue
         active = evaluate(desc.get('active', True))
-
+        print(desc)
         if desc['room'] == settings.room:
             node = createItem(desc, item)
             if not active:
                 node.state = monkey.NodeState.ACTIVE if active else monkey.NodeState.INACTIVE
             #print('adding', item, active)
             game_node.add(node)
-
-
             data.tag_to_id[item] = node.id
+
+    if settings.start_script:
+        getattr(scripts, settings.start_script)()
 
             #item_type = desc.get('type')
             #if item_type:

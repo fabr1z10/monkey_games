@@ -1,0 +1,17 @@
+sprites:
+  tv:
+    animations:
+      off:
+        frames:
+          - tex: [281,139,38,24]
+      on:
+        frames:
+          - tex: [281,164,38,24]
+  door:
+    animations:
+      closed:
+        frames:
+          - tex: [323,137,26,96]
+      open:
+        frames:
+          - tex: [350,137,26,96]

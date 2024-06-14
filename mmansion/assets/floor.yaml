@@ -1,0 +1,9 @@
+sprites:
+  door:
+    animations:
+      closed:
+        frames:
+          - tex: [133,137,56,88]
+      open:
+        frames:
+          - tex: [190,137,56,88]

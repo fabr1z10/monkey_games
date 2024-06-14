@@ -1,0 +1,9 @@
+sprites:
+  message:
+    animations:
+      default:
+        frames:
+          - tex: [26,138,110,15]
+            ticks: 20
+          - tex: [138,138,110,15]
+            ticks: 20

@@ -8,8 +8,17 @@ def makeText(id):
     msg.set_position(0, 200, 0)
     return msg
 
+def disable_ui():
+    monkey.get_node(settings.id_ui).state = monkey.NodeState.INACTIVE
+    settings.ui_enabled = False
+
+def enable_ui():
+    monkey.get_node(settings.id_ui).state = monkey.NodeState.ACTIVE
+    settings.ui_enabled = True
+
+
 def walkToItem(script, *args):
-    item_info = data.items[args[0]]
+    item_info = data.getItem(args[0])
     walkto = item_info.get('walk_to', None)
     if not walkto:
         node = monkey.get_node(data.tag_to_id[args[0]])
@@ -33,7 +42,7 @@ def addToInventory(item):
 
 def addText(msg):
     def f():
-        textNode = monkey.get_node(settings.id_text)
+        textNode = monkey.get_node(settings.id_msg)
         textNode.add(msg)
     return f
 
@@ -43,13 +52,20 @@ def message(script, x):
     script.add(monkey.actions.Delay(1))
     script.add(monkey.actions.CallFunc(lambda: msg.remove()))
 
-def goto_room(room, x, y, dir):
+def goto_room(room, pos, dir):
     def f():
-        p = data.items[settings.characters[settings.player]]
+        p = data.getItem(settings.characters[settings.player])
         p['room'] = room
-        p['pos'] = (x, y)
+        p['pos'] = pos
         p['direction'] = dir
         settings.room = room
+        monkey.close_room()
+    return f
+
+def cut_scene(room, script):
+    def f():
+        settings.room = room
+        settings.start_script = script
         monkey.close_room()
     return f
 
@@ -61,6 +77,15 @@ def say(script, *args):
     for x in args:
         message(script, x)
     script.add(monkey.actions.CallFunc(lambda: monkey.get_node(id).sendMessage(id="animate", anim="idle")))
+
+def talk_char(script, *args):
+    id = data.tag_to_id[args[0]]
+    script.add(monkey.actions.Animate(id=id, anim=args[1]))
+    for x in args[3:]:
+        message(script, x)
+    script.add(monkey.actions.Animate(id=id, anim=args[2]))
+
+
 
 def _read(script):
     say(script, 24)
@@ -74,12 +99,11 @@ def _open(script):
 def _close(script):
     say(script, 27)
 
-
+def _pickup(script):
+    say(script, 75)
 
 def pickup(script, item):
-    data.items[item]['active'] = False
-    print('FIIFIFIFI')
-    print(data.items[item])
+    data.getItem(item)['active'] = False
     script.add(monkey.actions.CallFunc(addToInventory(item)))
 
 
@@ -166,6 +190,22 @@ def open_panel(script, *args):
     change_door_state(script,'loose_panel', 'open', 'loose_panel')
     for a in ['cassette_tape']:
         updateNodeState(a, monkey.NodeState.ACTIVE)
+
+def turn_on_tv(script, *args):
+    script.add(monkey.actions.Animate(id=data.tag_to_id['tv'], anim='on'))
+    script.add(monkey.actions.CallFunc(disable_ui))
+    script.add(monkey.actions.Delay(2))
+    script.add(monkey.actions.CallFunc(cut_scene('tv', 'pippo')))
+
+def pippo():
+    disable_ui()
+    s = monkey.Script()
+    mark_eteer = monkey.get_sprite('sprites/mark_eteer')
+    mark_eteer.set_position(147, 56, 1)
+    data.tag_to_id['mark_eteer'] = mark_eteer.id
+    s.add(monkey.actions.Add(settings.id_game, mark_eteer))
+    talk_char(s, 'mark_eteer', 'talk_s', 'idle_s', 85, 86, 87, 88, 89, 90)
+    monkey.play(s)
 
 def close_panel(script, *args):
     change_door_state(script,'loose_panel', 'closed', 'loose_panel')

@@ -3,9 +3,11 @@ import monkey
 device_size = (320, 200)
 main_view_height = 136
 main_view_y = 54
-room = 'library'
+room = 'staircase'
+start_script= None
 title = 'Maniac Mansion'
 enable_mouse = True
+ui_enabled = True
 shaders = [
     monkey.SHADER_BATCH_QUAD_PALETTE,
     monkey.SHADER_BATCH_LINES
@@ -23,6 +25,8 @@ player = 1
 
 id_game = None
 id_text = None
+id_ui = None
+id_msg = None
 id_inv = None
 id_newkid = None
 

@@ -38,7 +38,18 @@ sprites:
         frames:
           - tex: [51,108,22,26]
             anchor: [11,0]
-
+      talk_e:
+        frames:
+          - tex: [1,108,24,25]
+            anchor: [13,0]
+          - tex: [130,110,24,25]
+            anchor: [13,0]
+      talk_s:
+        frames:
+          - tex: [27,108,22,29]
+            anchor: [11,0]
+          - tex: [155,110,22,29]
+            anchor: [11,0]
   bernard_body:
     ticks: *ticks
     animations:
@@ -74,20 +85,32 @@ sprites:
         frames:
           - tex: [94, 140,22,18]
             anchor: [11,5]
+            links:
+              - [11, 17]
           - tex: [118,140,20, 22]
             anchor: [11,9]
+            links:
+              - [11, 21]
           - tex: [118,140,20, 22]
             fliph: true
             anchor: [11,9]
+            links:
+              - [11, 21]
       walk_n:
         frames:
           - tex: [46, 140,22,20]
             anchor: [11,5]
+            links:
+              - [11,20]
           - tex: [71,139,20,24]
             anchor: [9,9]
+            links:
+              - [9, 24]
           - tex: [71,139,20,24]
             fliph: true
             anchor: [9,9]
+            links:
+              - [9, 21]
   bernard_legs:
     ticks: *ticks
     animations:
@@ -339,6 +362,35 @@ sprites:
             anchor: [9, 0]
             links:
               - [9, 24]
+  mark_eteer:
+    ticks: *ticks
+    animations:
+      idle_s:
+        frames:
+          - tex: [1,467,18,44]
+            anchor: [9,0]
+      talk_s:
+        frames:
+          - tex: [1,467,18,44]
+            anchor: [9,0]
+          - tex: [21,467,18,44]
+            anchor: [9,0]
+  tentacle:
+    ticks: *ticks
+    animations:
+      idle:
+        frames:
+          - tex: [41,426,22,85]
+            anchor: [11, 0]
+      walk:
+        frames:
+          - tex: [41,426,22,85]
+            anchor: [11, 0]
+          - tex: [ 65,432,24,79 ]
+            anchor: [ 12, 0 ]
+          - tex: [91,432,24,79]
+            anchor: [12, 0]
+
 multi_sprites:
   dave:
     nodes:

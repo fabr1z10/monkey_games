@@ -3,6 +3,12 @@ items = dict()
 strings = dict()
 tag_to_id = dict()
 
+def getItem(id: str):
+    return items['items'][id]
+
+
+
+
 inventory = {
     'dave': [],
     'bernard': []
@@ -22,6 +28,9 @@ door_pantry = 'closed'
 door_reactor='closed'
 door_living='closed'
 door_library='closed'
+door_artroom='closed'
+door_musicroom='closed'
+door_hallway_mid='closed'
 fridge = 'closed'
 loose_panel = 'closed'
 faucet = 'closed'

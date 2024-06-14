@@ -1,5 +1,6 @@
 import monkey
 from . import settings
+
 from . import data
 from . import scripts
 
@@ -16,7 +17,7 @@ def reset_action():
 
 
 def getItemScript(item, action, other=None):
-    itemInfo = data.items[item]
+    itemInfo = data.getItem(item)
     actions = itemInfo.get('actions', None)
     scr = None
     if actions:
@@ -37,12 +38,12 @@ def refresh_action():
     #print(data.tag_to_id)
     text = [ data.strings[settings.verbs[settings.action]['text']] ]
     if settings.item1:
-        text.append(data.strings[data.items[settings.item1]['text']])
+        text.append(data.strings[data.getItem(settings.item1)['text']])
     if settings.preposition:
         text.append(data.strings[settings.preposition])
     if settings.item2:
         #text.append(data.strings[settings.verbs[settings.action]['preposition']])
-        text.append(data.strings[data.items[settings.item2]['text']])
+        text.append(data.strings[data.getItem(settings.item2)['text']])
     node.updateText(" ".join(text))
 
 def refresh_inventory():
@@ -57,7 +58,7 @@ def refresh_inventory():
         x = settings.inv_x[i % 2]
         y = settings.inv_y[i // 2]
         #print(inventory_items[j], x, y, '....')
-        t = monkey.Text('text', 'c64', data.strings[data.items[inventory_items[j]]['text']][:18], pal='purple')
+        t = monkey.Text('text', 'c64', data.strings[data.getItem(inventory_items[j])['text']][:18], pal='purple')
         box_size = t.size
         t.add_component(monkey.components.MouseArea(monkey.shapes.AABB(0, box_size[0], -8, -8+box_size[1]), 0, 1,
             on_enter=on_enter_inventory_item(inventory_items[j]), on_leave=on_leave_inventory_item, on_click=execute_action, batch='line_ui'))
@@ -107,14 +108,14 @@ def move_inv(pos):
 
 def select_kid(i):
     def f(node):
-        curr = data.items[settings.characters[settings.player]]
+        curr = data.getItem(settings.characters[settings.player])
         id = data.tag_to_id['player']
         player = monkey.get_node(id)
         curr['direction'] = player.getController().direction
         curr['pos'] = [player.x, player.y]
         print('saved ',settings.player, ' position to',curr['pos'])
         settings.player = i
-        settings.room = data.items[settings.characters[i]]['room']
+        settings.room = data.getItem(settings.characters[i])['room']
         monkey.close_room()
     return f
 
@@ -128,7 +129,7 @@ def newkid(node):
     xc = [1, 40, 100]
     i=0
     for c in settings.characters:
-        name = data.strings[data.items[c]['text']]
+        name = data.strings[data.getItem(c)['text']]
         t = monkey.Text('text', 'c64', name, pal='purple')
         box_size = t.size
         t.add_component(monkey.components.MouseArea(monkey.shapes.AABB(0, box_size[0], -8, -8 + box_size[1]), 0, 1,
@@ -208,7 +209,7 @@ def execute_action(node):
 
     if not settings.item2:
         # one item action
-        item_info = data.items[settings.item1]
+        item_info = data.getItem(settings.item1)
         if settings.item1 not in inventory:
             scripts.walkToItem(script, settings.item1)
         actions = item_info.get('actions', None)
