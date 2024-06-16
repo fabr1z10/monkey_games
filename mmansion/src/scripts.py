@@ -69,6 +69,10 @@ def cut_scene(room, script):
         monkey.close_room()
     return f
 
+def kolpo(x):
+    player = monkey.get_node(data.tag_to_id['player'])
+    if abs(player.y-x.node.y) > 1.0:
+        x.goto([x.node.x, player.y])
 
 
 def say(script, *args):
@@ -76,7 +80,7 @@ def say(script, *args):
     script.add(monkey.actions.CallFunc(lambda: monkey.get_node(id).sendMessage(id="animate", anim="talk")))
     for x in args:
         message(script, x)
-    script.add(monkey.actions.CallFunc(lambda: monkey.get_node(id).sendMessage(id="animate", anim="idle")))
+    script.add(monkey.actions.CallFunc(lambda: monkey.get_node(id).sendMessage(id="animate", anim="quiet")))
 
 def talk_char(script, *args):
     id = data.tag_to_id[args[0]]

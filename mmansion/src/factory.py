@@ -166,8 +166,11 @@ def createItem(desc, item):
         addMouseArea(desc, node, item)
     if desc.get('type', '') == 'character':
         dir = desc.get('direction')
+        speed = desc.get('speed', 200)
         use_directional_anim = desc.get('use_anim_dir', True)
-        node.add_component(monkey.components.WalkableCharacter(200, z_func=z_func, direction=dir, anim_dir=use_directional_anim))
+        cb = getattr(scripts, desc['callback']) if 'callback' in desc else None
+        node.add_component(monkey.components.WalkableCharacter(speed, z_func=z_func, direction=dir,
+            anim_dir=use_directional_anim, callback=cb))
         node.add_component(monkey.components.Collider(1, 2|4, 0, monkey.shapes.Point(), batch='line'))
     if item == settings.characters[settings.player]:
         data.tag_to_id['player'] = node.id

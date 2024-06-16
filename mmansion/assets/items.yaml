@@ -13,10 +13,12 @@ items:
     room: staircase
     pos: [268, 20]
     type: character
+    callback: kolpo
     use_anim_dir: False
     direction: n
     sprite: 'sprites/tentacle'
     text: 97
+    speed: 10
     mouse:
       aabb: [-5,5,0,20]
 
