@@ -11,7 +11,7 @@ def getItem(id: str):
 
 inventory = {
     'dave': [],
-    'bernard': []
+    'bernard': ['wax_fruit']
 }
 
 delayed_funcs = {
@@ -35,7 +35,8 @@ fridge = 'closed'
 loose_panel = 'closed'
 faucet = 'closed'
 maindoor_unlocked = True
-
+pass_green_tentacle = 0
+food_given_to_gt = False
 light_reactor = False
 light_library = False
 

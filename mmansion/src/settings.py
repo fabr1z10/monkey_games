@@ -3,7 +3,7 @@ import monkey
 device_size = (320, 200)
 main_view_height = 136
 main_view_y = 54
-room = 'staircase'
+room = 'floor'
 start_script= None
 title = 'Maniac Mansion'
 enable_mouse = True
@@ -36,6 +36,14 @@ action = default_verb
 item1 = None
 item2 = None
 preposition = None
+
+class CollisionFlags:
+    PLAYER = 1
+    FOE = 2
+    HOTSPOT = 4
+
+
+
 
 
 verbs = {

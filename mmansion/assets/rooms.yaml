@@ -221,6 +221,7 @@ music_room:
 staircase:
   size: [640,136]
   batch: staircase
+  on_start: on_start_staircase
   walkarea:
     poly: [0,0,640,0,640,5,597,16,469,16,427,32,144,32,135,21,92,21,72,15,65,15,117,136,66,136,14,15,12,15,0,12]
   items:

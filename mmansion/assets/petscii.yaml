@@ -1,16 +1,49 @@
 sheet: 'petscii.png'
 tile_size: [8, 8]
 palettes:
-  green:
-    ffffff: 79d570
-  yellow:
-    ffffff: f7ff6c
+  black:
+    ffffff: 000000
+  white:
+    ffffff: ffffff
+  red:
+    ffffff: bb6a51
+  cyan:
+    ffffff: a9f3ff
   purple:
-    ffffff: c161c9
+    ffffff: cd6fd4
+  green:
+    ffffff: 89e581
+  blue:
+    ffffff: 6953f5
+  yellow:
+    ffffff: ffff7b
+  orange:
+    ffffff: c69232
+  brown:
+    ffffff: 8d7900
+  light_red:
+    ffffff: f5ab96
+  grey_1:
+    ffffff: 818181
+  grey_2:
+    ffffff: b6b6b6
+  light_green:
+    ffffff: cdffc6
   light_blue:
-    ffffff: a28fff
-  5:
-    6953f5: f7ff6c
+    ffffff: b19eff
+  grey_3:
+    ffffff: e0e0e0
+
+#  green:
+#    ffffff: 79d570
+#  yellow:
+#    ffffff: f7ff6c
+#  purple:
+#    ffffff: c161c9
+#  light_blue:
+#    ffffff: a28fff
+#  5:
+#    6953f5: f7ff6c
 fonts:
   c64:
     line_height: 8

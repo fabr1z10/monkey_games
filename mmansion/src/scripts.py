@@ -3,8 +3,8 @@ from . import data
 from . import settings
 from . import ui
 
-def makeText(id):
-    msg = monkey.Text('text', 'c64', data.strings[id], pal='light_blue')
+def makeText(id, pal):
+    msg = monkey.Text('text', 'c64', data.strings[id], pal=pal)
     msg.set_position(0, 200, 0)
     return msg
 
@@ -28,6 +28,15 @@ def walkToItem(script, *args):
     if walkdir:
         script.add(monkey.actions.Turn(data.tag_to_id['player'], walkdir))
 
+def walkToCharacter(script, *args):
+    idp = data.tag_to_id['player']
+    node = monkey.get_node(data.tag_to_id[args[0]])
+    player = monkey.get_node(idp)
+    if player.x > node.x:
+        script.add(monkey.actions.Walk(idp, (node.x + 30, node.y)))
+    script.add(monkey.actions.Turn(data.tag_to_id['player'], 'w'))
+
+
 def addToInventory(item):
     def f():
         inv = data.inventory[settings.characters[settings.player]]
@@ -46,8 +55,8 @@ def addText(msg):
         textNode.add(msg)
     return f
 
-def message(script, x):
-    msg = makeText(x)
+def message(script, x, pal):
+    msg = makeText(x, pal)
     script.add(monkey.actions.CallFunc(addText(msg)))
     script.add(monkey.actions.Delay(1))
     script.add(monkey.actions.CallFunc(lambda: msg.remove()))
@@ -76,11 +85,28 @@ def kolpo(x):
 
 
 def say(script, *args):
-    id = data.tag_to_id['player']
+    sayc(script, 'player', *args)
+    # id = data.tag_to_id['player']
+    # script.add(monkey.actions.CallFunc(lambda: monkey.get_node(id).sendMessage(id="animate", anim="talk")))
+    # for x in args:
+    #     message(script, x)
+    # script.add(monkey.actions.CallFunc(lambda: monkey.get_node(id).sendMessage(id="animate", anim="quiet")))
+
+def sayc(script, *args):
+    id = data.tag_to_id[args[0]]
+    cid = settings.characters[settings.player] if args[0] == 'player' else args[0]
+    pal = data.items['items'][cid]['text_color']
     script.add(monkey.actions.CallFunc(lambda: monkey.get_node(id).sendMessage(id="animate", anim="talk")))
-    for x in args:
-        message(script, x)
+    for x in args[1:]:
+        message(script, x, pal)
     script.add(monkey.actions.CallFunc(lambda: monkey.get_node(id).sendMessage(id="animate", anim="quiet")))
+
+def saycn(script, *args):
+    id = data.tag_to_id[args[0]]
+    cid = settings.characters[settings.player] if args[0] == 'player' else args[0]
+    pal = data.items['items'][cid]['text_color']
+    for x in args[1:]:
+        message(script, x, pal)
 
 def talk_char(script, *args):
     id = data.tag_to_id[args[0]]
@@ -242,3 +268,38 @@ def move_item(item, charFrom, charTo):
         data.inventory[charFrom].remove(item)
         data.inventory[charTo].append(item)
     return f
+
+def drop_item(item, charFrom):
+    def f():
+        data.inventory[charFrom].remove(item)
+    return f
+
+
+def hit_green_tentacle_stop(obj,player):
+    settings.ui_enabled = False
+    def ciao():
+        settings.ui_enabled = True
+    settings.ui_enabled = False
+    script = monkey.Script(id="__player")
+    print(player.id,player.x,player.y)
+    if data.pass_green_tentacle==0:
+        saycn(script, 'green_tentacle', 104 if data.food_given_to_gt else 98)
+        data.pass_green_tentacle = 1
+    else:
+        say(script, 99)
+    script.add(monkey.actions.Walk(player.id, (player.x + 50, player.y)), after=[0])
+    script.add(monkey.actions.Turn(player.id, 'w'))
+    script.add(monkey.actions.CallFunc(ciao))
+    monkey.play(script)
+
+def on_start_staircase():
+    data.pass_green_tentacle = 0
+    print ('ZXXXXX')
+
+def give_green_tentacle_wax_fruit(script):
+    script.add(monkey.actions.CallFunc(drop_item(settings.item1, settings.characters[settings.player])))
+    script.add(monkey.actions.CallFunc(ui.refresh_inventory))
+    data.food_given_to_gt = True
+    data.pass_green_tentacle = 0
+    saycn(script, 'green_tentacle', 101, 103)
+

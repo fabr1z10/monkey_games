@@ -6,17 +6,7 @@ from . import ui
 from . import scripts
 from . import data
 
-def cko(obj,player):
-    settings.ui_enabled = False
-    def ciao():
-        settings.ui_enabled = True
-    settings.ui_enabled = False
-    script = monkey.Script(id="__player")
-    print(player.id,player.x,player.y)
-    script.add(monkey.actions.Walk(player.id, (player.x - 50, player.y)))
-    script.add(monkey.actions.Turn(player.id, 'e'))
-    script.add(monkey.actions.CallFunc(ciao))
-    monkey.play(script)
+
 
 
 def evaluate(node):
@@ -154,7 +144,11 @@ def createItem(desc, item):
     auto_depth = desc.get('auto_depth', False)
     z = 1 - pos[1]/136.0 if auto_depth else z
     node.set_position(pos[0], pos[1], z)
-
+    is_player = False
+    if item == settings.characters[settings.player]:
+        is_player = True
+        data.tag_to_id['player'] = node.id
+        node.add_component(monkey.components.Follow(0))
     #if 'model' in desc:
     makeModel(desc, node)
     if 'baseline' in desc:
@@ -171,14 +165,21 @@ def createItem(desc, item):
         cb = getattr(scripts, desc['callback']) if 'callback' in desc else None
         node.add_component(monkey.components.WalkableCharacter(speed, z_func=z_func, direction=dir,
             anim_dir=use_directional_anim, callback=cb))
-        node.add_component(monkey.components.Collider(1, 2|4, 0, monkey.shapes.Point(), batch='line'))
-    if item == settings.characters[settings.player]:
-        data.tag_to_id['player'] = node.id
-        node.add_component(monkey.components.Follow(0))
+        flag = settings.CollisionFlags.PLAYER if is_player else settings.CollisionFlags.FOE
+        node.add_component(monkey.components.Collider(flag, settings.CollisionFlags.FOE | settings.CollisionFlags.HOTSPOT, 0, monkey.shapes.Point(), batch='line'))
+
     if 'collider' in desc:
-        print('fff')
-        collider = monkey.components.Collider(2, 1, 1, monkey.shapes.AABB(0,10,0,136), batch='line')
-        collider.setResponse(0, on_enter=cko)
+        collider_size = desc['collider']['size']
+        on_enter = desc['collider'].get('on_enter', None)
+        on_leave = desc['collider'].get('on_leave', None)
+
+        if on_enter:
+            on_enter = getattr(scripts, on_enter)
+        if on_leave:
+            on_leave = getattr(scripts, on_leave)
+        mask = desc['collider']['mask']
+        collider = monkey.components.Collider(settings.CollisionFlags.HOTSPOT, mask, 1, monkey.shapes.AABB(0,collider_size[0],0,collider_size[1]), batch='line')
+        collider.setResponse(0, on_enter=on_enter, on_leave=on_leave)
         node.add_component(collider)
 
     hasLight = getattr(data, "light_" + settings.room, True)
@@ -201,7 +202,12 @@ def create_room(room):
     if settings.room not in data.rooms:
         print(' -- Error! Cannot find room: ',settings.room)
         exit(1)
+
     room_info = data.rooms[settings.room]
+    on_start = room_info.get('on_start')
+    if on_start:
+        room.addOnStart(getattr(scripts, on_start))
+
 
     dw = settings.device_size[0]
     dh = settings.device_size[1]

@@ -7,7 +7,7 @@ variables:
   stairs_ground_floor:  &stairs_ground_floor    [332, 134]
   stairs_1st_floor:     &stairs_1st_floor       [326, 2]
   door_floor_1:         &door_floor_1           [148,30]
-  stairs_floor:         &stairs_floor           [558, 129]
+  stairs_floor:         &stairs_floor           [569, 118]
 items:
   green_tentacle:
     room: staircase
@@ -18,10 +18,10 @@ items:
     direction: n
     sprite: 'sprites/tentacle'
     text: 97
+    text_color: 'green'
     speed: 10
     mouse:
       aabb: [-5,5,0,20]
-
   dave:
     room: entrance_hall
     pos: [50, 20]
@@ -29,16 +29,18 @@ items:
     direction: n
     sprite: 'sprites/dave'
     text: 55
+    text_color: 'light_blue'
     mouse:
       priority: 0
       aabb: [ -5,5,0,70 ]
   bernard:
-    room: staircase
+    room: floor
     pos: [60, 20]
     type: character
     direction: e
     sprite: 'sprites/bernard'
     text: 56
+    text_color: 'grey_3'
     mouse:
       priority: 0
       aabb: [ -5,5,0,70 ]
@@ -942,8 +944,21 @@ items:
       aabb: [0,72,0,10]
     actions:
       walkto: [change_room, staircase, [442, 16], s]
-  test1:
+  path_staircase_floor:
     room: staircase
-    pos: [200, 0]
+    text: 67
+    pos: [427, 16]
+    walk_to: [448,24]
+    walk_dir: 'e'
+    mouse:
+      aabb: [0,90,0,16]
+    actions:
+      walkto: [change_room, floor, *stairs_floor, s]
+  green_tentacle_stop:
+    room: staircase
+    pos: [248, 0]
     z: 2
-    collider: True
+    collider:
+      size: [38, 136]
+      on_enter: hit_green_tentacle_stop
+      mask: 1 # collides with player only

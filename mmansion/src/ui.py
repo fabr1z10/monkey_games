@@ -233,10 +233,21 @@ def execute_action(node):
         refresh_action()
     else:
         if settings.action == 'give':
-            scripts.walkToItem(script, settings.item2)
+            #scripts.walkToItem(script, settings.item2)
+            scripts.walkToCharacter(script, settings.item2)
+
             if player_has_item(settings.item1):
-                script.add(monkey.actions.CallFunc(scripts.move_item(settings.item1, settings.characters[settings.player], settings.item2)))
-                script.add(monkey.actions.CallFunc(refresh_inventory))
+                if settings.item2 in settings.characters:
+                    script.add(monkey.actions.CallFunc(scripts.move_item(settings.item1, settings.characters[settings.player], settings.item2)))
+                    script.add(monkey.actions.CallFunc(refresh_inventory))
+                else:
+                    sid = 'give_' + settings.item2 + '_' + settings.item1
+                    ss = getattr(scripts, sid, None)
+                    if ss:
+                        print('found')
+                        ss(script)
+                    else:
+                        print('not found',sid)
         else:
             scr = getItemScript(settings.item1, settings.action, settings.item2)
             if not scr:
