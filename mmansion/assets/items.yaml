@@ -8,9 +8,14 @@ variables:
   stairs_1st_floor:     &stairs_1st_floor       [326, 2]
   door_floor_1:         &door_floor_1           [148,30]
   stairs_floor:         &stairs_floor           [569, 118]
+  stairs_floor2:        &stairs_floor2          [86, 118]
+  floor2_entry:         &floor2_entry           [58, 16]
+  floor2_radio:         &floor2_radio           [140, 30]
+  door_radio:           &door_radio             [315,22]
 items:
   green_tentacle:
     room: staircase
+    create: '@data.drink_given_to_gt==False'
     pos: [268, 20]
     type: character
     callback: kolpo
@@ -34,8 +39,8 @@ items:
       priority: 0
       aabb: [ -5,5,0,70 ]
   bernard:
-    room: floor
-    pos: [60, 20]
+    room: staircase
+    pos: [400, 20]
     type: character
     direction: e
     sprite: 'sprites/bernard'
@@ -956,9 +961,85 @@ items:
       walkto: [change_room, floor, *stairs_floor, s]
   green_tentacle_stop:
     room: staircase
+    create: '@data.drink_given_to_gt==False'
     pos: [248, 0]
     z: 2
     collider:
       size: [38, 136]
       on_enter: hit_green_tentacle_stop
       mask: 1 # collides with player only
+  lovely_plant:
+    room: staircase
+    pos: [105,22]
+    walk_to: [120,19]
+    walk_dir: 'n'
+    mouse:
+      aabb: [ 0,30,0,95 ]
+    text: 106
+  path_staircase_floor2:
+    room: staircase
+    text: 67
+    pos: [55, 126]
+    walk_to: *stairs_floor2
+    walk_dir: 'n'
+    mouse:
+      aabb: [0,72,0,10]
+    actions:
+      walkto: [change_room, floor2, *floor2_entry, e]
+  path_floor2_staircase:
+    room: floor2
+    text: 67
+    walk_to: *floor2_entry
+    pos: [20,10]
+    walk_dir: w
+    mouse:
+      aabb: [0,50,0,100]
+    actions:
+      walkto: [change_room, staircase, *stairs_floor2, s]
+  door_floor2_radio:
+    room: floor2
+    text: 28
+    pos: [118, 32]
+    walk_to: *floor2_radio
+    walk_dir: n
+    sprite: 'floor2/door'
+    anim: '@data.door_radio'
+    mouse:
+      aabb: [0,44,0,81]
+    actions:
+      open: [change_door_state, door_floor2_radio, open, door_radio]
+      close: [change_door_state, door_floor2_radio, closed, door_radio]
+      walkto: [walkto_door, door_radio, radio, *door_radio, w]
+  radio_room_bed:
+    room: radio
+    pos: [48, 15]
+    bg:
+      batch: radio
+      quad: [1,137,136,48]
+    auto_depth: True
+    baseline: [0,0,116,0,136,11]
+  wanted_poster:
+    room: radio
+    text: 107
+    pos: [160, 64]
+    walk_to: [180, 21]
+    walk_dir: n
+    mouse:
+      aabb: [0,40,0,48]
+    actions:
+      read: [say,108,109,110]
+  dime:
+    room: radio
+    text: 111
+    pos: [186, 24]
+    walk_to: [204, 24]
+    z: 0.1
+    walk_dir: 'w'
+    bg:
+      batch: radio
+      quad: [144,141,6,1]
+    active: True
+    mouse:
+      aabb: [0,6,0,2]
+    actions:
+      pickup: [pickup, dime]

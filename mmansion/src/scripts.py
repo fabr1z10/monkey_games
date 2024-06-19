@@ -303,3 +303,15 @@ def give_green_tentacle_wax_fruit(script):
     data.pass_green_tentacle = 0
     saycn(script, 'green_tentacle', 101, 103)
 
+def give_green_tentacle_fruit_drinks(script):
+    if not data.food_given_to_gt:
+        saycn(script, 'green_tentacle', 100)
+    else:
+        saycn(script, 'green_tentacle', 105)
+        data.drink_given_to_gt = True
+        monkey.get_node(data.tag_to_id['green_tentacle_stop']).remove()
+        gt = monkey.get_node(data.tag_to_id['green_tentacle'])
+        gt.getController().setCallback(lambda x: None)
+        script.add(monkey.actions.Walk(gt.id, [138,29]))
+
+

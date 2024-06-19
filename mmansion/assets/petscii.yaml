@@ -144,3 +144,4 @@ fonts:
       '♦': [448,0,8,8,8]        # diamonds sign
       '_': [456,0,8,8,8]        # underscore
       'π': [464,0,8,8,8]        # pi sign
+      '…': [296,8,8,8,8]        # ellipsis

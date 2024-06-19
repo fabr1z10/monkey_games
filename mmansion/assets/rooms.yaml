@@ -238,3 +238,21 @@ staircase:
         quad: [35,138,30,128]
       pos: [350, 8]
       auto_depth: True
+floor2:
+  size: [640, 136]
+  batch: floor2
+  walkarea:
+    poly:  [ 0,0,640,0,640,3,553,30,86,30,0,3 ]
+  items:
+    - bg:
+        batch: floor2
+        quad: [0,0,640,136]
+radio:
+  size: [368, 136]
+  batch: radio
+  walkarea:
+    poly: [0,0,368,0,368,14,314,32,306,32,306,24,203,24,198,32,72,32,72,26,186,26,165,14,20,14,0,8]
+  items:
+    - bg:
+        batch: radio
+        quad: [0,0,368,136]

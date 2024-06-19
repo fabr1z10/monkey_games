@@ -226,6 +226,10 @@ sprites:
         frames:
           - tex: [47,1,18,26]
             anchor: [9,0]
+      talk_n:
+        frames:
+          - tex: [47,1,18,26]
+            anchor: [9,0]
       walk_n:
         frames:
           - tex: [47,1,18,26]
