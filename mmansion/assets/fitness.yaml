@@ -1,0 +1,17 @@
+sprites:
+  hunkomatic:
+    animations:
+      default:
+        frames:
+          - tex: [1,137,48,77]
+      lift:
+        frames:
+          - tex: [51,137,48,77]
+  door:
+    animations:
+      closed:
+        frames:
+          - tex: [103,137,26,104]
+      open:
+        frames:
+          - tex: [130,137,26,104]

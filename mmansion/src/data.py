@@ -11,7 +11,7 @@ def getItem(id: str):
 
 inventory = {
     'dave': [],
-    'bernard': ['wax_fruit', 'fruit_drinks']
+    'bernard': ['cassette_tape']
 }
 
 delayed_funcs = {
@@ -32,6 +32,12 @@ door_artroom='closed'
 door_musicroom='closed'
 door_hallway_mid='closed'
 door_radio='closed'
+door_fitness='closed'
+
+cassette_recorder = 'off'
+tape_in_recorder = False
+
+
 hatch='open'
 fridge = 'closed'
 loose_panel = 'closed'

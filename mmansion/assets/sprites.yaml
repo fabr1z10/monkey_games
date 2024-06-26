@@ -398,6 +398,14 @@ sprites:
             anchor: [ 12, 0 ]
           - tex: [91,432,24,79]
             anchor: [12, 0]
+  tape:
+    animations:
+      default:
+        frames:
+          - tex: [1,462,10,4]
+      recorder:
+        frames:
+          - tex: [1,458,8,3]
 
 multi_sprites:
   dave:
@@ -442,7 +450,6 @@ multi_sprites:
         2: talk
       quiet:
         2: idle
-
 
 
 

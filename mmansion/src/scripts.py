@@ -2,6 +2,7 @@ import monkey
 from . import data
 from . import settings
 from . import ui
+from . import factory
 
 def makeText(id, pal):
     msg = monkey.Text('text', 'c64', data.strings[id], pal=pal)
@@ -132,9 +133,11 @@ def _close(script):
 def _pickup(script):
     say(script, 75)
 
-def pickup(script, item):
+def pickup(script, item, callback=None):
     data.getItem(item)['active'] = False
     script.add(monkey.actions.CallFunc(addToInventory(item)))
+    if callback:
+        globals()[callback](script)
 
 
 
@@ -315,3 +318,45 @@ def give_green_tentacle_fruit_drinks(script):
         script.add(monkey.actions.Walk(gt.id, [138,29]))
 
 
+def use_hunkomatic(script, *args):
+    script.add(monkey.actions.CallFunc(disable_ui))
+    for i in range(0,3):
+        script.add(monkey.actions.Animate(data.tag_to_id['hunkomatic'], 'default'))
+        script.add(monkey.actions.Delay(1))
+        script.add(monkey.actions.Animate(data.tag_to_id['hunkomatic'], 'lift'))
+        script.add(monkey.actions.Delay(1))
+    script.add(monkey.actions.Animate(data.tag_to_id['hunkomatic'], 'default'))
+    script.add(monkey.actions.CallFunc(enable_ui))
+    say(script, 118)
+
+def put_cassette_in_recorder(script, *args):
+    data.tape_in_recorder = True
+    script.add(monkey.actions.CallFunc(drop_item('cassette_tape', settings.characters[settings.player])))
+    script.add(monkey.actions.CallFunc(ui.refresh_inventory))
+    item = (data.items['items']['cassette_tape'])
+    item.update({
+        'rooms': 'music_room',
+        'pos': [282, 34],
+        'walk_to': [292, 25],
+        'walk_dir': 'n',
+        'anim': 'recorder'
+    })
+    script.add(monkey.actions.Add(settings.id_game, factory.createItem(item, 'cassette_tape')))
+
+def turn_on_recorder(script, *args):
+    if data.tape_in_recorder:
+        data.cassette_recorder = 'recording'
+        script.add(monkey.actions.Animate(data.tag_to_id['cassette_recorder'], data.cassette_recorder))
+        say(script, 122)
+    else:
+        say(script, 121)
+
+def turn_off_recorder(script, *args):
+    if data.tape_in_recorder:
+        data.cassette_recorder = 'off'
+        script.add(monkey.actions.Animate(data.tag_to_id['cassette_recorder'], data.cassette_recorder))
+        say(script, 123)
+
+def check_tape(script):
+    if settings.room == 'music_room':
+        data.tape_in_recorder = False

@@ -259,7 +259,7 @@ def execute_action(node):
                     f(script)
             else:
                 i1_in_inv = settings.item1 in inventory
-                i2_in_inv = settings.item1 in inventory
+                i2_in_inv = settings.item2 in inventory
                 if i1_in_inv and not i2_in_inv:
                     scripts.walkToItem(script, settings.item2)
                 elif i2_in_inv and not i1_in_inv:

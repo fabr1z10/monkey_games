@@ -11,7 +11,9 @@ variables:
   stairs_floor2:        &stairs_floor2          [86, 118]
   floor2_entry:         &floor2_entry           [58, 16]
   floor2_radio:         &floor2_radio           [140, 30]
+  floor2_fitness:       &floor2_fitness         [500, 30]
   door_radio:           &door_radio             [315,22]
+  door_fitness:         &door_fitness           [52, 24]
   radio_ladder:         &radio_ladder           [19,128]
   tentacle_ladder:      &tentacle_ladder        [88, 26]
 items:
@@ -41,7 +43,7 @@ items:
       priority: 0
       aabb: [ -5,5,0,70 ]
   bernard:
-    room: staircase
+    room: music_room
     pos: [400, 20]
     type: character
     direction: e
@@ -647,13 +649,13 @@ items:
     walk_to: [ 524,38 ]
     z: 0.1
     walk_dir: 'n'
-    sprite: 'library/tape'
+    sprite: 'sprites/tape'
     create: True
     active: '@data.loose_panel=="open"'
     mouse:
       aabb: [ 0,10,0,6 ]
     actions:
-      pickup: [ pickup, cassette_tape]
+      pickup: [ pickup, cassette_tape, check_tape]
   path_1st_floor:
     room: entrance_hall
     text: 67
@@ -1012,6 +1014,34 @@ items:
       open: [change_door_state, door_floor2_radio, open, door_radio]
       close: [change_door_state, door_floor2_radio, closed, door_radio]
       walkto: [walkto_door, door_radio, radio, *door_radio, w]
+  door_floor2_fitness:
+    room: floor2
+    text: 28
+    pos: [478, 32]
+    walk_to: *floor2_fitness
+    walk_dir: n
+    sprite: 'floor2/door'
+    anim: '@data.door_fitness'
+    mouse:
+      aabb: [0,44,0,81]
+    actions:
+      open: [change_door_state, door_floor2_fitness, open, door_fitness]
+      close: [change_door_state, door_floor2_fitness, closed, door_fitness]
+      walkto: [walkto_door, door_fitness, fitness, *door_fitness, e]
+  door_fitness:
+    room: fitness
+    text: 28
+    pos: [18, 20]
+    walk_to: *door_fitness
+    walk_dir: w
+    sprite: 'fitness/door'
+    anim: '@data.door_fitness'
+    mouse:
+      aabb: [0,26,0,104]
+    actions:
+      open: [change_door_state, door_fitness, open, door_fitness]
+      close: [change_door_state, door_fitness, closed, door_fitness]
+      walkto: [walkto_door, door_fitness, floor2, *floor2_fitness, s]
   radio_room_bed:
     room: radio
     pos: [48, 15]
@@ -1096,3 +1126,30 @@ items:
       aabb: [0,10,0,13]
     actions:
       pickup: [pickup, yellow_key]
+  hunkomatic:
+    room: fitness
+    text: 117
+    pos: [216, 26]
+    z: 0.1
+    walk_to: [240,24]
+    walk_dir: n
+    sprite: 'fitness/hunkomatic'
+    mouse:
+      aabb: [0,48,0,77]
+    actions:
+      use: [use_hunkomatic]
+  cassette_recorder:
+    room: music_room
+    text: 120
+    pos: [280, 32]
+    walk_to: [294, 25]
+    walk_dir: n
+    sprite: 'music/cassette_recorder'
+    anim: '@data.cassette_recorder'
+    mouse:
+      aabb: [0,30,0,7]
+      priority: 1
+    actions:
+      use_cassette_tape: [put_cassette_in_recorder]
+      turnon: [turn_on_recorder]
+      turnoff: [turn_off_recorder]

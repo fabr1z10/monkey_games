@@ -256,6 +256,15 @@ radio:
     - bg:
         batch: radio
         quad: [0,0,368,136]
+fitness:
+  size: [480, 136]
+  batch: fitness
+  walkarea:
+    poly: [0,0,480,0,480,11,415,32,269,32,268,25,215,25,214,32,185,32,176,25,60,25,56,32,55,32,0,14]
+  items:
+    - bg:
+        batch: fitness
+        quad: [0,0,480,136]
 tentacle:
   size: [640, 136]
   batch: tentacle

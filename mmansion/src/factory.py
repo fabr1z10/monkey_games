@@ -185,7 +185,8 @@ def createItem(desc, item):
     hasLight = getattr(data, "light_" + settings.room, True)
     if not hasLight:
         node.setPalette('dark')
-
+    if item:
+        data.tag_to_id[item] = node.id
     return node
 
 
@@ -322,7 +323,7 @@ def create_room(room):
                 node.state = monkey.NodeState.ACTIVE if active else monkey.NodeState.INACTIVE
             #print('adding', item, active)
             game_node.add(node)
-            data.tag_to_id[item] = node.id
+
 
     if settings.start_script:
         getattr(scripts, settings.start_script)()

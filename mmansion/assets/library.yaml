@@ -28,11 +28,7 @@ sprites:
       default:
         frames:
           - tex: [67,166,32,27]
-  tape:
-    animations:
-      default:
-        frames:
-          - tex: [70,138,10,4]
+
   panel:
     animations:
       closed:
