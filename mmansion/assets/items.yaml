@@ -12,6 +12,8 @@ variables:
   floor2_entry:         &floor2_entry           [58, 16]
   floor2_radio:         &floor2_radio           [140, 30]
   door_radio:           &door_radio             [315,22]
+  radio_ladder:         &radio_ladder           [19,128]
+  tentacle_ladder:      &tentacle_ladder        [88, 26]
 items:
   green_tentacle:
     room: staircase
@@ -1043,3 +1045,54 @@ items:
       aabb: [0,6,0,2]
     actions:
       pickup: [pickup, dime]
+  path_radio_tentacle:
+    room: radio
+    text: 112
+    walk_to: *radio_ladder
+    pos: [6,128]
+    walk_dir: w
+    mouse:
+      aabb: [0,26,0,8]
+    actions:
+      walkto: [change_room, tentacle, *tentacle_ladder, s]
+  hatch:
+    room: tentacle
+    text: 113
+    pos: [34, 11]
+    walk_to: *tentacle_ladder
+    walk_dir: s
+    sprite: 'tentacle/hatch'
+    anim: '@data.hatch'
+    mouse:
+      aabb: [0,70,0,13]
+    actions:
+      open: [change_door_state, hatch, open, hatch]
+      close: [change_door_state, hatch, closed, hatch]
+      walkto: [walkto_door, hatch, radio, *radio_ladder, s]
+  record:
+    room: tentacle
+    text: 114
+    pos: [345, 76]
+    z: 0.1
+    walk_to: [352,20]
+    walk_dir: 'n'
+    sprite: 'tentacle/record'
+    active: True
+    mouse:
+      aabb: [0,10,0,19]
+    actions:
+      pickup: [pickup, record]
+      read: [say, 115]
+  yellow_key:
+    room: tentacle
+    text: 116
+    pos: [566, 59]
+    z: 0.1
+    walk_to: [557,26]
+    walk_dir: 'e'
+    sprite: 'tentacle/yellow_key'
+    active: True
+    mouse:
+      aabb: [0,10,0,13]
+    actions:
+      pickup: [pickup, yellow_key]

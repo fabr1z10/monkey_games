@@ -1,0 +1,20 @@
+
+sprites:
+  hatch:
+    animations:
+      closed:
+        frames:
+          - tex: [72,137,70,13]
+      open:
+        frames:
+          - tex: [1,137,70,13]
+  record:
+    animations:
+      default:
+        frames:
+          - tex: [143,137,10,19]
+  yellow_key:
+    animations:
+      default:
+        frames:
+          - tex: [154,137,10,13]
