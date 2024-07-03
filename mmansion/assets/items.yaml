@@ -43,7 +43,7 @@ items:
       priority: 0
       aabb: [ -5,5,0,70 ]
   bernard:
-    room: music_room
+    room: living
     pos: [400, 20]
     type: character
     direction: e
@@ -217,7 +217,7 @@ items:
     actions:
       open: [ change_door_state, door_hall_living, open, door_living ]
       close: [ change_door_state, door_hall_living, closed, door_living ]
-      walkto: [ walkto_door, door_living, living, 55, 14, e ]
+      walkto: [ walkto_door, door_living, living, [55, 14], e ]
   door_living_hall:
     room: living
     text: 28
@@ -231,7 +231,7 @@ items:
     actions:
       open: [ change_door_state, door_living_hall, open, door_living ]
       close: [ change_door_state, door_living_hall, closed, door_living ]
-      walkto: [ walkto_door, door_living, entrance_hall, 588, 12, w ]
+      walkto: [ walkto_door, door_living, entrance_hall, [588, 12], w ]
   door_living_library:
     room: living
     text: 28
@@ -834,12 +834,15 @@ items:
     text: 79
     pos: [183,48]
     walk_to: [187,24]
+    z: 0.978
     walk_dir: 's'
+    sprite: 'music/vase'
+    anim: '@data.music_vase'
     mouse:
       aabb: [0,12,0,18]
       priority: 0
     actions:
-      pickup: [say, 80, 81]
+      pickup: [cond, "data.music_vase=='default'", [say, 80, 81], [say, 126]]
   piano:
     room: music_room
     text: 82
@@ -1113,6 +1116,37 @@ items:
     actions:
       pickup: [pickup, record]
       read: [say, 115]
+
+  record_in_player:
+    room: music_room
+    link_item: record
+    text: 114
+    pos: [276, 66]
+    z: 0.1
+    walk_to: [292, 25]
+    walk_dir: n
+    sprite: 'sprites/record'
+    active: False
+    mouse:
+      aabb: [0,28,0,3]
+      priority: 0
+    actions:
+      pickup: [pickup_record]
+  tape_in_player:
+    room: living
+    link_item: cassette_tape
+    text: 66
+    pos: [116, 36]
+    z: 0.1
+    walk_to: [130,20]
+    walk_dir: 'n'
+    sprite: 'sprites/cassette'
+    active: False
+    mouse:
+      aabb: [ 0,8,0,3 ]
+      priority: 0
+    actions:
+      pickup: [pickup_tape]
   yellow_key:
     room: tentacle
     text: 116
@@ -1153,3 +1187,103 @@ items:
       use_cassette_tape: [put_cassette_in_recorder]
       turnon: [turn_on_recorder]
       turnoff: [turn_off_recorder]
+  victrola:
+    room: music_room
+    text: 119
+    pos: [270, 54]
+    z: 0.1
+    walk_to: [294,25]
+    walk_dir: n
+    sprite: 'music/victrola'
+    anim: '@data.victrola'
+    mouse:
+      aabb: [0,44,0,28]
+    actions:
+      use_record: [put_record_in_victrola]
+      turnon: [turn_on_vic]
+      turnoff: [turn_off_vic]
+  cabinet:
+    room: living
+    text: 127
+    pos: [100, 22]
+    z: 0.1
+    walk_to: [128, 20]
+    walk_dir: n
+    sprite: 'living/cabinet'
+    anim: '@data.cabinet'
+    mouse:
+      aabb: [0,52,0,30]
+      priority: 2
+    actions:
+      open: [open_cabinet]
+      close: [close_cabinet]
+  cassette_player:
+    room: living
+    text: 128
+    pos: [112,32]
+    z: 0.2
+    walk_to: [130,20]
+    walk_dir: 'n'
+    sprite: 'living/cassette_player'
+
+    anim: '@data.cassette_player'
+    active: '@data.cabinet=="open"'
+    mouse:
+      aabb: [ 0,32,0,10]
+      priority: 1
+    actions:
+      use_cassette_tape: [put_tape_in_player]
+      turnon: [turn_on_player]
+      turnoff: [turn_off_player]
+  chandelier:
+    room: living
+    text: 130
+    pos: [286, 92]
+    z: 1
+    walk_to: [315,10]
+    walk_dir: n
+    active: "@not data.broken_chandelier"
+    sprite: 'living/chandelier'
+    mouse:
+      aabb: [0, 58,0,28]
+      priority: 1
+  broken_chandelier:
+    room: living
+    text: 131
+    pos: [274, 0]
+    z: 0.1
+    walk_to: [315,10]
+    walk_dir: s
+    active: "@data.broken_chandelier"
+    sprite: 'living/broken_chandelier'
+    mouse:
+      aabb: [0, 58,0,28]
+      priority: 1
+  key_chandelier:
+    room: living
+    text: 23
+    pos: [320, 112]
+    z: 1
+    walk_to: [318, 10]
+    walk_dir: n
+    sprite: 'living/key'
+    active: "@not data.broken_chandelier"
+    mouse:
+      aabb: [0, 3, 0, 8]
+    actions:
+      pickup: [say, 133]
+  old_rusty_key:
+    room: living
+    text: 132
+    pos: [344, 0]
+    z: 0.1
+    walk_to: [352, 8]
+    walk_dir: s
+    sprite: 'living/key2'
+    active: "@data.broken_chandelier"
+    mouse:
+      aabb: [0, 16,0,7]
+    actions:
+      pickup: [pickup, old_rusty_key]
+
+

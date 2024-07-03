@@ -406,7 +406,16 @@ sprites:
       recorder:
         frames:
           - tex: [1,458,8,3]
-
+  cassette:
+    animations:
+      default:
+        frames:
+          - tex: [12,458,10,3]
+  record:
+    animations:
+      default:
+        frames:
+          - tex: [12,464,28,2]
 multi_sprites:
   dave:
     nodes:

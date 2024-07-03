@@ -8,11 +8,11 @@ sprites:
       open:
         frames:
           - tex: [1,137,70,13]
-  record:
-    animations:
-      default:
-        frames:
-          - tex: [143,137,10,19]
+#  record:
+#    animations:
+#      default:
+#        frames:
+#          - tex: [143,137,10,19]
   yellow_key:
     animations:
       default:

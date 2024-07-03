@@ -139,7 +139,7 @@ def z_func(x, y):
 def createItem(desc, item):
     node = monkey.Node()
     #data.tag_to_id[item] = node.id
-    pos = desc.get('pos', [0, 0])
+    pos = evaluate(desc.get('pos', [0, 0]))
     z = desc.get('z', 0)
     auto_depth = desc.get('auto_depth', False)
     z = 1 - pos[1]/136.0 if auto_depth else z
@@ -233,6 +233,7 @@ def create_room(room):
     mm.addCamera(1)
     room.add_runner(mm)
     room.add_runner(monkey.Scheduler())
+    room.add_runner(monkey.Clock())
 
     ce = monkey.CollisionEngine2D(80, 80)
     room.add_runner(ce)

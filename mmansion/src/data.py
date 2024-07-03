@@ -7,11 +7,14 @@ def getItem(id: str):
     return items['items'][id]
 
 
+def isActive(item):
+    return items['items'][item].get('active', True)
+
 
 
 inventory = {
     'dave': [],
-    'bernard': ['cassette_tape']
+    'bernard': ['cassette_tape', 'record']
 }
 
 delayed_funcs = {
@@ -35,9 +38,18 @@ door_radio='closed'
 door_fitness='closed'
 
 cassette_recorder = 'off'
+victrola='empty'
 tape_in_recorder = False
-
-
+rec_start_time = None
+vic_start_time = None
+time_to_break_vase = 2
+vase_break_event = None
+chandelier_break_event = None
+tape_recorded = 0
+music_vase = 'default'
+cabinet = 'closed'
+cassette_player = 'off'
+broken_chandelier=False
 hatch='open'
 fridge = 'closed'
 loose_panel = 'closed'

@@ -3,7 +3,7 @@ import monkey
 device_size = (320, 200)
 main_view_height = 136
 main_view_y = 54
-room = 'music_room'
+room = 'living'
 start_script= None
 title = 'Maniac Mansion'
 enable_mouse = True

@@ -1,4 +1,5 @@
 import monkey
+import time
 from . import data
 from . import settings
 from . import ui
@@ -41,10 +42,11 @@ def walkToCharacter(script, *args):
 def addToInventory(item):
     def f():
         inv = data.inventory[settings.characters[settings.player]]
-        if item in inv:
+        link_item = data.items['items'][item].get('link_item', item)
+        if link_item in inv:
             return
         monkey.get_node(data.tag_to_id[item]).remove()
-        data.inventory[settings.characters[settings.player]].append(item)
+        data.inventory[settings.characters[settings.player]].append(link_item)
         ui.refresh_inventory()
     return f
 
@@ -83,6 +85,13 @@ def kolpo(x):
     player = monkey.get_node(data.tag_to_id['player'])
     if abs(player.y-x.node.y) > 1.0:
         x.goto([x.node.x, player.y])
+
+
+def cond(script, *args):
+    if eval(args[0]):
+        globals()[args[1][0]](script, *args[1][1:])
+    else:
+        globals()[args[2][0]](script, *args[2][1:])
 
 
 def say(script, *args):
@@ -204,20 +213,32 @@ def unlock_main_door(script, *args):
     change_door_state(script, 'door_main', 'open', 'door_main')
 
 def updateNodeState(id, state):
-    if id in data.tag_to_id:
-        node = monkey.get_node(data.tag_to_id[id])
-        if node:
-            node.state = state#monkey.NodeState.ACTIVE
+    def f():
+        if id in data.tag_to_id:
+            node = monkey.get_node(data.tag_to_id[id])
+            if node:
+                node.state = state#monkey.NodeState.ACTIVE
+    return f
 
 def open_fridge(script, *args):
     change_door_state(script,'refrigerator', 'open', 'fridge')
     for a in ['cheese', 'batteries', 'lettuce', 'pepsi', 'ketchup']:
-        updateNodeState(a, monkey.NodeState.ACTIVE)
+        script.add(monkey.actions.CallFunc(updateNodeState(a, monkey.NodeState.ACTIVE)))
 
 def close_fridge(script, *args):
     change_door_state(script,'refrigerator', 'closed', 'fridge')
     for a in ['cheese', 'batteries', 'lettuce', 'pepsi', 'ketchup']:
-        updateNodeState(a, monkey.NodeState.INACTIVE)
+        script.add(monkey.actions.CallFunc(updateNodeState(a, monkey.NodeState.INACTIVE)))
+
+def open_cabinet(script, *args):
+    change_door_state(script,'cabinet', 'open', 'cabinet')
+    for a in ['cassette_player']:
+        script.add(monkey.actions.CallFunc(updateNodeState(a, monkey.NodeState.ACTIVE)))
+
+def close_cabinet(script, *args):
+    change_door_state(script,'cabinet', 'closed', 'cabinet')
+    for a in ['cassette_player']:
+        script.add(monkey.actions.CallFunc(updateNodeState(a, monkey.NodeState.INACTIVE)))
 
 def open_panel(script, *args):
     change_door_state(script,'loose_panel', 'open', 'loose_panel')
@@ -343,20 +364,100 @@ def put_cassette_in_recorder(script, *args):
     })
     script.add(monkey.actions.Add(settings.id_game, factory.createItem(item, 'cassette_tape')))
 
+def put_tape_in_player(script, *args):
+    script.add(monkey.actions.CallFunc(drop_item('cassette_tape', settings.characters[settings.player])))
+    script.add(monkey.actions.CallFunc(ui.refresh_inventory))
+    item = (data.items['items']['tape_in_player'])
+    item['active'] = True
+    script.add(monkey.actions.Add(settings.id_game, factory.createItem(item, 'tape_in_player')))
+
+
+def put_record_in_victrola(script, *args):
+    script.add(monkey.actions.CallFunc(drop_item('record', settings.characters[settings.player])))
+    script.add(monkey.actions.CallFunc(ui.refresh_inventory))
+    item = (data.items['items']['record_in_player'])
+    item['active'] = True
+    script.add(monkey.actions.Add(settings.id_game, factory.createItem(item, 'record_in_player')))
+
+
+def breakChandelier():
+    data.broken_chandelier = True
+    updateNodeState('key_chandelier', monkey.NodeState.INACTIVE)()
+    updateNodeState('chandelier', monkey.NodeState.INACTIVE)()
+    updateNodeState('old_rusty_key', monkey.NodeState.ACTIVE)()
+    updateNodeState('broken_chandelier', monkey.NodeState.ACTIVE)()
+
+
+def breakVase():
+    if data.vic_start_time:
+        data.music_vase = 'broken'
+        if 'music_vase' in data.tag_to_id:
+            monkey.get_node(data.tag_to_id['music_vase']).setAnimation(data.music_vase)
+
+def turn_on_vic(script, *args):
+    if data.isActive('record_in_player'):
+        data.vic_start_time = time.time()
+        data.vase_break_event = monkey.getClock().addEvent(True, True, data.time_to_break_vase, breakVase)
+    else:
+        say(script, 124)
+
+def turn_off_vic(script, *args):
+    if data.vic_start_time:
+        data.vic_start_time = None
+        monkey.getClock().removeEvent(data.vase_break_event)
+        data.vase_break_event = None
+
 def turn_on_recorder(script, *args):
     if data.tape_in_recorder:
-        data.cassette_recorder = 'recording'
-        script.add(monkey.actions.Animate(data.tag_to_id['cassette_recorder'], data.cassette_recorder))
-        say(script, 122)
+        data.chandelier_break_event = monkey.getClock().addEvent(True, True, data.time_to_break_vase, breakVase)
     else:
         say(script, 121)
+
+def turn_on_player(script, *args):
+    if data.isActive('tape_in_player'):
+        data.cassette_player = 'on'
+        script.add(monkey.actions.Animate(data.tag_to_id['cassette_player'], data.cassette_player))
+        data.chandelier_break_event = monkey.getClock().addEvent(True, True, data.time_to_break_vase, breakChandelier)
+    else:
+        say(script, 129)
+
+def turn_off_player(script, *args):
+    if data.cassette_player == 'on':
+        data.cassette_player = 'off'
+        script.add(monkey.actions.Animate(data.tag_to_id['cassette_player'], data.cassette_player))
+
+
+
+
 
 def turn_off_recorder(script, *args):
     if data.tape_in_recorder:
         data.cassette_recorder = 'off'
         script.add(monkey.actions.Animate(data.tag_to_id['cassette_recorder'], data.cassette_recorder))
         say(script, 123)
+        data.rec_start_time = None
+        print('recorder stopped @ ',time.time())
+        # check if victrola has been playin for n seconds. In this case mark tape as recorded
+        if data.vic_start_time:
+            elapsed_time = time.time() - data.vic_start_time
+            print(' *** TAPE RECORDED ***')
+            if elapsed_time > data.time_to_break_vase:
+                data.tape_recorded = 1
+
+
 
 def check_tape(script):
     if settings.room == 'music_room':
         data.tape_in_recorder = False
+
+def pickup_record(script):
+    if data.vic_start_time:
+        say(script, 125)
+    else:
+        pickup(script, 'record_in_player')
+
+def pickup_tape(script):
+    if data.cassette_player == 'on':
+        say(script, 125)
+    else:
+        pickup(script, 'tape_in_player')

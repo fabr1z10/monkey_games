@@ -15,3 +15,40 @@ sprites:
       open:
         frames:
           - tex: [100,138,42,111]
+  cabinet:
+    animations:
+      closed:
+        frames:
+          - tex: [217,138,52,30]
+      open:
+        frames:
+          - tex: [272,138,56,30]
+            anchor: [4, 0]
+  chandelier:
+    animations:
+      default:
+        frames:
+          - tex: [152,146,58,36]
+  broken_chandelier:
+    animations:
+      broken:
+        frames:
+          - tex: [331,139,70,27]
+  key:
+    animations:
+      default:
+        frames:
+          - tex: [143,138,6,10]
+  key2:
+    animations:
+      default:
+        frames:
+          - tex: [143,185,16,7]
+  cassette_player:
+    animations:
+      off:
+        frames:
+          - tex: [248,181,32,10]
+      on:
+        frames:
+          - tex: [248,170,32,10]

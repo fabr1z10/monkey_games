@@ -23,3 +23,21 @@ sprites:
       recording:
         frames:
           - tex: [249,168,30,7]
+  victrola:
+    animations:
+      empty:
+        frames:
+          - tex: [218,218,54,33]
+            anchor: [8,-10]
+      record:
+        frames:
+          - tex: [218,184,54,33]
+  vase:
+    animations:
+      default:
+        frames:
+          - tex: [281,203,12,18]
+      broken:
+        frames:
+          - tex: [281,190,32,12]
+            anchor: [10,0]
