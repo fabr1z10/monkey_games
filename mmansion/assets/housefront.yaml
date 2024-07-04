@@ -20,3 +20,11 @@ sprites:
       default:
         frames:
           - tex: [190, 321, 12, 4]
+  grating:
+    animations:
+      closed:
+        frames:
+          - tex: [447,161,42,14]
+      open:
+        frames:
+          - tex: [447,176,42,14]

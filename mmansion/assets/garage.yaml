@@ -1,0 +1,10 @@
+sprites:
+  gate:
+    animations:
+      closed:
+        frames:
+          - tex: [1,137,42,56]
+      open:
+        frames:
+          - tex: [45,137,34,72]
+            anchor: [30,16]

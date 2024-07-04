@@ -44,6 +44,11 @@ sprites:
       default:
         frames:
           - tex: [143,185,16,7]
+  radio:
+    animations:
+      default:
+        frames:
+          - tex: [219,170,26,25]
   cassette_player:
     animations:
       off:

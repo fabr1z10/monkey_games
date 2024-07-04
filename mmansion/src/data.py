@@ -14,7 +14,7 @@ def isActive(item):
 
 inventory = {
     'dave': [],
-    'bernard': ['cassette_tape', 'record']
+    'bernard': []
 }
 
 delayed_funcs = {
@@ -36,6 +36,9 @@ door_musicroom='closed'
 door_hallway_mid='closed'
 door_radio='closed'
 door_fitness='closed'
+door_pool = 'closed'
+gate='closed'
+door_pool_locked = 1
 
 cassette_recorder = 'off'
 victrola='empty'
@@ -50,6 +53,7 @@ music_vase = 'default'
 cabinet = 'closed'
 cassette_player = 'off'
 broken_chandelier=False
+strong_dave = 1
 hatch='open'
 fridge = 'closed'
 loose_panel = 'closed'
@@ -60,7 +64,8 @@ food_given_to_gt = False
 drink_given_to_gt = True
 light_reactor = False
 light_library = False
-
+grating_removed = 0
+grating = 'closed'
 baselines = []
 
 def getDoormatSize():

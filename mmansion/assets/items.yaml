@@ -16,6 +16,19 @@ variables:
   door_fitness:         &door_fitness           [52, 24]
   radio_ladder:         &radio_ladder           [19,128]
   tentacle_ladder:      &tentacle_ladder        [88, 26]
+  pipecave_in:          &pipecave_in            [35, 28]
+  grating:              &grating                [366, 12]
+  door_main:            &door_main              [72, 17]
+  door_pantry_dining:   &door_pantry_dining     [50, 20]
+  door_entry_kitchen:   &door_entry_kitchen     [180, 30]
+  door_kitchen_entry:   &door_kitchen_entry     [55, 14]
+  door_kitchen_dining:  &door_kitchen_dining    [587, 14]
+  door_dining_kitchen:  &door_dining_kitchen    [57, 14]
+  door_dining_pantry:   &door_dining_pantry     [977, 25]
+  door_pantry_pool:     &door_pantry_pool       [120, 30]
+  door_pool:            &door_pool              [68, 7]
+  gate_pool:            &gate_pool              [123, 62]
+  door_garage:          &door_garage            [51,40]
 items:
   green_tentacle:
     room: staircase
@@ -32,7 +45,7 @@ items:
     mouse:
       aabb: [-5,5,0,20]
   dave:
-    room: entrance_hall
+    room: pantry
     pos: [50, 20]
     type: character
     direction: n
@@ -43,7 +56,7 @@ items:
       priority: 0
       aabb: [ -5,5,0,70 ]
   bernard:
-    room: living
+    room: start
     pos: [400, 20]
     type: character
     direction: e
@@ -98,19 +111,44 @@ items:
       quad: [447,139,54,21]
     mouse:
       aabb: [0,54,0,21]
+      priority: 0
     actions:
       open: [rm, bushes]
   grating:
     room: housefront
     text: 33
-    pos: [356,16]
-    walk_to: [366, 12]
+    z: 0.1
+    pos: [360,17]
+    walk_to: *grating
     walk_dir: n
     mouse:
-      aabb: [0,44,0,18]
+      aabb: [0,42,0,14]
       priority: 1
+    sprite: 'housefront/grating'
+    anim: '@data.grating'
     actions:
-      open: [say, 32]
+      open: [pull_grating]
+      close: [close_grating]
+      pull: [pull_grating]
+      walkto: [walkto_door, grating, pipecave, *pipecave_in, e ]
+  grating_pipecave:
+    room: pipecave
+    text: 136
+    sprite: 'pipecave/grate'
+    z: 0.1
+    pos: [2, 40]
+    walk_to: *pipecave_in
+    walk_dir: n
+    mouse:
+      aabb: [6, 60, 0, 24]
+    sprite: 'pipecave/grate'
+    anim: '@data.grating'
+    actions:
+      open: [change_door_state, 'grating_pipecave', 'open', 'grating']
+      close: [change_door_state, 'grating_pipecave', 'closed', 'grating']
+      walkto: [walkto_door, grating, housefront, *grating, s]
+
+
   doormat:
     room: housefront
     text: 21
@@ -153,7 +191,7 @@ items:
     actions:
       open: ['open_main_door']
       close: [change_door_state, door_main, closed, door_main]
-      walkto: [walkto_door, door_main, entrance_hall, 72, 17, e ]
+      walkto: [walkto_door, door_main, entrance_hall, *door_main, e ]
   grandfather_clock:
     room: entrance_hall
     text: 34
@@ -182,7 +220,7 @@ items:
     room: entrance_hall
     text: 28
     pos: [152,32]
-    walk_to: [180, 30]
+    walk_to: *door_entry_kitchen
     walk_dir: n
     sprite: 'entrancehall/door_kitchen'
     anim: '@data.door_kitchen'
@@ -191,7 +229,7 @@ items:
     actions:
       open: [change_door_state, door_kitchen, open, door_kitchen]
       close: [change_door_state, door_kitchen, closed, door_kitchen]
-      walkto: [walkto_door, door_kitchen, kitchen, 55, 14, e ]
+      walkto: [walkto_door, door_kitchen, kitchen, *door_kitchen_entry, e ]
   door_entrance_reactor:
     room: entrance_hall
     text: 28
@@ -265,7 +303,7 @@ items:
     room: kitchen
     text: 28
     pos: [26,12]
-    walk_to: [55, 14]
+    walk_to: *door_kitchen_entry
     walk_dir: w
     sprite: 'kitchen/door_hall'
     anim: '@data.door_kitchen'
@@ -274,12 +312,12 @@ items:
     actions:
       open: [change_door_state, door_kitchen_hall, open, door_kitchen]
       close: [change_door_state, door_kitchen_hall, closed, door_kitchen]
-      walkto: [walkto_door, door_kitchen, entrance_hall, 180, 30, s ]
+      walkto: [walkto_door, door_kitchen, entrance_hall, *door_entry_kitchen, s ]
   door_dining:
     room: kitchen
     text: 28
     pos: [588,12]
-    walk_to: [587, 14]
+    walk_to: *door_kitchen_dining
     walk_dir: e
     sprite: 'kitchen/door_dining'
     anim: '@data.door_dining'
@@ -288,7 +326,7 @@ items:
     actions:
       open: [change_door_state, door_dining, open, door_dining]
       close: [change_door_state, door_dining, closed, door_dining]
-      walkto: [walkto_door, door_dining, dining, 60, 26, e ]
+      walkto: [walkto_door, door_dining, dining, *door_dining_kitchen, e ]
   refrigerator:
     room: kitchen
     text: 36
@@ -467,7 +505,7 @@ items:
     room: dining
     text: 28
     pos: [18, 26]
-    walk_to: [60, 26]
+    walk_to: *door_dining_kitchen
     walk_dir: w
     sprite: 'dining/door_kitchen'
     anim: '@data.door_dining'
@@ -476,12 +514,12 @@ items:
     actions:
       open: [change_door_state, door_dining_kitchen, open, door_dining]
       close: [change_door_state, door_dining_kitchen, closed, door_dining]
-      walkto: [walkto_door, door_dining, kitchen, 587, 14, w ]
+      walkto: [walkto_door, door_dining, kitchen, *door_kitchen_dining, w ]
   door_dining_pantry:
     room: dining
     text: 28
     pos: [986, 25]
-    walk_to: [977, 25]
+    walk_to: *door_dining_pantry
     walk_dir: e
     sprite: 'dining/door_pantry'
     anim: '@data.door_pantry'
@@ -490,7 +528,7 @@ items:
     actions:
       open: [change_door_state, door_dining_pantry, open, door_pantry]
       close: [change_door_state, door_dining_pantry, closed, door_pantry]
-      walkto: [walkto_door, door_pantry, pantry, 20, 20, e]
+      walkto: [walkto_door, door_pantry, pantry, *door_pantry_dining, e]
   fruit_drinks:
     room: pantry
     text: 52
@@ -1262,16 +1300,26 @@ items:
   key_chandelier:
     room: living
     text: 23
-    pos: [320, 112]
+    pos: [318, 110]
     z: 1
     walk_to: [318, 10]
     walk_dir: n
     sprite: 'living/key'
     active: "@not data.broken_chandelier"
     mouse:
-      aabb: [0, 3, 0, 8]
+      aabb: [0, 5, 0, 10]
     actions:
       pickup: [say, 133]
+  radio:
+    room: living
+    text: 134
+    pos: [114, 50]
+    z: 0.11
+    walk_to: [130, 20]
+    walk_dir: n
+    sprite: 'living/radio'
+    mouse:
+      aabb: [0, 26,0,25]
   old_rusty_key:
     room: living
     text: 132
@@ -1285,5 +1333,97 @@ items:
       aabb: [0, 16,0,7]
     actions:
       pickup: [pickup, old_rusty_key]
-
-
+  door_pantry_dining:
+    room: pantry
+    text: 28
+    pos: [10, 20]
+    walk_to: *door_pantry_dining
+    walk_dir: w
+    sprite: 'pantry/door_left'
+    anim: '@data.door_pantry'
+    mouse:
+      aabb: [0,26,0,104]
+    actions:
+      open: [change_door_state, door_pantry_dining, open, door_pantry]
+      close: [change_door_state, door_pantry_dining, closed, door_pantry ]
+      walkto: [walkto_door, door_pantry, dining, *door_dining_pantry, w]
+  door_pantry_pool:
+    room: pantry
+    text: 28
+    pos: [98, 34]
+    walk_to: *door_pantry_pool
+    walk_dir: n
+    sprite: 'pantry/door_up'
+    anim: '@data.door_pool'
+    mouse:
+      aabb: [0,44,0,86]
+    actions:
+      open: [change_door_state, door_pantry_pool, open, door_pantry, door_pool_locked]
+      close: [change_door_state, door_pantry_pool, closed, door_pantry ]
+      walkto: [walkto_door, door_pool, pool, *door_pool, e]
+      use_silver_key: [unlock, door_pantry_pool, door_pool, door_pool_locked]
+  pool:
+    room: pool
+    text: 138
+    pos: [158,16]
+    walk_to: [276, 60]
+    walk_dir: s
+    mouse:
+      aabb: [0,324,0,40]
+      priority: 1
+    actions:
+      walkto: [say, 139]
+  pool_ladder:
+    room: pool
+    text: 112
+    pos: [292,40]
+    walk_to: [306, 60]
+    walk_dir: s
+    mouse:
+      aabb: [0, 20,0,25]
+    actions:
+      walkto: [say, 140]
+  door_pool_pantry:
+    room: pool
+    text: 28
+    pos: [32, 0]
+    walk_to: *door_pool
+    walk_dir: w
+    sprite: 'pool/door'
+    anim: '@data.door_pool'
+    mouse:
+      aabb: [0,20,0,101]
+    actions:
+      open: [change_door_state, door_pool_pantry, open, door_pool]
+      close: [change_door_state, door_pool_pantry, closed, door_pool]
+      walkto: [walkto_door, door_pool, pantry, *door_pantry_pool, s]
+  gate:
+    room: pool
+    text: 141
+    pos: [102, 64]
+    z: 0.1
+    walk_to: *gate_pool
+    walk_dir: n
+    sprite: 'pool/gate'
+    anim: '@data.gate'
+    mouse:
+      aabb: [0,42,0,56]
+    actions:
+      open: [change_door_state, gate, open, gate]
+      close: [change_door_state, gate, closed, gate]
+      walkto: [walkto_door, gate, garage, *door_garage, s]
+  gate_garage:
+    room: garage
+    text: 141
+    pos: [30, 48]
+    z: 0.1
+    walk_to: *door_garage
+    walk_dir: n
+    sprite: 'garage/gate'
+    anim: '@data.gate'
+    mouse:
+      aabb: [-30,44,0,56]
+    actions:
+      open: [change_door_state, gate_garage, open, gate]
+      close: [change_door_state, gate_garage, closed, gate]
+      walkto: [walkto_door, gate, pool, *gate_pool, s]

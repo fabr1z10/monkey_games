@@ -3,7 +3,7 @@ import monkey
 device_size = (320, 200)
 main_view_height = 136
 main_view_y = 54
-room = 'living'
+room = 'pantry'
 start_script= None
 title = 'Maniac Mansion'
 enable_mouse = True
@@ -21,7 +21,7 @@ inv_y = [21, 13]
 inventory_start_index = 0
 inventory_max_items = 4
 
-player = 1
+player = 0
 
 id_game = None
 id_text = None

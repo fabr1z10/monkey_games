@@ -97,6 +97,25 @@ pantry:
     - bg:
         batch: pantry
         quad: [0, 0, 320, 136]
+pool:
+  size: [560, 136]
+  batch: pool
+  walkarea:
+    poly: [39,0,504,0,500,8,138,8,174,59,463,58,462,64,80,64,73,36]
+  items:
+    - bg:
+        batch: pool
+        quad: [0, 0, 560, 136]
+garage:
+  size: [400, 136]
+  batch: garage
+  walkarea:
+    poly: [0,0,400,0,400,16,126,16,80,40,80,48,0,48]
+  items:
+    - bg:
+        batch: garage
+        quad: [0, 0, 400, 136]
+
 reactor:
   size: [656, 136]
   batch: reactor
@@ -274,3 +293,63 @@ tentacle:
     - bg:
         batch: tentacle
         quad: [0,0,640,136]
+pipecave:
+  size: [960, 136]
+  batch: pipecave
+  walkarea:
+    poly: [0,24, 960,24,960,30,0,30]
+  items:
+    - bg:
+        batch: pipecave
+        quad: [0,0,960,88]
+      pos: [0, 24]
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [52, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [132, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [212, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [300, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [388, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [476, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [564, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [652, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [740, 24]
+      z: 1
+    - bg:
+        batch: pipecave
+        quad: [1,89,48,80]
+      pos: [828, 24]
+      z: 1

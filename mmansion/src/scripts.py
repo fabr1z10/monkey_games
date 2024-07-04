@@ -176,9 +176,18 @@ def pull_doormat(script, *args):
 
 def change_door_state(script, *args):
     # pass tag, state, variable
+    if args[1] == 'open' and len(args) > 3:
+        # door is locked!
+        if getattr(data, args[3]) == 1:
+            say(script, 137)
+            return
     setattr(data, args[2], args[1])
     #node = monkey.get_node(data.tag_to_id[args[0]])
     script.add(monkey.actions.Animate(data.tag_to_id[args[0]], args[1]))
+
+def unlock(script, *args):
+    setattr(data, args[2], 0)
+    change_door_state(script, args[0], 'open', args[1])
 
 def walkto_door(script, *args):
     # pass tag, variable
@@ -189,6 +198,7 @@ def walkto_door(script, *args):
         print('DOOR CLOSED')
 
 def rm(script, *args):
+    data.items['items'][args[0]]['active'] = False
     script.add(monkey.actions.CallFunc(lambda: monkey.get_node(data.tag_to_id[args[0]]).remove()))
 
 
@@ -417,7 +427,8 @@ def turn_on_player(script, *args):
     if data.isActive('tape_in_player'):
         data.cassette_player = 'on'
         script.add(monkey.actions.Animate(data.tag_to_id['cassette_player'], data.cassette_player))
-        data.chandelier_break_event = monkey.getClock().addEvent(True, True, data.time_to_break_vase, breakChandelier)
+        if data.tape_recorded == 1:
+            data.chandelier_break_event = monkey.getClock().addEvent(True, True, data.time_to_break_vase, breakChandelier)
     else:
         say(script, 129)
 
@@ -461,3 +472,13 @@ def pickup_tape(script):
         say(script, 125)
     else:
         pickup(script, 'tape_in_player')
+
+def pull_grating(script):
+    if data.strong_dave == 1:
+        change_door_state(script, 'grating', 'open', 'grating')
+        say(script, 135)
+    else:
+        say(script, 32)
+
+def close_grating(script):
+    change_door_state(script, 'grating', 'closed', 'grating')

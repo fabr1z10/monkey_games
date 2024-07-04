@@ -1,0 +1,18 @@
+sprites:
+  door:
+    animations:
+      closed:
+        frames:
+          - tex: [2,137,20,101]
+      open:
+        frames:
+          - tex: [24,137,20,101]
+  gate:
+    animations:
+      closed:
+        frames:
+          - tex: [78,137,42,56]
+      open:
+        frames:
+          - tex: [47,137,28,79]
+            anchor: [22,23]

@@ -1,0 +1,9 @@
+sprites:
+  grate:
+    animations:
+      closed:
+        frames:
+          - tex: [52,119,66,24]
+      open:
+        frames:
+          - tex: [52,89,66,29]
