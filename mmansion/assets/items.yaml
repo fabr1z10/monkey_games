@@ -1427,3 +1427,17 @@ items:
       open: [change_door_state, gate_garage, open, gate]
       close: [change_door_state, gate_garage, closed, gate]
       walkto: [walkto_door, gate, pool, *gate_pool, s]
+  garage_door:
+    room: garage
+    text: 142
+    pos: [138,16]
+    auto_depth: True
+    walk_to: [254,14]
+    walk_dir: n
+    sprite: 'garage/garage_door'
+    anim: '@data.garage_door'
+    mouse:
+      aabb: [0,256,0,112]
+    actions:
+      open: [open_garage_door]
+      close: [close_garage_door]

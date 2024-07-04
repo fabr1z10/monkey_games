@@ -8,3 +8,24 @@ sprites:
         frames:
           - tex: [45,137,34,72]
             anchor: [30,16]
+  garage_door:
+    animations:
+      closed:
+        frames:
+          - tex: [80,137,256,112]
+      open:
+        loop: -1
+        frames:
+          - tex: [80,137,256,112]
+          - tex: [80,137,256,96]
+            anchor: [0,-16]
+          - tex: [80,137,256,80]
+            anchor: [0,-32]
+          - tex: [80,137,256,64]
+            anchor: [0,-48]
+          - tex: [80,137,256,48]
+            anchor: [0,-64]
+          - tex: [80,137,256,32]
+            anchor: [0,-80]
+          - tex: [80,137,256,16]
+            anchor: [0,-96]

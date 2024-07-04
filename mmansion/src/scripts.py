@@ -482,3 +482,15 @@ def pull_grating(script):
 
 def close_grating(script):
     change_door_state(script, 'grating', 'closed', 'grating')
+
+def open_garage_door(script):
+    if data.garage_door == 'closed':
+        data.garage_door = 'open'
+        n = monkey.get_node(data.tag_to_id['garage_door'])
+        n.getMouseArea().setShape( monkey.shapes.AABB(0,256,96,112))
+        script.add(monkey.actions.Animate(data.tag_to_id['garage_door'], 'open'))
+    else:
+        say(script, 143)
+
+def close_garage_door(script):
+    say(script, 144 if data.garage_door=='open' else 27)

@@ -38,6 +38,7 @@ door_radio='closed'
 door_fitness='closed'
 door_pool = 'closed'
 gate='closed'
+garage_door='closed'
 door_pool_locked = 1
 
 cassette_recorder = 'off'
