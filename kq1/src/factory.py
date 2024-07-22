@@ -3,7 +3,8 @@ import monkey
 from . import settings
 from . import item_builders
 from . import utils
-
+from . import data
+from . import scripts
 
 def init():
     settings.rooms = monkey.read_data_file('rooms.yaml')
@@ -38,6 +39,12 @@ def create_room(room):
 
     root = room.root()
 
+    kb = monkey.components.Keyboard()
+    kb.add(settings.Keys.restart, 1, 0, scripts.restart_room)
+    #kb.add(settings.Keys.inventory, 1, 0, inventory.show_inventory)
+    #kb.add(settings.Keys.view_item, 1, 0, inventory.show_view_item)
+    root.add_component(kb)
+
     room_info = settings.rooms[settings.room]
 
     # add walkarea
@@ -52,7 +59,7 @@ def create_room(room):
             area.addPolyWall(hole['poly'])
             if mode == 'all':
                 root.add(utils.makeWalkableCollider(hole['poly']))
-
+    data.walkArea = area
     wman.addWalkArea(area)
     # also need to add a collider
     room.add_runner(wman)

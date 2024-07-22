@@ -1,8 +1,9 @@
+
 start:
   # walkarea is a polygon where both player and npcs are allowed to walk
   # it can include holes. A hole can be forbidden for player and npc or for npc only
   walkarea:
-    poly: [0,0, 288, 0, 288, 10, 316,10, 316,128, 164,128,164,20,0,20]
+    poly: [0,0, 288, 0, 288, 10, 316,10, 316,128, 164,128,164,30,184,30,184,20,0,20]
   items:
     - type: bg
       batch: "start"
@@ -12,28 +13,48 @@ start:
       batch: "start"
       pos: [198, 39, 0]
       quad: [86, 167, 118, 127]
-      walk_info:
-        block:
-          poly: [65,0,85,0,85,10,65,10]
-        baseline: [65,0,85,0]
+      auto_depth: True
+      baseline: &start1 [66, 1, 72, 0, 76, 0, 84, 2]
+      hole:
+        path: *start1
+    - type: bg      # castle
+      batch: "start"
+      quad: [208,167, 70,137]
+      pos: [118,24]
+      auto_depth: True
+    - type: common
+      hole:
+        poly: [175,45,164,45,164,26,175,26,186,22,199,35,204,36]
+        mode: npc
+        collide:
+          - tag: 0
+            on_enter: ['drown', {'x': 184, 'y': 34}]
+    - type: common
+      hole:
+        poly: [-1,4,226,4,237,15,243,18,312,0,312,2,296,10,286,21,270,28,247,28,234,21,220,8,-1,8]
+        mode: npc
+        collide:
+          - tag: 0
+            on_enter: ['drown', {'y': 3}]
 test3d:
   walkarea:
     poly: [10, 10, 306, 10, 306, 156, 10, 156]
     holes:
       - poly: [20, 20, 30, 20, 30, 30, 20, 30]
-
   items:
     - type: bg
       batch: "test3d"
       pos: [90,70,0]
       quad: [12,177,128,61]
       auto_depth: True
-      walk_info:
-        baseline: [0,0,128,44]
+      baseline: &b1 [0,0,128,44]
+      hole:
+        path: *b1
     - type: bg
       batch: "test3d"
       pos: [80,80,0]
       quad: [12,247,128,61]
       auto_depth: True
-      walk_info:
-        baseline: [0,0,128,44]
+      baseline: *b1
+      hole:
+        path: *b1

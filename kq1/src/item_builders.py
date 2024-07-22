@@ -1,7 +1,13 @@
 import monkey
 from . import settings
 from . import engine
-from . import data
+from . import data as dd
+from . import scripts
+
+
+def pippo(x,y):
+	print('figga')
+
 
 def build(data):
 	print(data)
@@ -28,16 +34,29 @@ def common(data):
 	auto_depth = data.get('auto_depth', False)
 	z = pos[2] if not auto_depth else 1.0 - pos[1] / 166.0
 	n.set_position(pos[0], pos[1], z)
-	walk_info = data.get('walk_info', None)
-	if walk_info:
-		# get nowalk area
-		block = walk_info.get('block', None)
-		baseline = walk_info.get('baseline', None)
-		if block:
-			n.add_component(monkey.components.Collider(2, 0, 0, getShape(block), batch='lines'))
-		if baseline:
-			n.add_component(monkey.components.Baseline(monkey.shapes.PolyLine(points=baseline)))
-
+	baseline = data.get('baseline', None)
+	if baseline:
+		n.add_component(monkey.components.Baseline(monkey.shapes.PolyLine(baseline)))
+	hole = data.get('hole', None)
+	if hole:
+		mode = hole.get('mode', 'all')
+		if 'path' in hole:
+			s = monkey.shapes.PolyLine(hole['path'])
+			dd.walkArea.addLinearWall(hole['path'])
+		elif 'poly' in hole:
+			s = monkey.shapes.Polygon(hole['poly'])
+			dd.walkArea.addPolyWall(hole['poly'])
+		if mode == 'all':
+			n.add_component(monkey.components.Collider(2, 0, 0, s, batch='lines'))
+		else:
+			# if mode npc I can have a collision callback with player
+			if 'collide' in hole:
+				collider = monkey.components.Collider(settings.CollisionFlags.hotspot,
+					settings.CollisionFlags.player, 10, s, batch='lines')
+				for c in hole['collide']:
+					f = getattr(scripts, c['on_enter'][0])(**c['on_enter'][1])
+					collider.setResponse(c['tag'], on_enter=f)
+				n.add_component(collider)
 	return n
 
 def bg(data):
@@ -65,20 +84,21 @@ def character(data):
 	z = 1.0 - pos[1] / 166.0
 	b.set_position(pos[0], pos[1], z)
 	speed = data['speed']
+	direction = data.get('dir', 'e')
 	#b = monkey.get_sprite('sprites/' + sprite)
 	if isPlayer:
-		b.add_component(monkey.components.PlayerSierraController(half_width=2, speed=speed,z_func=engine.z_func, skinWidth=1))
-	print('cff')
-	return b
+		b.add_component(monkey.components.PlayerSierraController(half_width=2,
+			speed=speed,z_func=engine.z_func, skinWidth=1, dir=direction))
 	# setup collider
 	flag = data.get('flag', settings.CollisionFlags.player if isPlayer else settings.CollisionFlags.foe)
-	mask = data.get('mask', settings.CollisionFlags.foe if isPlayer else settings.CollisionFlags.player)
+	mask = data.get('mask', settings.CollisionFlags.foe | settings.CollisionFlags.hotspot if isPlayer else
+		settings.CollisionFlags.player | settings.CollisionFlags.hotspot)
 	tag = data.get('tag', 0 if isPlayer else 1)
-	shape = monkey.shapes.AABB(-5, 5, -1, 1)
+	shape = monkey.shapes.Point() #AABB(-5, 5, -1, 1)
 	collider = monkey.components.Collider(flag, mask, tag, shape, batch='lines')
 	b.add_component(collider)
 
 	#b.scale=scale
 	if isPlayer:
-		settings.player_id = sprite.id
-	return sprite
+		settings.player_id = b.id
+	return b

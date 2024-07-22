@@ -15,3 +15,25 @@ room='test3d'
 rooms = {}
 items = {}
 strings = {}
+player_id = None
+
+
+class CollisionFlags:
+    player = 1
+    wall = 2
+    foe = 4
+    hotspot = 8
+
+class CollisionTags:
+    player = 0
+    foe = 1
+
+class Keys:
+    restart = 299
+    enter = 257
+    inventory = 258
+    view_item = 293 # F4
+    right = 262
+    left = 263
+    up = 265
+    down =264

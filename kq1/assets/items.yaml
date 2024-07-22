@@ -4,4 +4,5 @@ graham:
   room: test3d
   sprite: 'sprites/graham'
   pos: [100, 100]
+  dir: s
   speed: 100

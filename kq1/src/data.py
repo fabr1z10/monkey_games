@@ -1,4 +1,5 @@
 
+walkArea = None
 
 
 class WalkInfo:
