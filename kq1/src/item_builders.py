@@ -68,6 +68,7 @@ def character(data):
 	#b = monkey.get_sprite('sprites/' + sprite)
 	if isPlayer:
 		b.add_component(monkey.components.PlayerSierraController(half_width=2, speed=speed,z_func=engine.z_func, skinWidth=1))
+	print('cff')
 	return b
 	# setup collider
 	flag = data.get('flag', settings.CollisionFlags.player if isPlayer else settings.CollisionFlags.foe)

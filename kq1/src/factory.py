@@ -2,6 +2,8 @@ import monkey
 
 from . import settings
 from . import item_builders
+from . import utils
+
 
 def init():
     settings.rooms = monkey.read_data_file('rooms.yaml')
@@ -37,10 +39,25 @@ def create_room(room):
     root = room.root()
 
     room_info = settings.rooms[settings.room]
+
     # add walkarea
-    poly = room_info['walkarea']['poly']
-    walkArea = monkey.WalkArea(poly, 2, [0, 166])
-    room.add_runner(walkArea)
+    warea = room_info.get('walkarea')
+    wman = monkey.WalkManager([0, 166])
+    outline = warea['poly'] if warea else [1, 1, 315, 1, 315, 165, 1, 165]
+    area = monkey.WalkArea(outline, 2)
+    # holes
+    if warea and 'holes' in warea:
+        for hole in warea['holes']:
+            mode = hole.get('mode', 'all')
+            area.addPolyWall(hole['poly'])
+            if mode == 'all':
+                root.add(utils.makeWalkableCollider(hole['poly']))
+
+    wman.addWalkArea(area)
+    # also need to add a collider
+    room.add_runner(wman)
+    root.add(utils.makeWalkableCollider(outline))
+
 
     for item in room_info.get('items', []):
         root.add(item_builders.build(item))
