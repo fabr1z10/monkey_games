@@ -3,7 +3,7 @@ from . import settings
 from . import engine
 from . import data as dd
 from . import scripts
-
+from . import utils
 
 def pippo(x,y):
 	print('figga')
@@ -28,7 +28,7 @@ def getShape(data):
 		settings.monkeyAssert(shape, 'Shape not found!')
 	return shape
 
-def common(data):
+def node(data):
 	n = monkey.Node()
 	pos = data.get('pos', [0, 0, 0])
 	auto_depth = data.get('auto_depth', False)
@@ -40,35 +40,35 @@ def common(data):
 	hole = data.get('hole', None)
 	if hole:
 		mode = hole.get('mode', 'all')
-		if 'path' in hole:
-			s = monkey.shapes.PolyLine(hole['path'])
+		s = utils.readShape(hole)
+		if isinstance(s, monkey.shapes.PolyLine):
 			dd.walkArea.addLinearWall(hole['path'])
-		elif 'poly' in hole:
-			s = monkey.shapes.Polygon(hole['poly'])
+		else:
 			dd.walkArea.addPolyWall(hole['poly'])
 		if mode == 'all':
 			n.add_component(monkey.components.Collider(2, 0, 0, s, batch='lines'))
-		else:
-			# if mode npc I can have a collision callback with player
-			if 'collide' in hole:
-				collider = monkey.components.Collider(settings.CollisionFlags.hotspot,
-					settings.CollisionFlags.player, 10, s, batch='lines')
-				for c in hole['collide']:
-					f = getattr(scripts, c['on_enter'][0])(**c['on_enter'][1])
-					collider.setResponse(c['tag'], on_enter=f)
-				n.add_component(collider)
+		if 'collide' in hole:
+			collider = utils.makeCollider(hole['collide'], shape=s)
+			n.add_component(collider)
+	collider = data.get('collider', None)
+	if collider:
+		collider = utils.makeCollider(data['collide'])
+		n.add_component(collider)
+	if 'quad' in data:
+		batchId = data['quad']['batch']
+		room =monkey.engine().getRoom()
+		if not room.hasBatch(batchId):
+			room.add_batch(batchId, monkey.SpriteBatch(max_elements=10000, cam=0, sheet=batchId))
+		a = monkey.models.Quad(batchId)
+		a.add(data['quad']['coords'])
+		n.set_model(a)
+	elif 'sprite' in data:
+		spr=data['sprite']
+		batchId = spr[:spr.find('/')]
+		n.set_model(monkey.models.getSprite(data['sprite']), batch=batchId)
 	return n
 
-def bg(data):
-	n = common(data)
-	batchId = data['batch']
-	room =monkey.engine().getRoom()
-	if not room.hasBatch(batchId):
-		room.add_batch(batchId, monkey.SpriteBatch(max_elements=10000, cam=0, sheet=batchId))
-	a = monkey.models.Quad(batchId)
-	a.add(data['quad'])
-	n.set_model(a)
-	return n
+
 
 def character(data):
 	sprite = data['sprite']

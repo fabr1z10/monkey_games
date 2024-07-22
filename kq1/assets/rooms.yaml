@@ -5,37 +5,51 @@ start:
   walkarea:
     poly: [0,0, 288, 0, 288, 10, 316,10, 316,128, 164,128,164,30,184,30,184,20,0,20]
   items:
-    - type: bg
-      batch: "start"
+    - type: node
       pos: [0, 0, -1]
-      quad: [0, 0, 316, 166]
-    - type: bg      # tree
-      batch: "start"
+      quad:
+        batch: "start"
+        coords: [0, 0, 316, 166]
+    - type: node      # tree
       pos: [198, 39, 0]
-      quad: [86, 167, 118, 127]
+      quad:
+        batch: "start"
+        coords: [86, 167, 118, 127]
       auto_depth: True
       baseline: &start1 [66, 1, 72, 0, 76, 0, 84, 2]
       hole:
         path: *start1
-    - type: bg      # castle
-      batch: "start"
-      quad: [208,167, 70,137]
+    - type: node      # castle
+      quad:
+        batch: "start"
+        coords: [208,167, 70,137]
       pos: [118,24]
       auto_depth: True
-    - type: common
+    - type: node
+      sprite: 'sprites/flag1'
+      pos: [6,155,0]
+    - type: node
+      sprite: 'sprites/flag2'
+      pos: [36,155,0]
+    - type: node
+      sprite: 'sprites/flag3'
+      pos: [66,155,0]
+    - type: node
       hole:
         poly: [175,45,164,45,164,26,175,26,186,22,199,35,204,36]
         mode: npc
         collide:
-          - tag: 0
-            on_enter: ['drown', {'x': 184, 'y': 34}]
-    - type: common
+          response:
+            - tag: 0
+              on_enter: ['drown', {'x': 184, 'y': 34}]
+    - type: node
       hole:
         poly: [-1,4,226,4,237,15,243,18,312,0,312,2,296,10,286,21,270,28,247,28,234,21,220,8,-1,8]
         mode: npc
         collide:
-          - tag: 0
-            on_enter: ['drown', {'y': 3}]
+          response:
+            - tag: 0
+              on_enter: ['drown', {'y': 3}]
 test3d:
   walkarea:
     poly: [10, 10, 306, 10, 306, 156, 10, 156]

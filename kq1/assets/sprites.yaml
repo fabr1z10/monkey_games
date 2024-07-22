@@ -2,7 +2,7 @@ id: 'kq1main'
 sheet: 'sprites.png'
 tile_size: [8, 8]
 palettes:
-  1:
+  black:
     ffffff: 000000
   2:
     0: ffffff

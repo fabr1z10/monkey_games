@@ -37,3 +37,6 @@ class Keys:
     left = 263
     up = 265
     down =264
+
+class Colors:
+    White = (1,1,1,1)
