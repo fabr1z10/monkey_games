@@ -1,1 +1,43 @@
-{}
+parser:
+  remove: ["a", "an", "the"]
+  prepositions: ["from", "for", "to", "with"]
+  verbs:
+    acquire: &get get
+    get: *get
+    pick: *get
+    pick_up: *get
+    pluck: *get
+    take: *get
+    attack: &fight fight
+    fight: *fight
+    hit: *fight
+    open: &open open
+    close: &close close
+    shut: *close
+    look: &look look
+    examine: *look
+    check: *look
+    see: *look
+    push: push
+    move: move
+  remap:
+    trees: tree
+    flags: flag
+    banner: flag
+    banners: flag
+  items:
+    rock: {'rock', 'rocks', 'boulder', 'boulders'}
+strings:
+  1: "##settings.strings[random.choice([2,3])]##"
+  2: This is a very beautiful tree.
+  3: This is just a normal tree, but very pretty.
+  4: This is the castle of King Edward the Benevolent.
+  5: The alligators are swimming in the moat.
+  6: You admire the beauty of the tree.
+  7: "##settings.strings[random.choice([2,3,6])]##"
+  8: King Edward the Benevolent, the mighty ruler of Daventry, lives in this castle.
+  9: High above the castle, the flags are waving in the wind.
+  10: You see a large, grey rock.
+  11: There are numerous white birch trees reaching to the sky.
+  12: After moving that rock once, even thinking about it should make you tired.
+  13: With a heave and a ho, you manage to move the rock... revealing a dark hole underneath it.

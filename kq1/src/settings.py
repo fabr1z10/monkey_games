@@ -1,4 +1,5 @@
 import monkey
+from nutree import Tree, Node
 
 def monkeyAssert(cond, msg):
     if not cond:
@@ -11,11 +12,25 @@ shaders = [
     monkey.SHADER_BATCH_QUAD_PALETTE,
     monkey.SHADER_BATCH_LINES
 ]
+
+
+tree = None
 room='test3d'
 rooms = {}
 items = {}
 strings = {}
 player_id = None
+game_node_id = None
+text_node_id = None
+parser_id = None
+# half-width and half-height
+collider_size = [1, 1]
+last_action = None
+
+def getItem(id):
+    global items
+    return items[id]
+
 
 
 class CollisionFlags:
@@ -30,6 +45,7 @@ class CollisionTags:
 
 class Keys:
     restart = 299
+    F3 = 292
     enter = 257
     inventory = 258
     view_item = 293 # F4

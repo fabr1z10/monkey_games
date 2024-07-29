@@ -1,6 +1,39 @@
 import monkey
+import re
+import random
 from . import scripts
 from . import settings
+from . import data
+
+
+def getCurrentRoom():
+    return settings.items[settings.room]
+
+def callScript(s):
+    if isinstance(s, str):
+        getattr(scripts, s)()
+    else:
+        getattr(scripts, s[0])(**s[1])
+
+def callItemScript(s, item):
+    if isinstance(s, str):
+        getattr(scripts, s)(item=item)
+    else:
+        getattr(scripts, s[0])(**s[1], item=item)
+
+# change item parent
+def moveTo(id: str, parent: str, **kwargs):
+    item = settings.getItem(id)
+    if item['parent'] == settings.room:
+        monkey.get_node(item['iid']).remove()
+    item['parent'] = parent
+    if 'pos' in kwargs:
+        item['pos'] = kwargs['pos']
+    if 'dir' in kwargs:
+        item['dir'] = kwargs['dir']
+    settings.tree.find(id).move_to(settings.tree.find(parent))
+    settings.tree.print()
+
 
 def makeWalkableCollider(outline):
     c = monkey.Node()
@@ -39,3 +72,124 @@ def makeScoreBar():
     menu_bar.add(score_label)
     menu_bar.add(sound_label)
     return menu_node
+
+def match_items(dobj: str):
+    match = []
+    for n in settings.tree.find('graham').parent:
+        s = settings.parser['items'].get(n.name, {})
+        if dobj in s:
+            match.append(n)
+    return match
+
+def process_action(s: str):
+    if not s:
+        return
+    settings.last_action = s
+    ts = s.lower().strip()
+    ts = " ".join(ts.split()).split(' ')
+    # remove words
+    a = [x for x in ts if x not in settings.parser['remove']]
+    # extract verb
+    istart_direct = 1
+    istart_indirect = -1
+    verb = settings.parser['verbs'].get(a[0])
+    if not verb:
+        verb = settings.parser['verbs'].get(' '.join(a[:2]))
+        istart_direct = 2
+    if not verb:
+        print('Unknown verb: ', a[0])
+        return
+    else:
+        print('verb:',verb)
+
+    # find visible objects
+    i = istart_direct
+    iend_direct = -1
+    while i < len(a):
+        if a[i] in settings.parser['prepositions']:
+            istart_indirect = i+1
+            break
+        i+=1
+    iend_direct = i
+    direct_object = ' '.join(a[istart_direct:iend_direct]) if iend_direct > istart_direct else None
+    indirect_object = ' '.join(a[istart_indirect:]) if istart_indirect > 0 else None
+    print('direct object:', direct_object)
+    print('indirect object:', indirect_object)
+
+
+    # if action is verb only ... skip this
+    if direct_object:
+        direct_object = settings.parser['remap'].get(direct_object, direct_object)
+        # check all match
+        dobj = match_items(direct_object)
+        iobj = None
+        if indirect_object:
+            indirect_object = settings.parser['remap'].get(indirect_object, indirect_object)
+            iobj = match_items(indirect_object)
+        valid = dobj and (not indirect_object or not iobj)
+        if not valid:
+            # try with room actions
+            actions = getCurrentRoom().get('actions')
+            action_string = verb + '_' + direct_object + ('' if not indirect_object else indirect_object)
+            if action_string in actions:
+                print('found!')
+                callScript(actions[action_string])
+        else:
+            print('match object ', dobj,iobj)
+            if len(dobj) == 1:
+                print(dobj[0].name)
+                item =settings.getItem(dobj[0].name)
+                actions = item.get('actions')
+                if actions:
+                    if verb in actions:
+                        callItemScript(actions[verb], item)
+
+            else:
+                print('disambiguate ',dobj)
+
+
+
+
+
+
+
+def id_to_string(string_id, **kwargs):
+    message = settings.strings[string_id]
+    aa = dict(kwargs, random=random, msg=id_to_string, game_state=data, settings=settings)
+    expr = set(re.findall('(\#\#[^\#]*\#\#)', message))
+    for ex in expr:
+        message = message.replace(ex, str(eval(ex[2:-2], aa)))
+    return message
+
+def make_text(string_id, **kwargs):
+    # allow for dynamic strings
+    message = id_to_string(string_id, **kwargs)
+    msg = monkey.Text(batch='sprites', font='sierra', anchor=monkey.ANCHOR_CENTER,
+                      text=message,
+                      width=29 * 8, pal='black')
+    msg.set_position(160, 100, 10)
+    border = monkey.Node()
+    mw = msg.size[0]
+    mh = msg.size[1]
+    border.set_model(monkey.models.from_shape('tri',
+                                              monkey.shapes.AABB(-10-mw*0.5, mw*0.5 + 10, -mh*0.5 - 5, mh*0.5+5),
+                                              (1, 1, 1, 1),
+                                              monkey.FillType.Solid))
+    border.set_position(0, 0, -0.1)
+
+    border2 = monkey.Node()
+    border2.set_model(monkey.models.from_shape('lines',
+                                               monkey.shapes.AABB(-mw*0.5-5, mw*0.5+ 5, -mh*0.5 - 3,mh*0.5+ 3),
+                                               monkey.from_hex('AA0000'),
+                                               monkey.FillType.Outline))
+    border2.set_position(0, 0, -0.01)
+    border3 = monkey.Node()
+    border3.set_model(monkey.models.from_shape('lines',
+                                               monkey.shapes.AABB(-mw*0.5-6, mw*0.5 + 6, -mh*0.5 - 3, mh*0.5+3),
+                                               monkey.from_hex('AA0000'),
+                                               monkey.FillType.Outline))
+    border3.set_position(0, 0, -0.01)
+    msg.add(border)
+    msg.add(border2)
+    msg.add(border3)
+    return msg

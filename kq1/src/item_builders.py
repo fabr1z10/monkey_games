@@ -8,13 +8,28 @@ from . import utils
 def pippo(x,y):
 	print('figga')
 
+def read(item, key: str, default=None):
+	# some keys can contain code
+	value = item.get(key, default)
+	if not value and not default:
+		print('Missing key:',key,'in item:',item)
+		exit(1)
+	if isinstance(value, str) and value[0] == '@':
+		print('sucax:', item, type(item))
+		return eval(value[1:], {'item': item})
+	return value
+
+
+
 
 def build(data):
-	print(data)
 	itemType = data['type']
 	settings.monkeyAssert(itemType in globals(), "Unknown builder: " + itemType)
 	builder = globals()[itemType]#, None)
-	return builder(data)
+	node = builder(data)
+	data['iid'] = node.id
+	print('assigned iid:', node.id)
+	return node
 
 def getShape(data):
 	shape = None
@@ -30,7 +45,7 @@ def getShape(data):
 
 def node(data):
 	n = monkey.Node()
-	pos = data.get('pos', [0, 0, 0])
+	pos = read(data, 'pos', [0, 0, 0])#data.get('pos', [0, 0, 0])
 	auto_depth = data.get('auto_depth', False)
 	z = pos[2] if not auto_depth else 1.0 - pos[1] / 166.0
 	n.set_position(pos[0], pos[1], z)
@@ -70,6 +85,46 @@ def node(data):
 
 
 
+# this function creates a function generating a foe following player. You can specify the initial position,
+# the speed, the sprite and the callback function to call if the foe catches the player
+def create_foe(id: str, sprite: str, x: float, y: float, speed: float, callback: str, msg: int, **kwargs):
+    def f():
+        # if anim_dir is True, the sprites need to h
+        anim_dir = kwargs.get('anim_dir', True)
+        flip_horizontal = kwargs.get('flip_horizontal', True)
+        func_ai = kwargs.get('func_ai', func_follow_player)
+        call_every = kwargs.get('period', 1)
+        on_create = kwargs.get('on_create', None)
+        a = monkey.get_sprite(sprite)
+        a.set_position(x, y, 0)
+        walk_anim= kwargs.get('walk_anim', 'walk')
+        idle_anim = kwargs.get('idle_anim', 'walk')
+        a.add_component(monkey.components.NPCSierraFollow(func_ai, speed, call_every, z_func=settings.z_func,
+            anim_dir=anim_dir, walk_anim=walk_anim, idle_anim=idle_anim, flip_horizontal=flip_horizontal))
+        collide = kwargs.get('collider', False)
+        if collide:
+            flag = kwargs.get('flag', settings.CollisionFlags.foe)
+            mask = kwargs.get('mask', settings.CollisionFlags.player)
+            collider = monkey.components.Collider(flag, mask, 1, monkey.shapes.AABB(-5, 5, -1, 1), batch='lines')
+            if callback:
+                collider.setResponse(0, on_enter=globals()[callback])
+            #if callback:
+            #    a.user_data = {
+            #        'on_enter': [callback]
+            #    }
+            a.add_component(collider)
+
+        game_state.nodes[id] = a.id
+        monkey.get_node(game_state.Ids.game_node).add(a)
+        if msg != -1:
+            s = monkey.Script()
+            message(s, msg)
+            monkey.play(s)
+        if on_create:
+            monkey.play(on_create)
+
+    return f
+
 def character(data):
 	sprite = data['sprite']
 	batchId = sprite[:sprite.find('/')]
@@ -86,15 +141,27 @@ def character(data):
 	speed = data['speed']
 	direction = data.get('dir', 'e')
 	#b = monkey.get_sprite('sprites/' + sprite)
+	print('direction=',direction)
 	if isPlayer:
 		b.add_component(monkey.components.PlayerSierraController(half_width=2,
-			speed=speed,z_func=engine.z_func, skinWidth=1, dir=direction))
+			speed=speed, skinWidth=1, dir=direction))
+	else:
+		# we need to have an ai function that moves the player
+		func_ai = scripts.retrieveFunc(data['ai_func'])
+		walk_anim = data.get('walk_anim', 'walk')
+		idle_anim = data.get('idle_anim', 'walk')
+		call_every = data.get('period', 1)
+		anim_dir = data.get('anim_dir', True)
+		flip_horizontal = data.get('flip_horizontal', True)
+		b.add_component(monkey.components.NPCSierraFollow(func_ai, speed, call_every,
+            anim_dir=anim_dir, walk_anim=walk_anim, idle_anim=idle_anim, flip_horizontal=flip_horizontal, walk_area=1))
+
 	# setup collider
 	flag = data.get('flag', settings.CollisionFlags.player if isPlayer else settings.CollisionFlags.foe)
 	mask = data.get('mask', settings.CollisionFlags.foe | settings.CollisionFlags.hotspot if isPlayer else
 		settings.CollisionFlags.player | settings.CollisionFlags.hotspot)
 	tag = data.get('tag', 0 if isPlayer else 1)
-	shape = monkey.shapes.Point() #AABB(-5, 5, -1, 1)
+	shape = monkey.shapes.AABB(-settings.collider_size[0], settings.collider_size[0], -settings.collider_size[1], settings.collider_size[1])
 	collider = monkey.components.Collider(flag, mask, tag, shape, batch='lines')
 	b.add_component(collider)
 
@@ -102,3 +169,24 @@ def character(data):
 	if isPlayer:
 		settings.player_id = b.id
 	return b
+
+
+def hotspot(data):
+	node = monkey.Node()
+	shape = monkey.shapes.AABB(*data['aabb'])
+	collider = monkey.components.Collider(settings.CollisionFlags.hotspot, settings.CollisionFlags.player, 10,
+		shape, batch='lines')
+	node.add_component(collider)
+	collider.setResponse(settings.CollisionTags.player,
+		on_enter=scripts.retrieveFunc(data.get('on_enter')),
+		on_exit=scripts.retrieveFunc(data.get('on_exit')),
+		on_continue=scripts.retrieveFunc(data.get('on_continue')))
+	return node
+
+def west(data):
+	d = {'aabb': [0, 2 * settings.collider_size[0], 0, 166], 'on_enter': ['goto_room', {'room': data['room'], 'x': 316 - 10*settings.collider_size[0], 'dir': 'w'}]}
+	return hotspot(d)
+
+def east(data):
+	d = {'aabb': [316 - 2 * settings.collider_size[0], 316, 0, 166], 'on_enter': ['goto_room', {'room': data['room'], 'x': 10*settings.collider_size[0], 'dir': 'e'}]}
+	return hotspot(d)

@@ -1,8 +1,159 @@
-graham:
-  type: character
-  is_player: True
-  room: test3d
-  sprite: 'sprites/graham'
-  pos: [100, 100]
-  dir: s
-  speed: 100
+items:
+  graham:
+    type: character
+    is_player: True
+    parent: room_test3d
+    sprite: 'sprites/graham'
+    pos: [100, 100]
+    dir: s
+    speed: 100
+  rock:
+    type: node
+    parent: room_rock
+    pos: '@[236, 21 if item.moved else 33, 0]'
+    auto_depth: True
+    moved: False
+    quad:
+      batch: rock
+      coords: [280, 168, 34, 23]
+    actions:
+      push: push_rock
+      look: [msg, {'lines': [10]}]
+  room_castle:
+    walkareas:
+    - poly: [0,10,20,10,20,0,316,0,316,20,260,20,251,47,203,47,191,20,128,20,149,46,149,130,0,130,0,20]
+    east:
+      room: room_start
+    west:
+      room: room_rock
+    actions:
+      look_tree: [msg, {'lines': [7]}]
+      look_castle: [ msg, { 'lines': [8] } ]
+      look_flag: [msg, { 'lines': [9] }]
+    items:
+      - type: node
+        pos: [0, 0, -1]
+        quad:
+          batch: 'castle'
+          coords: [0, 0, 316, 166]
+      - type: node
+        batch: "castle"
+        auto_depth: true
+        pos: [8, 44, 0]
+        quad:
+          batch: castle
+          coords: [128,168,86,122]
+      - type: node
+        batch: "castle"
+        auto_depth: true
+        pos: [128, 20, 0]
+        quad:
+          batch: castle
+          coords: [221,168,72,139]
+      - type: node
+        sprite: 'sprites/flag1'
+        pos: [226,155,0]
+      - type: node
+        sprite: 'sprites/flag2'
+        pos: [256,155,0]
+      - type: node
+        sprite: 'sprites/flag3'
+        pos: [286,155,0]
+
+  room_start:
+    # walkarea is a polygon where both player and npcs are allowed to walk
+    # it can include holes. A hole can be forbidden for player and npc or for npc only
+    walkareas:
+      - poly: [0,0, 288, 0, 288, 10, 316,10, 316,128, 164,128,164,30,184,30,184,20,0,20]
+      # this is the walkarea for alligators
+      - poly: [0, 0, 316, 0, 244,18,241,18,228,6,0,6]
+    on_start: init_start
+    actions:
+      look_tree: [msg, {'lines': [1]}]
+      look_castle: [ msg, { 'lines': [4] } ]
+      look_alligator: &alli [ msg, { 'lines': [ 5 ] } ]
+      look_alligators: *alli
+
+    west:
+      room: room_castle
+    items:
+      - type: node
+        pos: [0, 0, -1]
+        quad:
+          batch: "start"
+          coords: [0, 0, 316, 166]
+      - type: node      # tree
+        pos: [198, 39, 0]
+        quad:
+          batch: "start"
+          coords: [86, 167, 118, 127]
+        auto_depth: True
+        baseline: &start1 [66, 1, 72, 0, 76, 0, 84, 2]
+        hole:
+          path: *start1
+      - type: node      # castle
+        quad:
+          batch: "start"
+          coords: [208,167, 70,137]
+        pos: [118,24]
+        auto_depth: True
+      - type: node
+        sprite: 'sprites/flag1'
+        pos: [6,155,0]
+      - type: node
+        sprite: 'sprites/flag2'
+        pos: [36,155,0]
+      - type: node
+        sprite: 'sprites/flag3'
+        pos: [66,155,0]
+      - type: node
+        hole:
+          poly: [175,45,164,45,164,26,175,26,186,22,199,35,204,36]
+          mode: npc
+          collide:
+            response:
+              - tag: 0
+                on_enter: ['drown', {'x': 184, 'y': 34}]
+      - type: node
+        hole:
+          poly: [-1,4,226,4,237,15,243,18,312,0,312,2,296,10,286,21,270,28,247,28,234,21,220,8,-1,8]
+          mode: npc
+          collide:
+            response:
+              - tag: 0
+                on_enter: ['drown', {'y': 3}]
+  room_rock:
+    walkareas:
+      - poly: [ 0,0,316,0,316,166,0,166 ]
+    east:
+      room: room_castle
+    items:
+      - type: node
+        pos: [ 0, 0, -1 ]
+        quad:
+          batch: "rock"
+          coords: [ 0, 0, 316, 166 ]
+    actions:
+      look_tree: [msg, {'lines': [11]}]
+  room_test3d:
+    walkarea:
+      poly: [10, 10, 306, 10, 306, 156, 10, 156]
+      holes:
+        - poly: [20, 20, 30, 20, 30, 30, 20, 30]
+    items:
+      - type: bg
+        batch: "test3d"
+        pos: [90,70,0]
+        quad: [12,177,128,61]
+        auto_depth: True
+        baseline: &b1 [0,0,128,44]
+        hole:
+          path: *b1
+      - type: bg
+        batch: "test3d"
+        pos: [80,80,0]
+        quad: [12,247,128,61]
+        auto_depth: True
+        baseline: *b1
+        hole:
+          path: *b1
