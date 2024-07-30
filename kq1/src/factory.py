@@ -7,15 +7,24 @@ from . import utils
 from . import data
 from . import scripts
 from collections import deque
-from attrdict import AttrDict
+from addict import Dict
 
 
 def init():
     # load all items
     items = monkey.read_data_file('items.yaml')
     for key, value in items['items'].items():
-        settings.items[key] = AttrDict(value)
+        value['iid'] = -1
+        value['name'] = key
+        value['active'] = value.get('active', True)
+    settings.items = Dict(items['items'])
+
+    #exit(1)
+    #for key, value in items['items'].items():
+    #    settings.items[key] = AttrDict(value)
     print(settings.items)
+    print(settings.items.rock.moved)
+    #exit(1)
 
     #settings.parser = monkey.read_data_file('parser.yaml')
     settings.tree = Tree("kq1")
@@ -113,6 +122,7 @@ def create_room(room):
             root.add(utils.makeWalkableCollider(outline))
         i+=1
         wman.addWalkArea(area)
+    settings.wman = wman
     room.add_runner(wman)
 
     # add links
@@ -120,6 +130,10 @@ def create_room(room):
         game_node.add(item_builders.west(room_info['west']))
     if 'east' in room_info:
         game_node.add(item_builders.east(room_info['east']))
+    if 'north' in room_info:
+        game_node.add(item_builders.north(room_info['north']))
+    if 'south' in room_info:
+        game_node.add(item_builders.south(room_info['south']))
 
 
 
@@ -132,8 +146,12 @@ def create_room(room):
     print (' -- adding dynamic items...')
     print(settings.room)
     for item in settings.tree.find(settings.room).children:
-        print(' -- adding',item)
-        game_node.add(item_builders.build(settings.getItem(item.data)))
+        print(' -- adding',item,type(settings.items))
+        itemData = getattr(settings.items, item.name)
+        node = item_builders.build(itemData)
+        game_node.add(node)
+        itemData.iid = node.id
+
             # item_type = desc.get('type')
             # if item_type:
             #     f = globals().get(item_type)
@@ -142,7 +160,6 @@ def create_room(room):
             #         game_node.add(node)
             #         area(node, desc)
             #         game_state.nodes[item] = node.id
-
     # create parser
     parser = monkey.TextEdit(batch='ui', font='sierra', prompt='>', cursor='_', width=2000,pal=0, on_enter=utils.process_action)
     parser.set_position(0,24,0)

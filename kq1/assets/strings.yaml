@@ -27,6 +27,8 @@ parser:
     banners: flag
   items:
     rock: {'rock', 'rocks', 'boulder', 'boulders'}
+    hole: {'hole'}
+    dagger: {'dagger'}
 strings:
   1: "##settings.strings[random.choice([2,3])]##"
   2: This is a very beautiful tree.
@@ -41,3 +43,10 @@ strings:
   11: There are numerous white birch trees reaching to the sky.
   12: After moving that rock once, even thinking about it should make you tired.
   13: With a heave and a ho, you manage to move the rock... revealing a dark hole underneath it.
+  14: There is no hole here.
+  15: There is an intricately carved dagger in the hole.
+  16: You already have it.
+  17: You reach into the hole and grasp the dagger, being careful not to cut yourself.
+  18: Its handle is beautifully carved; the blade is bronze and very sharp.
+  19: You do not have it.
+  20: You could see it better if you picked it up.

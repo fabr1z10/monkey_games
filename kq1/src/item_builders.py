@@ -4,20 +4,12 @@ from . import engine
 from . import data as dd
 from . import scripts
 from . import utils
+from addict import Dict
 
 def pippo(x,y):
 	print('figga')
 
-def read(item, key: str, default=None):
-	# some keys can contain code
-	value = item.get(key, default)
-	if not value and not default:
-		print('Missing key:',key,'in item:',item)
-		exit(1)
-	if isinstance(value, str) and value[0] == '@':
-		print('sucax:', item, type(item))
-		return eval(value[1:], {'item': item})
-	return value
+
 
 
 
@@ -27,8 +19,12 @@ def build(data):
 	settings.monkeyAssert(itemType in globals(), "Unknown builder: " + itemType)
 	builder = globals()[itemType]#, None)
 	node = builder(data)
-	data['iid'] = node.id
-	print('assigned iid:', node.id)
+	#print('figa',data,type(data), isinstance(data,AttrDict))
+	#if isinstance(data, AttrDict):
+	#	print('sucalo',node.id)
+	#		data.iid = node.id
+	#print('figa',data,type(data), isinstance(data,AttrDict))
+
 	return node
 
 def getShape(data):
@@ -45,7 +41,7 @@ def getShape(data):
 
 def node(data):
 	n = monkey.Node()
-	pos = read(data, 'pos', [0, 0, 0])#data.get('pos', [0, 0, 0])
+	pos = utils.read(data, 'pos', [0, 0, 0])#data.get('pos', [0, 0, 0])
 	auto_depth = data.get('auto_depth', False)
 	z = pos[2] if not auto_depth else 1.0 - pos[1] / 166.0
 	n.set_position(pos[0], pos[1], z)
@@ -189,4 +185,12 @@ def west(data):
 
 def east(data):
 	d = {'aabb': [316 - 2 * settings.collider_size[0], 316, 0, 166], 'on_enter': ['goto_room', {'room': data['room'], 'x': 10*settings.collider_size[0], 'dir': 'e'}]}
+	return hotspot(d)
+
+def north(data):
+	d = {'aabb': [0, 316, 120, 120 + 2*settings.collider_size[0]], 'on_enter': ['goto_room', {'room': data['room'],'y': 10*settings.collider_size[0], 'dir': 'n'}]}
+	return hotspot(d)
+
+def south(data):
+	d = {'aabb': [0, 316, 0, 2*settings.collider_size[0]], 'on_enter': ['goto_room', {'room': data['room'],'y': 120-10*settings.collider_size[0], 'dir': 's'}]}
 	return hotspot(d)

@@ -4,6 +4,19 @@ import random
 from . import scripts
 from . import settings
 from . import data
+from . import utils
+
+def read(item, key: str, default=None):
+	# some keys can contain code
+	value = item.get(key, default)
+	if not value and not default:
+		print('Missing key:',key,'in item:',item)
+		exit(1)
+	if isinstance(value, str) and value[0] == '@':
+		return eval(value[1:], {'item': item, 'items': settings.items})
+	return value
+
+
 
 
 def getCurrentRoom():
@@ -76,6 +89,8 @@ def makeScoreBar():
 def match_items(dobj: str):
     match = []
     for n in settings.tree.find('graham').parent:
+        if utils.read(settings.items[n.name], 'active') != True:
+            continue
         s = settings.parser['items'].get(n.name, {})
         if dobj in s:
             match.append(n)
@@ -122,6 +137,7 @@ def process_action(s: str):
         direct_object = settings.parser['remap'].get(direct_object, direct_object)
         # check all match
         dobj = match_items(direct_object)
+        print('i can see',dobj)
         iobj = None
         if indirect_object:
             indirect_object = settings.parser['remap'].get(indirect_object, indirect_object)
@@ -134,11 +150,13 @@ def process_action(s: str):
             if action_string in actions:
                 print('found!')
                 callScript(actions[action_string])
+            else:
+                scripts.msg(lines=[19])
         else:
             print('match object ', dobj,iobj)
             if len(dobj) == 1:
                 print(dobj[0].name)
-                item =settings.getItem(dobj[0].name)
+                item = getattr(settings.items, dobj[0].name)
                 actions = item.get('actions')
                 if actions:
                     if verb in actions:

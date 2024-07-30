@@ -61,10 +61,18 @@ def add_message_to_script(script, messageId, **kwargs):
 # prints out a message
 def msg(**kwargs):
 	script = monkey.Script()
-	for arg in kwargs['lines']:
+	if isinstance(kwargs['lines'], str) and kwargs['lines'][0] == '@':
+		ccc = eval(kwargs['lines'][1:], {'items': settings.items})
+	else:
+		ccc = kwargs['lines']
+	for arg in ccc:
 		add_message_to_script(script, arg, **kwargs)
 		#message(script, arg, **kwargs)
 	monkey.play(script)
+
+def look_hole(**kwargs):
+	msg(lines=[15 if settings.items['rock'].moved else 14])
+
 
 
 def drown(**kwargs):
@@ -82,6 +90,7 @@ def drown(**kwargs):
 
 def addNode(node):
 	monkey.get_node(settings.game_node_id).add(node)
+
 
 
 # moves character randomly in [»0, x1] x [y0, y1]
@@ -105,16 +114,77 @@ def init_start():
 
 def push_rock(**kwargs):
 	rock = kwargs['item']
+	print('---',rock)
 	if rock.moved:
 		msg(lines=[12])
 	else:
 		rock.moved = True
-	# 	if is_within_bounds('rock'):
-	# 		game_state.rock_moved = True
+		print('figa- --',rock.iid)
 		script = monkey.Script()
 		add_message_to_script(script, 13)
 		script.add(monkey.actions.MoveBy(id=rock.iid, delta=(0, -12), time=1))
+		script.add(monkey.actions.CallFunc(lambda: settings.wman.recomputeBaselines()))
 		#move_item_by('rock', (0, -12, 0))
 		monkey.play(script)
 	# 	else:
 	# 		msg(id=93, x='rock')
+
+def add_to_inventory(**kwargs):
+	print(kwargs['item'])
+	# check if item is already held
+	if kwargs['item'].name in settings.tree.find('graham'):
+		msg (lines=[16])
+	else:
+		msg(lines=kwargs['lines'])
+		settings.tree.find('dagger').move_to(settings.tree.find('graham'))
+
+def make_solid_rect(x, y, w, h, color = 'FFFFFF', z = 0):
+	node = monkey.Node()
+	node.set_model(monkey.models.from_shape('tri',
+		monkey.shapes.AABB(0, w, 0, h),
+		monkey.from_hex(color),
+		monkey.FillType.Solid))
+	node.set_position(x, y, z)
+	return node
+
+def make_outline_rect(x, y, w, h, color = 'FFFFFF', z = 0):
+	node = monkey.Node()
+	node.set_model(monkey.models.from_shape(
+	'lines',
+		monkey.shapes.AABB(0, w, 0, h),
+		monkey.from_hex(color),
+		monkey.FillType.Outline))
+	node.set_position(x, y, z)
+	return node
+
+def make_outline2_rect(x, y, w, h, color='FFFFFF', z=0):
+	node = monkey.Node()
+	node.add(make_outline_rect(x, y, w, h, color, z))
+	node.add(make_outline_rect(x+1, y, w-2, h, color, z))
+	return node
+
+def look_item(**kwargs):
+	name = kwargs['item'].name
+	if name in settings.tree.find('graham'):
+		script = monkey.Script()
+		#msg(lines=kwargs['held'])
+		#idesc = settings.items['items'][item_id]['inventory']
+		script.add(monkey.actions.CallFunc(function=CallFuncs.set_main_node_active(monkey.NodeState.PAUSED)))
+		#msg = utils.make_text(kwargs['held'], **kwargs)
+		#script.add(monkey.actions.Add(id=settings.text_node_id, node=msg))
+		node = monkey.Node()
+		node.add(utils.make_text(kwargs['held'][0], **kwargs))
+		node.add(make_solid_rect(136, 0, 42, 47, color='000000', z=2))
+		node.add(make_outline2_rect(136, 0, 42, 47, color='AA0000', z=2))
+		spr = monkey.get_sprite(kwargs['image'])
+		spr.set_position(157, 22, 3)
+		node.add(spr)
+		script.add(monkey.actions.Add(id=settings.text_node_id, node=node))
+		wk = monkey.actions.WaitForKey()
+		wk.add(settings.Keys.enter, func=CallFuncs.rm_node(node.id))
+		script.add(wk)
+		monkey.play(script)
+	else:
+		msg(lines=kwargs['not_held'])
+
+

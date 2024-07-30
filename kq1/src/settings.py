@@ -26,6 +26,8 @@ parser_id = None
 # half-width and half-height
 collider_size = [1, 1]
 last_action = None
+wman = None
+
 
 def getItem(id):
     global items
