@@ -51,11 +51,11 @@ def node(data):
 	hole = data.get('hole', None)
 	if hole:
 		mode = hole.get('mode', 'all')
-		s = utils.readShape(hole)
+		s, m = utils.readShape(hole)
 		if isinstance(s, monkey.shapes.PolyLine):
-			dd.walkArea.addLinearWall(hole['path'])
+			dd.walkArea.addLinearWall(m)
 		else:
-			dd.walkArea.addPolyWall(hole['poly'])
+			dd.walkArea.addPolyWall(m)
 		if mode == 'all':
 			n.add_component(monkey.components.Collider(2, 0, 0, s, batch='lines'))
 		if 'collide' in hole:

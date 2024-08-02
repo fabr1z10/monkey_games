@@ -13,6 +13,20 @@ def retrieveFunc(f: list):
 		return globals()[f[0]](**f[1])
 
 class CallFuncs:
+
+	def goto_room(room, **kwargs):
+		def f():
+			settings.previous_room = settings.room
+			settings.room = room
+			player = monkey.get_node(settings.player_id)
+			x = kwargs.get('x', player.x)
+			y = kwargs.get('y', player.y)
+			dir = kwargs.get('dir', 'e')
+			utils.moveTo('graham', settings.room, pos=[x, y], dir=dir)
+			monkey.close_room()
+		return f
+
+
 	def set_main_node_active(value):
 		def f():
 			#monkey.get_node(settings.text_edit_node).active = value
@@ -187,4 +201,19 @@ def look_item(**kwargs):
 	else:
 		msg(lines=kwargs['not_held'])
 
+def check_position(**kwargs):
+	area = kwargs.get('area', None)
+	if area:
+		node = monkey.get_node(settings.items['graham'].iid)
+		if node.x < area[0] or node.x > area[2] or node.y < area[1] or node.y > area[3]:
+			msg(lines=[kwargs.get('outside_area_msg', 10)])
+			return 1
+	return 0
 
+def climb_tree(**kwargs):
+	m = check_position(**kwargs)
+	if m == 0:
+		n = monkey.Script()
+		add_message_to_script(n, 23)
+		n.add(monkey.actions.CallFunc(CallFuncs.goto_room('room_start', dir='s', x=200, y=50)))
+		monkey.play(n)

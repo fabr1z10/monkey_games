@@ -20,6 +20,7 @@ parser:
     see: *look
     push: push
     move: move
+    climb: climb
   remap:
     trees: tree
     flags: flag
@@ -50,3 +51,6 @@ strings:
   18: Its handle is beautifully carved; the blade is bronze and very sharp.
   19: You do not have it.
   20: You could see it better if you picked it up.
+  21: This is a very large oak tree with branches stretching to the sky.
+  22: You can't climb a tree here!
+  23: OK

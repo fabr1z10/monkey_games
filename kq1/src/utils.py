@@ -56,9 +56,16 @@ def makeWalkableCollider(outline):
 def readShape(data):
     if 'path' in data:
         s = monkey.shapes.PolyLine(data['path'])
+        m = data['path']
     elif 'poly' in data:
         s = monkey.shapes.Polygon(data['poly'])
-    return s
+        m = data['poly']
+    elif 'trapezoid' in data:
+        ymax= data['y_max']
+        m = data['trapezoid'].copy()
+        m.extend([m[-2], ymax, m[0], ymax])
+        s = monkey.shapes.Polygon(m)
+    return s, m
 
 def makeCollider(data, shape=None):
     if not shape:
