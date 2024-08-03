@@ -21,6 +21,7 @@ def create_foe_script(f):
 	script = monkey.Script()
 	script.add(monkey.actions.Delay(random.randint(1, 10)))
 	script.add(monkey.actions.CallFunc(f))
+	add_message_to_script(script, 24)
 	monkey.play(script)
 
 
@@ -147,7 +148,6 @@ def init_start():
 def init_ogre():
 	def f():
 		ogre = item_builders.character(settings.items.ogre)
-		print('QUI!?')
 		addNode(ogre)
 	create_foe_script(f)
 
@@ -243,3 +243,9 @@ def climb_tree(**kwargs):
 		add_message_to_script(n, 23)
 		n.add(monkey.actions.CallFunc(CallFuncs.goto_room('room_start', dir='s', x=200, y=50)))
 		monkey.play(n)
+
+def ciappi(ogre, player):
+	player.remove()
+	ogre.sendMessage(id="setFunc", func=None)
+	ogre.setAnimation('catch')
+	msg(lines=[25])

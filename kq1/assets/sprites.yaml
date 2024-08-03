@@ -294,6 +294,14 @@ sprites:
             anchor: [16, 0]
           - tex: [338,158,26,23]
             anchor: [18, 0]
+      catch:
+        frames:
+          - tex: [259,182,24,31]
+            anchor: [14,0]
+      end:
+        frames:
+          - tex: [284,182,36,24]
+            anchor: [20, 0]
   gnome:
     animations:
       walk:

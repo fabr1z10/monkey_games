@@ -53,9 +53,9 @@ def node(data):
 		mode = hole.get('mode', 'all')
 		s, m = utils.readShape(hole)
 		if isinstance(s, monkey.shapes.PolyLine):
-			dd.walkArea.addLinearWall(m)
+			dd.walkArea.addLinearWall(m, [pos[0], pos[1]])
 		else:
-			dd.walkArea.addPolyWall(m)
+			dd.walkArea.addPolyWall(m, [pos[0], pos[1]])
 		if mode == 'all':
 			n.add_component(monkey.components.Collider(2, 0, 0, s, batch='lines'))
 		if 'collide' in hole:
@@ -162,6 +162,11 @@ def character(data):
 	tag = data.get('tag', 0 if isPlayer else 1)
 	shape = monkey.shapes.AABB(-settings.collider_size[0], settings.collider_size[0], -settings.collider_size[1], settings.collider_size[1])
 	collider = monkey.components.Collider(flag, mask, tag, shape, batch='lines')
+	if 'response' in data:
+		for response in data['response']:
+			on_enter = scripts.retrieveFunc(response.get('on_enter', []))
+			collider.setResponse(response['tag'], on_enter=on_enter)
+
 	b.add_component(collider)
 
 	#b.scale=scale

@@ -39,8 +39,11 @@ items:
     type: character
     sprite: 'sprites/ogre'
     speed: 80
-    pos: [50, 100, 0]
+    pos: [96, 112, 0]
     ai_func: ['func_random', {'x0': 180, 'x1': 260, 'y0': 20, 'y1': 80}]
+    response:
+      - tag: 0
+        on_enter: ['ciappi']
   room_castle:
     walkareas:
     - poly: [0,10,20,10,20,0,316,0,316,20,260,20,251,47,203,47,191,20,128,20,149,46,149,130,0,130,0,20]
