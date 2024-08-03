@@ -35,6 +35,12 @@ items:
     parent: room_rock
     actions:
       look: [msg, {'lines': '@[15] if items.rock.moved else [14]'}]
+  ogre:
+    type: character
+    sprite: 'sprites/ogre'
+    speed: 80
+    pos: [50, 100, 0]
+    ai_func: ['func_random', {'x0': 180, 'x1': 260, 'y0': 20, 'y1': 80}]
   room_castle:
     walkareas:
     - poly: [0,10,20,10,20,0,316,0,316,20,260,20,251,47,203,47,191,20,128,20,149,46,149,130,0,130,0,20]
@@ -169,6 +175,24 @@ items:
         quad:
           batch: "goldegg"
           coords: [3,297,48,26]
+  room_ogre:
+    walkareas:
+      - poly: [ 0, 0, 316, 0, 316, 166, 0, 166 ]
+    on_start: init_ogre
+    items:
+      - type: node
+        pos: [ 0, 0, -1 ]
+        quad:
+          batch: "ogre"
+          coords: [ 0, 0, 316, 166 ]
+      - type: node
+        pos: [194,55,0]
+        baseline: [0,0,72,0]
+        hole:
+          poly: [0,0,72,0,72,5,0,5]
+        quad:
+          batch: "ogre"
+          coords: [ 1,291,72,38]
   room_start:
     # walkarea is a polygon where both player and npcs are allowed to walk
     # it can include holes. A hole can be forbidden for player and npc or for npc only
@@ -238,6 +262,8 @@ items:
       room: room_castle
     north:
       room: room_goldegg
+    south:
+      room: room_ogre
     items:
       - type: node
         pos: [ 0, 0, -1 ]

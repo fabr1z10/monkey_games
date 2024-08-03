@@ -83,58 +83,60 @@ def node(data):
 
 # this function creates a function generating a foe following player. You can specify the initial position,
 # the speed, the sprite and the callback function to call if the foe catches the player
-def create_foe(id: str, sprite: str, x: float, y: float, speed: float, callback: str, msg: int, **kwargs):
-    def f():
-        # if anim_dir is True, the sprites need to h
-        anim_dir = kwargs.get('anim_dir', True)
-        flip_horizontal = kwargs.get('flip_horizontal', True)
-        func_ai = kwargs.get('func_ai', func_follow_player)
-        call_every = kwargs.get('period', 1)
-        on_create = kwargs.get('on_create', None)
-        a = monkey.get_sprite(sprite)
-        a.set_position(x, y, 0)
-        walk_anim= kwargs.get('walk_anim', 'walk')
-        idle_anim = kwargs.get('idle_anim', 'walk')
-        a.add_component(monkey.components.NPCSierraFollow(func_ai, speed, call_every, z_func=settings.z_func,
-            anim_dir=anim_dir, walk_anim=walk_anim, idle_anim=idle_anim, flip_horizontal=flip_horizontal))
-        collide = kwargs.get('collider', False)
-        if collide:
-            flag = kwargs.get('flag', settings.CollisionFlags.foe)
-            mask = kwargs.get('mask', settings.CollisionFlags.player)
-            collider = monkey.components.Collider(flag, mask, 1, monkey.shapes.AABB(-5, 5, -1, 1), batch='lines')
-            if callback:
-                collider.setResponse(0, on_enter=globals()[callback])
-            #if callback:
-            #    a.user_data = {
-            #        'on_enter': [callback]
-            #    }
-            a.add_component(collider)
-
-        game_state.nodes[id] = a.id
-        monkey.get_node(game_state.Ids.game_node).add(a)
-        if msg != -1:
-            s = monkey.Script()
-            message(s, msg)
-            monkey.play(s)
-        if on_create:
-            monkey.play(on_create)
-
-    return f
+# def create_foe(id: str, sprite: str, x: float, y: float, speed: float, callback: str, msg: int, **kwargs):
+# 	def f():
+#         # if anim_dir is True, the sprites need to h
+#         anim_dir = kwargs.get('anim_dir', True)
+#         flip_horizontal = kwargs.get('flip_horizontal', True)
+#         func_ai = kwargs.get('func_ai', func_follow_player)
+#         call_every = kwargs.get('period', 1)
+#         on_create = kwargs.get('on_create', None)
+#         a = monkey.get_sprite(sprite)
+#         a.set_position(x, y, 0)
+#         walk_anim= kwargs.get('walk_anim', 'walk')
+#         idle_anim = kwargs.get('idle_anim', 'walk')
+#         a.add_component(monkey.components.NPCSierraFollow(func_ai, speed, call_every, z_func=settings.z_func,
+#             anim_dir=anim_dir, walk_anim=walk_anim, idle_anim=idle_anim, flip_horizontal=flip_horizontal))
+#         collide = kwargs.get('collider', False)
+#         if collide:
+#             flag = kwargs.get('flag', settings.CollisionFlags.foe)
+#             mask = kwargs.get('mask', settings.CollisionFlags.player)
+#             collider = monkey.components.Collider(flag, mask, 1, monkey.shapes.AABB(-5, 5, -1, 1), batch='lines')
+#             if callback:
+#                 collider.setResponse(0, on_enter=globals()[callback])
+#             #if callback:
+#             #    a.user_data = {
+#             #        'on_enter': [callback]
+#             #    }
+#             a.add_component(collider)
+#
+#         game_state.nodes[id] = a.id
+#         monkey.get_node(game_state.Ids.game_node).add(a)
+#         if msg != -1:
+#             s = monkey.Script()
+#             message(s, msg)
+#             monkey.play(s)
+#         if on_create:
+#             monkey.play(on_create)
+#
+#     return f
 
 def character(data):
+	print(data)
+	assert 'speed' in data
 	sprite = data['sprite']
 	batchId = sprite[:sprite.find('/')]
 	room = monkey.engine().getRoom()
 	if not room.hasBatch(batchId):
 		print(' -- adding batch:',batchId)
 		room.add_batch(batchId, monkey.SpriteBatch(max_elements=10000, cam=0, sheet=batchId))
-	print('xxx')
 	b = monkey.get_sprite(sprite)
 	pos = data.get('pos', [0, 0, 0])
 	isPlayer = data.get('is_player', False)
 	z = 1.0 - pos[1] / 166.0
 	b.set_position(pos[0], pos[1], z)
 	speed = data['speed']
+	print('HEY SPEED',speed, 'speed' in data)
 	direction = data.get('dir', 'e')
 	#b = monkey.get_sprite('sprites/' + sprite)
 	print('direction=',direction)
@@ -147,10 +149,11 @@ def character(data):
 		walk_anim = data.get('walk_anim', 'walk')
 		idle_anim = data.get('idle_anim', 'walk')
 		call_every = data.get('period', 1)
+		walk_area_id = data.get('walk_area', 0)
 		anim_dir = data.get('anim_dir', True)
 		flip_horizontal = data.get('flip_horizontal', True)
 		b.add_component(monkey.components.NPCSierraFollow(func_ai, speed, call_every,
-            anim_dir=anim_dir, walk_anim=walk_anim, idle_anim=idle_anim, flip_horizontal=flip_horizontal, walk_area=1))
+            anim_dir=anim_dir, walk_anim=walk_anim, idle_anim=idle_anim, flip_horizontal=flip_horizontal, walk_area=walk_area_id))
 
 	# setup collider
 	flag = data.get('flag', settings.CollisionFlags.player if isPlayer else settings.CollisionFlags.foe)

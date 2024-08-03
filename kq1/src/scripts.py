@@ -12,6 +12,18 @@ def retrieveFunc(f: list):
 	else:
 		return globals()[f[0]](**f[1])
 
+
+def addNode(node):
+	monkey.get_node(settings.game_node_id).add(node)
+
+
+def create_foe_script(f):
+	script = monkey.Script()
+	script.add(monkey.actions.Delay(random.randint(1, 10)))
+	script.add(monkey.actions.CallFunc(f))
+	monkey.play(script)
+
+
 class CallFuncs:
 
 	def goto_room(room, **kwargs):
@@ -27,12 +39,14 @@ class CallFuncs:
 		return f
 
 
+
 	def set_main_node_active(value):
 		def f():
 			#monkey.get_node(settings.text_edit_node).active = value
 			monkey.get_node(settings.game_node_id).state = value
 			monkey.get_node(settings.parser_id).state = value
 		return f
+
 	def rm_node(*args):
 		def f():
 			for id in args:
@@ -40,6 +54,12 @@ class CallFuncs:
 				monkey.get_node(id).remove()
 			CallFuncs.set_main_node_active(monkey.NodeState.ACTIVE)()
 		return f
+
+	def add_node(node):
+		def f():
+			addNode(node)
+		return f
+
 
 def restart_room():
 	monkey.close_room()
@@ -102,8 +122,6 @@ def drown(**kwargs):
 	return f
 
 
-def addNode(node):
-	monkey.get_node(settings.game_node_id).add(node)
 
 
 
@@ -121,9 +139,17 @@ def init_start():
 			'sprite': 'sprites/alligator',
 			'speed': 30,
 			'pos': [random.randint(10, 306), 2],
+			'walk_area_id': 1,
 			'ai_func': ['func_random', {'x0': 0, 'x1': 316, 'y0': 0, 'y1': 120}]
 		}
 		addNode(item_builders.character(alligator))
+
+def init_ogre():
+	def f():
+		ogre = item_builders.character(settings.items.ogre)
+		print('QUI!?')
+		addNode(ogre)
+	create_foe_script(f)
 
 
 def push_rock(**kwargs):
