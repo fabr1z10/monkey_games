@@ -26,10 +26,13 @@ parser:
     flags: flag
     banner: flag
     banners: flag
+    "carrot patch": garden
   items:
     rock: {'rock', 'rocks', 'boulder', 'boulders'}
     hole: {'hole'}
     dagger: {'dagger'}
+    carrot_w: {'carrot'}
+    carrot_e: {'carrot'}
 strings:
   1: "##settings.strings[random.choice([2,3])]##"
   2: This is a very beautiful tree.
@@ -56,3 +59,7 @@ strings:
   23: OK
   24: Watch out!!! There is an ogre nearby! He will crush you in his strong arms if he catches you.
   25: You were warned to be careful around this fierce creature! Maybe next time you will be able to elude the beast.
+  26: This is a well-tended carrot patch. The carrots look tempting to a hungry traveler.
+  27: There are many large, plump carrots in the garden.
+  28: You pluck a plump, orange carrot from the ground.
+  29: This is one of the tastiest looking carrots you have ever seen.

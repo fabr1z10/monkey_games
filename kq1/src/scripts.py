@@ -176,7 +176,8 @@ def add_to_inventory(**kwargs):
 		msg (lines=[16])
 	else:
 		msg(lines=kwargs['lines'])
-		settings.tree.find('dagger').move_to(settings.tree.find('graham'))
+		settings.tree.find(kwargs['item'].name).move_to(settings.tree.find('graham'))
+		settings.tree.print()
 
 def make_solid_rect(x, y, w, h, color = 'FFFFFF', z = 0):
 	node = monkey.Node()

@@ -15,7 +15,7 @@ def init():
     items = monkey.read_data_file('items.yaml')
     for key, value in items['items'].items():
         value['iid'] = -1
-        value['name'] = key
+        value['name'] = value.get('name', key)
         value['active'] = value.get('active', True)
     settings.items = Dict(items['items'])
 

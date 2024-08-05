@@ -164,6 +164,8 @@ def process_action(s: str):
             if len(dobj) == 1:
                 print(dobj[0].name)
                 item = getattr(settings.items, dobj[0].name)
+                if 'link' in item:
+                    item = getattr(settings.items, item['link'])
                 actions = item.get('actions')
                 if actions:
                     if verb in actions:
