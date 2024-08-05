@@ -98,6 +98,17 @@ items:
       - type: node
         sprite: 'sprites/flag3'
         pos: [286,155,0]
+  room_cliff:
+    walkareas:
+      - poly: [ 0,0,316,0,316,166,0,166 ]
+    south:
+      room: room_gardene
+    items:
+      - type: node
+        pos: [ 0, 0, -1 ]
+        quad:
+          batch: "cliff"
+          coords: [ 0, 0, 316, 166 ]
   room_gardene:
     walkareas:
       - poly: [ 0,0,316,0,316,166,0,166 ]
@@ -106,13 +117,43 @@ items:
     west:
       room: room_gardenw
     #east: fairy
-    #north: cliff
+    north:
+      room: room_cliff
     items:
       - type: node
         pos: [ 0, 0, -1 ]
         quad:
           batch: "gardene"
           coords: [ 0, 0, 316, 166 ]
+      - type: node      # slanted wall
+        pos: [161, 35, 0.789]
+        quad:
+          batch: "gardene"
+          coords: [173,167,139,89]
+        baseline: [0, 72, 121, 0, 139, 0]
+        hole:
+          poly: [0, 72, 121, 0, 139, 0, 18,72]
+      - type: node      # slanted wall
+        auto_depth: True
+        pos: [0,107,0]
+        quad:
+          batch: "gardene"
+          coords: [1,170,161,17]
+        baseline: [0,0,160,0]
+        hole:
+          poly: [0, 0, 160, 0, 160,2, 0,2]
+      - type: node      # tree right
+        auto_depth: True
+        pos: [190,110,0]
+        quad:
+          batch: "gardene"
+          coords: [2,269,126,56]
+      - type: node      # tree right
+        batch: "gardene"
+        pos: [92,124,0.2952]
+        quad:
+          batch: "gardene"
+          coords: [133,283,80,42]
   room_gardenw:
     walkareas:
       - poly: [ 0,0,316,0,316,166,0,166 ]
