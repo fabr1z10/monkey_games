@@ -27,6 +27,7 @@ parser_id = None
 collider_size = [1, 1]
 last_action = None
 wman = None
+on_room_start = None
 
 
 def getItem(id):

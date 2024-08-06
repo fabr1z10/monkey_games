@@ -145,7 +145,7 @@ def character(data):
 			speed=speed, skinWidth=1, dir=direction))
 	else:
 		# we need to have an ai function that moves the player
-		func_ai = scripts.retrieveFunc(data['ai_func'])
+		func_ai = utils.retrieveFunc(data['ai_func'])
 		walk_anim = data.get('walk_anim', 'walk')
 		idle_anim = data.get('idle_anim', 'walk')
 		call_every = data.get('period', 1)
@@ -164,8 +164,9 @@ def character(data):
 	collider = monkey.components.Collider(flag, mask, tag, shape, batch='lines')
 	if 'response' in data:
 		for response in data['response']:
-			on_enter = scripts.retrieveFunc(response.get('on_enter', []))
-			collider.setResponse(response['tag'], on_enter=on_enter)
+			on_enter = utils.retrieveFunc(response.get('on_enter', []))
+			on_exit = utils.retrieveFunc(response.get('on_exit', []))
+			collider.setResponse(response['tag'], on_enter=on_enter, on_exit=on_exit)
 
 	b.add_component(collider)
 
@@ -182,23 +183,75 @@ def hotspot(data):
 		shape, batch='lines')
 	node.add_component(collider)
 	collider.setResponse(settings.CollisionTags.player,
-		on_enter=scripts.retrieveFunc(data.get('on_enter')),
-		on_exit=scripts.retrieveFunc(data.get('on_exit')),
-		on_continue=scripts.retrieveFunc(data.get('on_continue')))
+		on_enter=utils.retrieveFunc(data.get('on_enter')),
+		on_exit=utils.retrieveFunc(data.get('on_exit')),
+		on_continue=utils.retrieveFunc(data.get('on_continue')))
 	return node
 
-def west(data):
-	d = {'aabb': [0, 2 * settings.collider_size[0], 0, 166], 'on_enter': ['goto_room', {'room': data['room'], 'x': 316 - 10*settings.collider_size[0], 'dir': 'w'}]}
-	return hotspot(d)
+def swim_area(data):
+	return node({
+		'type': 'node',
+        'hole': {
+			'poly': data.get('poly'),
+        	'mode': 'npc',
+        	'collide': {'response': [{'tag': 0, 'on_enter': 'start_swim', 'on_exit': 'end_swim'}]}
+		}
+	})
 
-def east(data):
-	d = {'aabb': [316 - 2 * settings.collider_size[0], 316, 0, 166], 'on_enter': ['goto_room', {'room': data['room'], 'x': 10*settings.collider_size[0], 'dir': 'e'}]}
-	return hotspot(d)
+def bgitem(data):
+	pos = data['pos']
+	bl = data['baseline']
+	#maxy = max (bl[i] for i in range(1, len(bl), 2))
+	p = bl.copy()
+	p.extend([p[-2], data['y_back'], p[0], data['y_back']])
+	return node({
+		'type': 'node',
+		'quad': {'batch': data['batch'], 'coords': data['coords']},
+		'auto_depth': True,
+		'pos': [pos[0], pos[1], 0],
+		'baseline': data['baseline'],
+		'hole': {'poly': p}
+	})
 
-def north(data):
-	d = {'aabb': [0, 316, 120, 120 + 2*settings.collider_size[0]], 'on_enter': ['goto_room', {'room': data['room'],'y': 10*settings.collider_size[0], 'dir': 'n'}]}
+# - type: node
+#        pos: [128, 41, 0]
+#        quad:
+#          batch: "cliff"
+#          coords: [1,168,46,19]
+#        auto_depth: True
+#        baseline: [0,5,18,0,26,3,40,3,46,5]
+#        hole:
+#          poly: [0,5,18,0,26,3,40,3,46,5,46,7,0,7]
+
+
+
+
+def lnk(data, aabb, x=None, y=None, dir=None):
+	d = {
+		'aabb': aabb,
+		'on_enter': ['goto_room_hotspot', {
+			'room': data['room'],
+			'dir': data.get('dir', dir),
+			'x_bounds': data.get('x_bounds', None),
+			'y_bounds': data.get('y_bounds', None)
+		}]
+	}
+	x = data.get('x', x)
+	y = data.get('y', y)
+	if x:
+		d['on_enter'][1]['x'] = x
+	if y:
+		d['on_enter'][1]['y'] = y
 	return hotspot(d)
 
 def south(data):
-	d = {'aabb': [0, 316, 0, 2*settings.collider_size[0]], 'on_enter': ['goto_room', {'room': data['room'],'y': 120-10*settings.collider_size[0], 'dir': 's'}]}
-	return hotspot(d)
+	return lnk(data,[0, 316, 0, 2 * settings.collider_size[0]], y=120 - 10 * settings.collider_size[0], dir='s')
+
+def north(data):
+	return lnk(data, [0, 316, 120, 120 + 2*settings.collider_size[0]], y=10*settings.collider_size[0], dir='n')
+
+def west(data):
+	return lnk(data, [0, 2 * settings.collider_size[0], 0, 166], x=316 - 10*settings.collider_size[0], dir='w')
+
+def east(data):
+	return lnk(data, [316 - 2 * settings.collider_size[0], 316, 0, 166], x=10*settings.collider_size[0], dir='e')

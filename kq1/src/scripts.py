@@ -4,13 +4,7 @@ from . import item_builders
 from . import settings
 from . import utils
 
-def retrieveFunc(f: list):
-	if not f:
-		return None
-	if len(f) == 1:
-		return globals()[f[0]]
-	else:
-		return globals()[f[0]](**f[1])
+
 
 
 def addNode(node):
@@ -25,18 +19,32 @@ def create_foe_script(f):
 	monkey.play(script)
 
 
+
+
 class CallFuncs:
 
-	def goto_room(room, **kwargs):
+	def _a(player, **kwargs):
+		settings.previous_room = settings.room
+		settings.room = kwargs.get('room')
+		x = kwargs.get('x', player.x)
+		y = kwargs.get('y', player.y)
+		print('@@@@',kwargs)
+		xb = kwargs.get('x_bounds', None)
+		yb = kwargs.get('y_bounds', None)
+		if xb:
+			x = utils.clamp(x, xb[0], xb[1])
+		if yb:
+			y = utils.clamp(x, yb[0], yb[1])
+		dir = kwargs.get('dir', 'e')
+		utils.moveTo('graham', settings.room, pos=[x, y], dir=dir)
+		monkey.close_room()
+
+
+
+	def goto_room(**kwargs):
 		def f():
-			settings.previous_room = settings.room
-			settings.room = room
 			player = monkey.get_node(settings.player_id)
-			x = kwargs.get('x', player.x)
-			y = kwargs.get('y', player.y)
-			dir = kwargs.get('dir', 'e')
-			utils.moveTo('graham', settings.room, pos=[x, y], dir=dir)
-			monkey.close_room()
+			CallFuncs._a(player, **kwargs)
 		return f
 
 
@@ -70,20 +78,12 @@ def history():
 	if settings.last_action:
 		monkey.get_node(settings.parser_id).setText(settings.last_action)
 
-def goto_room(**kwargs):
+def goto_room_hotspot(**kwargs):
 	def f(hotspot, player):
-		settings.previous_room = settings.room
-		settings.room = kwargs.get('room')
-		player = monkey.get_node(settings.player_id)
-		x = kwargs.get('x', player.x)
-		y = kwargs.get('y', player.y)
-		dir = kwargs['dir']
-		utils.moveTo('graham', settings.room, pos=[x,y], dir=dir)
-		#settings.items['graham']['room'] = settings.room
-		#settings.items['graham']['pos'] = [x, y]
-		#settings.items['graham']['dir'] = dir
-		monkey.close_room()
+		CallFuncs._a(player, **kwargs)
 	return f
+#goto_room = CallFuncs.goto_room
+
 
 def add_message_to_script(script, messageId, **kwargs):
 	script.add(monkey.actions.CallFunc(function=CallFuncs.set_main_node_active(monkey.NodeState.PAUSED)))
@@ -108,6 +108,39 @@ def msg(**kwargs):
 def look_hole(**kwargs):
 	msg(lines=[15 if settings.items['rock'].moved else 14])
 
+
+def fall2():
+	player = monkey.get_node(settings.player_id)
+	#player.set_position(177, 120, 0)
+	z = 1.0 - 47.0/166.0
+	script = monkey.Script()
+	script.add(monkey.actions.SierraEnable(id=player.id, value=False))
+	script.add(monkey.actions.CallFunc(lambda: player.set_position(177, 120, z)))
+	script.add(monkey.actions.Animate(id=player.id, anim='fall'))
+	script.add(monkey.actions.Move(id=player.id, position=(177, 47, z), speed=10))
+	script.add(monkey.actions.Animate(id=player.id, anim='land'))
+	add_message_to_script(script, 31)
+	script.add(monkey.actions.Animate(id=player.id, anim='stars'))
+	script.add(monkey.actions.Delay(5))
+	script.add(monkey.actions.SierraEnable(id=player.id, value=True))
+
+	monkey.play(script)
+
+
+def fall(**kwargs):
+	def f(hotspot, player):
+		settings.on_room_start = fall2
+		script = monkey.Script()
+		add_message_to_script(script, 30)
+		script.add(monkey.actions.SierraEnable(id=player.id, value=False))
+		script.add(monkey.actions.CallFunc(lambda: player.set_position(player.x, player.y, -0.6)))
+		script.add(monkey.actions.Animate(id=player.id, anim='fall'))
+		script.add(monkey.actions.Move(id=player.id, position=(player.x, 0, -0.6), speed=10))
+		script.add(monkey.actions.CallFunc(CallFuncs.goto_room('room_goldegg', x= 40, y=40)))
+		#script.add(monkey.actions.CallFunc(CallFuncs.goto_room('room_goldegg', dir='s', x=200, y=50)))
+		#script.add(monkey.actions.CallFunc(lambda: exit(1)))
+		monkey.play(script)
+	return f
 
 
 def drown(**kwargs):
@@ -170,13 +203,18 @@ def push_rock(**kwargs):
 	# 		msg(id=93, x='rock')
 
 def add_to_inventory(**kwargs):
-	print(kwargs['item'])
+	item = kwargs['item']
+	#print(kwargs['item'])
 	# check if item is already held
-	if kwargs['item'].name in settings.tree.find('graham'):
-		msg (lines=[16])
+	if item.name in settings.tree.find('graham'):
+		# item is held
+		msg(lines=[16])
 	else:
 		msg(lines=kwargs['lines'])
-		settings.tree.find(kwargs['item'].name).move_to(settings.tree.find('graham'))
+		settings.tree.find(item.name).move_to(settings.tree.find('graham'))
+		node = monkey.get_node(item.iid)
+		if node:
+			node.remove()
 		settings.tree.print()
 
 def make_solid_rect(x, y, w, h, color = 'FFFFFF', z = 0):
@@ -242,7 +280,7 @@ def climb_tree(**kwargs):
 	if m == 0:
 		n = monkey.Script()
 		add_message_to_script(n, 23)
-		n.add(monkey.actions.CallFunc(CallFuncs.goto_room('room_start', dir='s', x=200, y=50)))
+		n.add(monkey.actions.CallFunc(CallFuncs.goto_room('room_treetop', dir='n', x=82, y=5)))
 		monkey.play(n)
 
 def ciappi(ogre, player):
@@ -250,3 +288,9 @@ def ciappi(ogre, player):
 	ogre.sendMessage(id="setFunc", func=None)
 	ogre.setAnimation('catch')
 	msg(lines=[25])
+
+def start_swim(other, player):
+	player.set_model(monkey.models.getSprite('sprites/graham_swim'), batch='sprites')
+
+def end_swim(other, player):
+	player.set_model(monkey.models.getSprite('sprites/graham'), batch='sprites')

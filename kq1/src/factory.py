@@ -168,3 +168,7 @@ def create_room(room):
     settings.game_node_id = game_node.id
     settings.text_node_id = text_node.id
     settings.parser_id = parser.id
+
+    if settings.on_room_start:
+        settings.on_room_start()
+        settings.on_room_start = None

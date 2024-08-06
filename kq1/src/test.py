@@ -16,3 +16,6 @@ def start():
 
 def rock():
     set_player('room_rock', [200, 40])
+
+def cliff():
+    set_player('room_cliff', [220, 40])

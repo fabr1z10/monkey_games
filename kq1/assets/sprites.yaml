@@ -508,6 +508,7 @@ sprites:
             anchor: [15,3]
           - tex: [182,107,38,11]
             anchor: [15,5]
+
   graham:
     animations:
       idle_e:
@@ -611,3 +612,28 @@ sprites:
             anchor: [15,3]
           - tex: [182,107,38,11]
             anchor: [15,5]
+      fall:
+        box: 0
+        frames:
+          - tex: [397,38,22,24]
+            anchor: [11, 13]
+          - tex: [397,63,22,8]
+            anchor: [11,4]
+          - tex: [397,2,22,24]
+            anchor: [11,10]
+          - tex: [397,27,22,10]
+            anchor: [11,4]
+      land:
+        box: 0
+        frames:
+          - tex: [397,2,22,24]
+            anchor: [11,5 ]
+      stars:
+        box: 0
+        frames:
+          - tex: [397,72,22,24]
+            anchor: [11,5]
+          - tex: [397,97,22,24]
+            anchor: [11,5]
+          - tex: [397,122,22,24]
+            anchor: [11,5]

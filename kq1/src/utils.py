@@ -6,6 +6,19 @@ from . import settings
 from . import data
 from . import utils
 
+def clamp(x, x0, x1):
+    return x0 if x <= x0 else (x1 if x>= x1 else x)
+
+def retrieveFunc(f):
+    if not f:
+        return None
+    if isinstance(f, str):
+        return getattr(scripts, f)
+    elif len(f) == 0:
+        return getattr(scripts, f[0])
+    else:
+        return getattr(scripts, f[0])(**f[1])
+
 def read(item, key: str, default=None):
 	# some keys can contain code
 	value = item.get(key, default)
@@ -74,8 +87,9 @@ def makeCollider(data, shape=None):
     collider = monkey.components.Collider(settings.CollisionFlags.hotspot,
         collideMask, 10, shape, batch='lines')
     for c in data['response']:
-        f = getattr(scripts, c['on_enter'][0])(**c['on_enter'][1])
-        collider.setResponse(c['tag'], on_enter=f)
+        on_enter = retrieveFunc(c.get('on_enter', []))
+        on_exit = retrieveFunc(c.get('on_exit', []))
+        collider.setResponse(c['tag'], on_enter=on_enter, on_exit=on_exit)
     return collider
 
 def makeScoreBar():
@@ -152,9 +166,9 @@ def process_action(s: str):
         valid = dobj and (not indirect_object or not iobj)
         if not valid:
             # try with room actions
-            actions = getCurrentRoom().get('actions')
+            actions = getCurrentRoom().get('actions', None)
             action_string = verb + '_' + direct_object + ('' if not indirect_object else indirect_object)
-            if action_string in actions:
+            if actions and action_string in actions:
                 print('found!')
                 callScript(actions[action_string])
             else:

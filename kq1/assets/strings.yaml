@@ -33,6 +33,7 @@ parser:
     dagger: {'dagger'}
     carrot_w: {'carrot'}
     carrot_e: {'carrot'}
+    egg: {"egg", "gold egg", "golden egg"}
 strings:
   1: "##settings.strings[random.choice([2,3])]##"
   2: This is a very beautiful tree.
@@ -63,3 +64,11 @@ strings:
   27: There are many large, plump carrots in the garden.
   28: You pluck a plump, orange carrot from the ground.
   29: This is one of the tastiest looking carrots you have ever seen.
+  30: Apparently you lost your grip while climbing this tree and you fall to the hard earth below.
+  31: OUCH
+  32: The golden egg is smooth and shiny
+  33: The golden egg is so heavy you almost drop it.
+  34: The smooth golden egg shines brightly in the sunlight.
+  35: This is a relatively low, rustic stone fence which runs along the left and rear sides of the garden.
+  36: It is a relatively low, native stone and masonry fence to the right and rear of a garden.
+  37: This is a beautiful little lake.

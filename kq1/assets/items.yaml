@@ -44,6 +44,16 @@ items:
     actions:
       get: [add_to_inventory, {'lines': [17]}]
       look: [look_item, {'held': [18], 'not_held': [20], 'image': 'sprites/item_dagger'}]
+  egg:
+    type: node
+    parent: room_treetop
+    quad:
+      batch: 'treetop'
+      coords: [1, 167, 28, 17]
+    pos: [ 138,81,0 ]
+    actions:
+      get: [ add_to_inventory, { 'lines': [ 33 ] } ]
+      look: [ look_item, { 'held': [ 34 ], 'not_held': [ 32 ], 'image': 'sprites/item_egg' } ]
   hole:
     type: node
     parent: room_rock
@@ -100,7 +110,7 @@ items:
         pos: [286,155,0]
   room_cliff:
     walkareas:
-      - poly: [ 0,0,316,0,316,166,0,166 ]
+      - poly: [ 0,0,316,0,316,110,153,110,173,108,187,97,191,84,213,67,217,55,187,61,172,62,170,67,137,70,137,77,89,77,85,85,0,85]
     south:
       room: room_gardene
     items:
@@ -109,16 +119,38 @@ items:
         quad:
           batch: "cliff"
           coords: [ 0, 0, 316, 166 ]
+      - {'type': 'swim_area', 'poly': [0,0,146,0,167,10,196,36,215,45,216,56,212,63,162,91,0,91]}
+      - {'type': 'bgitem', 'pos': [128, 41], 'batch': 'cliff', 'coords': [1,168,46,19], 'baseline': [0,5,18,0,26,3,40,3,46,5], 'y_back': 7}
+      - {'type': 'bgitem', 'pos': [96, 44], 'batch': 'cliff', 'coords': [1,188,28,12], 'baseline': [0,1,4,0,22,0,28,1], 'y_back': 3}
+      - {'type': 'bgitem', 'pos': [182, 44], 'batch': 'cliff', 'coords': [1,201,22,11], 'baseline': [0,0,18,0,22,1], 'y_back': 2}
+
+
+  room_fairy:
+    walkareas:
+      - poly: [0,0,316,0,316,166,0,166]
+    west:
+      room: room_gardene
+    items:
+      - type: node
+        pos: [ 0, 0, -1 ]
+        quad:
+          batch: "fairy"
+          coords: [ 0, 0, 316, 166 ]
   room_gardene:
     walkareas:
       - poly: [ 0,0,316,0,316,166,0,166 ]
     south:
       room: room_start
+      x_bounds: [180, 316]
     west:
       room: room_gardenw
-    #east: fairy
+    east:
+      room: room_fairy
     north:
       room: room_cliff
+      x_bounds: [200, 316]
+    actions:
+      look_wall: [msg, {'lines': [36]}]
     items:
       - type: node
         pos: [ 0, 0, -1 ]
@@ -165,7 +197,7 @@ items:
       room: room_castle
     actions:
       look_garden: [msg, {'lines': [26]}]
-
+      look_wall: [msg, {'lines': [35]}]
     items:
       - type: node
         pos: [ 0, 0, -1 ]
@@ -253,6 +285,21 @@ items:
         quad:
           batch: "goldegg"
           coords: [3,297,48,26]
+  room_lake2:
+    walkareas:
+      - poly: [ 0, 0, 316, 0, 316, 166, 0, 166 ]
+    items:
+      - type: node
+        pos: [ 0, 0, -1 ]
+        quad:
+          batch: "lake2"
+          coords: [ 0, 0, 316, 166 ]
+      - {'type': 'swim_area', 'poly': [207,43,228,38,234,31,238,6,263,4,297,10,316,5,316,112,293,114,263,111,274,113,264,108,208,108,187,104,170,96,169,93,173,90,202,87,209,83,194,61,203,46]}
+      - {'type': 'bgitem', 'pos': [10,95], 'batch': 'lake2', 'coords': [1, 167, 105, 71], 'baseline': [34,2,38,0,66,0,72,3], 'y_back': 4}
+      - { 'type': 'bgitem', 'pos': [ 180,79  ], 'batch': 'lake2', 'coords': [115, 219, 24, 44], 'baseline': [0,1,8,0,14,0,24,2 ], 'y_back': 3 }
+      - { 'type': 'bgitem', 'pos': [ 154,31  ], 'batch': 'lake2', 'coords': [176, 168, 138, 135], 'baseline': [50,2,58,0,68,0,74,4], 'y_back': 5 }
+    actions:
+      look_lake: [msg, {'lines': [37]}]
   room_ogre:
     walkareas:
       - poly: [ 0, 0, 316, 0, 316, 166, 0, 166 ]
@@ -284,9 +331,12 @@ items:
       look_castle: [ msg, { 'lines': [4] } ]
       look_alligator: &alli [ msg, { 'lines': [ 5 ] } ]
       look_alligators: *alli
-
+    east:
+      room: room_lake2
     west:
       room: room_castle
+    north:
+      room: room_gardene
     items:
       - type: node
         pos: [0, 0, -1]
@@ -374,6 +424,48 @@ items:
           coords: [81,237,60,58]
     actions:
       look_tree: [msg, {'lines': [11]}]
+  room_treetop:
+    walkareas:
+      - poly: [ 0,0,165,0,165,70,148,70,122,81,73,81,73,32,0,32]
+    south:
+      room: room_goldegg
+      x: 177
+      y: 47
+    items:
+      - type: node
+        pos: [ 0, 0, -1 ]
+        quad:
+          batch: "treetop"
+          coords: [ 0, 0, 316, 166 ]
+      - type: node
+        pos: [ 40, 0, -0.5]
+        quad:
+          batch: "treetop"
+          coords: [33,167,126,80]
+      - type: node
+        hole:
+          poly: [41,0,55,13,64,13,74,23,82,23,97,37,113,49,115,60,107,61,85,54,76,48,63,25]
+          mode: npc
+          collide:
+            response:
+              - tag: 0
+                on_enter: ['fall', {}]
+      - type: node
+        hole:
+          poly: [60,61,86,67,112,78,120,80,60,80]
+          mode: npc
+          collide:
+            response:
+              - tag: 0
+                on_enter: ['fall', {}]
+      - type: node
+        hole:
+          poly: [ 112,0,200,0,200,72,167,72,148,59,135,29]
+          mode: npc
+          collide:
+            response:
+              - tag: 0
+                on_enter: ['fall', {}]
   room_test3d:
     walkarea:
       poly: [10, 10, 306, 10, 306, 156, 10, 156]
