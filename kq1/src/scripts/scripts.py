@@ -11,11 +11,16 @@ def addNode(node):
 	monkey.get_node(settings.game_node_id).add(node)
 
 
-def create_foe_script(f):
+def create_foe_script(item, msg, on_create_callback=None):
+	def f():
+		node = item_builders.character(item)
+		addNode(node)
 	script = monkey.Script()
 	script.add(monkey.actions.Delay(random.randint(1, 10)))
 	script.add(monkey.actions.CallFunc(f))
-	add_message_to_script(script, 24)
+	if on_create_callback:
+		script.add(monkey.actions.CallFunc(on_create_callback))
+	add_message_to_script(script, msg)
 	monkey.play(script)
 
 
@@ -179,10 +184,19 @@ def init_start():
 		addNode(item_builders.character(alligator))
 
 def init_ogre():
-	def f():
-		ogre = item_builders.character(settings.items.ogre)
-		addNode(ogre)
-	create_foe_script(f)
+	create_foe_script(settings.items.ogre, 24)
+
+
+def spellEnd():
+	settings.items.graham.spell = 0
+	msg(lines=[39])
+def init_fairy():
+	# fairy appears only if graham has no protective spell
+	def on_create_fairy():
+		settings.items.graham.spell = 1
+		monkey.getClock().addEvent(True, True, 15, spellEnd)
+	if settings.items.graham.spell == 0:
+		create_foe_script(settings.items.fairy, 38, on_create_fairy)
 
 
 def push_rock(**kwargs):
