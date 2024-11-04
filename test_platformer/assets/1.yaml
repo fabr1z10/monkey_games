@@ -1,6 +1,39 @@
 sheet: '1.png'
 tile_size: [8, 8]
 sprites:
+  mario:
+    boxes:
+      - [-4,0,4,16]
+    animations:
+      idle:
+        frames:
+          - tex: [0,240,16,16]
+            anchor: [8, 0]
+            box: 0
+      jump:
+        frames:
+          - tex: [64,240,16,16]
+            anchor: [8, 0]
+            box: 0
+      slide:
+        frames:
+          - tex: [96,240,16,16]
+            anchor: [8, 0]
+            box: 0
+      dead:
+        frames:
+          - tex: [80,240,16,16]
+            anchor: [8, 0]
+            box: 0
+      walk:
+        box: 0
+        frames:
+          - tex: [16,240,16,16]
+            anchor: [8, 0]
+          - tex: [32,240,16,16]
+            anchor: [8, 0]
+          - tex: [48,240,16,16]
+            anchor: [8, 0]
   goomba:
     boxes:
       - [-8, 0, 8, 16]
