@@ -1,2 +1,23 @@
 sheet: '1.png'
 tile_size: [8, 8]
+sprites:
+  goomba:
+    boxes:
+      - [-8, 0, 8, 16]
+    animations:
+      walk:
+        box: 0
+        frames:
+          - tex: [0, 16, 16, 16]
+            anchor: [8, 0]
+          - tex: [0,16,16,16]
+            anchor: [8, 0]
+            fliph: True
+      jump:
+        box: 0
+        frames:
+          - tex: [0, 16, 16, 16]
+            anchor: [8, 0]
+          - tex: [0,16,16,16]
+            anchor: [8, 0]
+            fliph: True

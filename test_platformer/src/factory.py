@@ -1,9 +1,8 @@
 import monkey
-import math
 
-FLAG_PLAYER = 1
-FLAG_FOE = 4
-FLAG_PLATFORM = 2
+from .mario import Mario
+from .items import RectangularPlatform
+from .foes import Goomba
 
 # moving platform
 def make_moving_platform(p0, delta, time):
@@ -15,43 +14,6 @@ def make_moving_platform(p0, delta, time):
   mp.add_component(mover)
   #mp.set_position(160, 120)
   return mp
-
-class RectangularPlatform(monkey.Node):
-  def __init__(self, x, y, width, height, tw=1, th=1):
-    super().__init__()
-    platform_width = width * tw * 8
-    platform_height = height * th * 8
-    tp= monkey.TileParser('gfx')
-    self.set_model(tp.parse('Q {0},{1},{2},{3},{4},{5}'.format(x,y,tw,th,width,height)))
-    self.add_component(monkey.components.Collider(FLAG_PLATFORM, 0, 1, monkey.shapes.AABB(0, platform_width, 0, platform_height)))
-
-
-class FoeController(monkey.components.CustomController2D):
-  def __init__(self, **kwargs):
-    super().__init__(self.ciao, **kwargs)
-    self.vy = 0
-
-  def ciao(self, dt):
-    self.vy -= 50.0 * dt
-    self.move((0, self.vy*dt), False)
-    if self.grounded:
-      print('grounded')
-      self.vy = abs(self.vy)
-
-
-
-
-
-
-class Foe(monkey.Node):
-  def __init__(self):
-    super().__init__()
-    self.set_position(64,128)
-    self.add_component(monkey.components.Collider(FLAG_FOE, 0, 0, monkey.shapes.AABB(-8, 8, 0, 16)))
-    self.add_component(FoeController(size=(16,16), speed=100, acceleration=500,
-                                                      jump_height=128, time_to_jump_apex=1))
-
-
 
 
 def test1(room):
@@ -113,17 +75,24 @@ def test2(room):
   #tp= monkey.TileParser('gfx')
   #m.set_model(tp.parse('Q  0,0,2,2,69,2;'))
   #root.add(m)
-
-  root.add(RectangularPlatform(0, 0, 69, 2, tw=2, th=2))
+  a = RectangularPlatform(0, 0, 0, 0, 20, 2, tw=2, th=2)
+  #a =Mario(32,128)
+  root.add(a)#RectangularPlatform(0, 0, 0, 0, 20, 2, tw=2, th=2))
   #root.add(Cane())
-  player = monkey.Node()
-  player.set_position(32, 128)
-  player.add_component(monkey.components.Collider(FLAG_PLAYER, 0, 0, monkey.shapes.AABB(-8, 8, 0, 16)))
-  player.add_component(monkey.components.PlayerController2D(size=(16,16), speed=100, acceleration=500,
-                                                      jump_height=128, time_to_jump_apex=1))
-  player.add_component(monkey.components.Follow(0))
-  root.add(player)
-  root.add(Foe())
+  #player = monkey.Node()
+  #player.set_position(32, 128)
+  #pc = monkey.components.Collider(FLAG_PLAYER, FLAG_FOE, 0, monkey.shapes.AABB(-8, 8, 0, 16))
+  #def pippo(foe):
+  #  foe.node.remove()
+
+
+  #pc.setResponse(TAG_FOE, on_enter=pippo)
+  #player.add_component(pc)
+  #player.add_component(monkey.components.PlayerController2D(size=(16,16), speed=100, acceleration=500,
+  #jump_height=128, time_to_jump_apex=1))
+  #player.add_component(monkey.components.Follow(0))
+  root.add(Mario(32, 128))
+  root.add(Goomba(128, 40))
 
 
 
