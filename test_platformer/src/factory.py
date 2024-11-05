@@ -3,6 +3,7 @@ import monkey
 from .mario import Mario
 from .items import RectangularPlatform
 from .foes import Goomba
+from .room import GameRoom
 
 # moving platform
 def make_moving_platform(p0, delta, time):
@@ -57,45 +58,19 @@ def test1(room):
   player.add_component(monkey.components.Follow(0))
   root.add(player)
 
-def test2(room):
-  world_size = (512, 240)
-  cam = monkey.CamOrtho(256, 240,
-                        viewport=(0, 0, 256, 240),
-                        bounds_x=(128, world_size[0]-128), bounds_y=(120, world_size[1]-120))
-  room.add_runner(monkey.CollisionEngine2D(80, 80))
-  room.add_camera(cam)
-  room.add_batch('lines', monkey.LineBatch(max_elements=200, cam=0))
-  room.add_batch('gfx', monkey.SpriteBatch(max_elements=10000, cam=0, sheet='1'))
+def test2():
+  room = GameRoom((512, 240))
   root = room.root()
-
-
-
-  #m = monkey.Node()
-  #m.set_position(128,128)
-  #tp= monkey.TileParser('gfx')
-  #m.set_model(tp.parse('Q  0,0,2,2,69,2;'))
-  #root.add(m)
   a = RectangularPlatform(0, 0, 0, 0, 20, 2, tw=2, th=2)
-  #a =Mario(32,128)
-  root.add(a)#RectangularPlatform(0, 0, 0, 0, 20, 2, tw=2, th=2))
-  #root.add(Cane())
-  #player = monkey.Node()
-  #player.set_position(32, 128)
-  #pc = monkey.components.Collider(FLAG_PLAYER, FLAG_FOE, 0, monkey.shapes.AABB(-8, 8, 0, 16))
-  #def pippo(foe):
-  #  foe.node.remove()
-
-
-  #pc.setResponse(TAG_FOE, on_enter=pippo)
-  #player.add_component(pc)
-  #player.add_component(monkey.components.PlayerController2D(size=(16,16), speed=100, acceleration=500,
-  #jump_height=128, time_to_jump_apex=1))
-  #player.add_component(monkey.components.Follow(0))
+  root.add(a)
   root.add(Mario(32, 128))
   root.add(Goomba(128, 40))
+  return room
 
 
 
 
-def create_room(room):
-  test2(room)
+def create_room():
+  return test2()
+  #r = GameRoom((512, 240))
+  #return r

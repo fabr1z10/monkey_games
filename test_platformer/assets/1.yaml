@@ -54,3 +54,7 @@ sprites:
           - tex: [0,16,16,16]
             anchor: [8, 0]
             fliph: True
+      dead:
+        frames:
+          - tex: [16, 16, 16, 8]
+            anchor: [8, 0]
