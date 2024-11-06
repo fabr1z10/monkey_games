@@ -27,7 +27,7 @@ class FoeController2(monkey.components.Controller2D):
 
   def dead(self, dt):
     self.timer += dt
-    if self.timer > 32:
+    if self.timer > 2:
       self.node.remove()
 
   def ciao(self, dt):
@@ -42,22 +42,20 @@ class FoeController2(monkey.components.Controller2D):
 
 class Goomba(monkey.Node):
 
-  def on_hit_by_player(self, foe, player, delta):
-    print('HIT ', delta)
-    if delta[1] < 0:
-      self.setAnimation('dead')
-      self.controller.setState(1)
-      player.bounceOnFoe()
-      #foe.remove()
+  def __del__(self):
+    print('HALLLN')
+  def pippo(self):
+    self.remove()
 
   def __init__(self, x, y):
     super().__init__()
+    #monkey.engine().storeRef(self)
     self.set_position(x, y)
     self.set_model(monkey.models.getSprite('gfx/goomba'), batch='gfx')
     # add collider
     collider = monkey.components.Collider(values.FLAG_FOE, values.FLAG_PLAYER,
 		values.TAG_FOE, monkey.shapes.AABB(-8, 8, 0, 16))
-    collider.setResponse(values.TAG_PLAYER, on_enter=self.on_hit_by_player)
+    #collider.setResponse(values.TAG_PLAYER, on_enter=self.on_hit_by_player)
 
     self.add_component(collider)
     self.controller = FoeController2(size=(16,16), speed=20, acceleration=500,

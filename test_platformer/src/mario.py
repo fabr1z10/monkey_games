@@ -5,6 +5,9 @@ from . import values
 
 
 class Mario(monkey.Node):
+	def __del__(self):
+		print('PANZONE',self.id)
+
 	def on_hit_by_foe(self, player, foe, delta):
 		print('HIT BY FOE', delta)
 		self.setAnimation('dead')
@@ -28,6 +31,7 @@ class Mario(monkey.Node):
 
 	def __init__(self, x, y):
 		super().__init__()
+		#monkey.engine().storeRef(self)
 		self.time=0
 		self.vx=0
 		self.vy=0
@@ -37,12 +41,12 @@ class Mario(monkey.Node):
 		self.set_model(monkey.models.getSprite('gfx/mario'), batch='gfx')
 		# add collider
 		collider = monkey.components.Collider(values.FLAG_PLAYER, values.FLAG_FOE, values.TAG_PLAYER, monkey.shapes.AABB(-8, 8, 0, 16))
-		collider.setResponse(values.TAG_FOE, on_enter=self.on_hit_by_foe)
+		#collider.setResponse(values.TAG_FOE, on_enter=self.on_hit_by_foe)
 		self.add_component(collider)
 		# add controller
 		self.controller = monkey.components.PlayerController2D(size=(16, 16), speed=100,
 			acceleration=500, jump_height=64, time_to_jump_apex=0.5)
-		self.controller.addCallback(self.dead)
+		#self.controller.addCallback(self.dead)
 		self.add_component(self.controller)
 
 
