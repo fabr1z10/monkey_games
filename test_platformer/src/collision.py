@@ -14,10 +14,7 @@ class MarioVsGoomba(monkey.CollisionResponse):
 		if who == 0 and move[1] < 0:
 			print('removing')
 			#foe.node.remove()
-			foe.node.setAnimation('dead')
-			#print(type(player.node))
-			#print(type(foe.node))
-			foe.node.controller.setState(1)
+			foe.node.dead()
 			player.node.bounceOnFoe()
 
 		print('START COLLISION')

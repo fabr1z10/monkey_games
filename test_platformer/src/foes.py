@@ -44,8 +44,13 @@ class Goomba(monkey.Node):
 
   def __del__(self):
     print('HALLLN')
-  def pippo(self):
-    self.remove()
+
+  def dead(self):
+    self.setAnimation('dead')
+    self.controller.setState(1)
+    # disable collisions
+    self.collider.setState(monkey.NodeState.INACTIVE)
+    #self.remove()
 
   def __init__(self, x, y):
     super().__init__()
@@ -53,11 +58,11 @@ class Goomba(monkey.Node):
     self.set_position(x, y)
     self.set_model(monkey.models.getSprite('gfx/goomba'), batch='gfx')
     # add collider
-    collider = monkey.components.Collider(values.FLAG_FOE, values.FLAG_PLAYER,
+    self.collider = monkey.components.Collider(values.FLAG_FOE, values.FLAG_PLAYER,
 		values.TAG_FOE, monkey.shapes.AABB(-8, 8, 0, 16))
     #collider.setResponse(values.TAG_PLAYER, on_enter=self.on_hit_by_player)
 
-    self.add_component(collider)
+    self.add_component(self.collider)
     self.controller = FoeController2(size=(16,16), speed=20, acceleration=500,
 		jump_height=128, time_to_jump_apex=1)
     self.add_component(self.controller)

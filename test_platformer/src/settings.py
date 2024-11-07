@@ -1,6 +1,6 @@
 import monkey
 
-device_size = (256, 240)
+device_size = (320, 200)
 title = 'New game'
 
 DRAW_COLLIDER_OUTLINE = 'lines'

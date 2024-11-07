@@ -1,0 +1,5 @@
+sheet: 'bubble.png'
+tile_size: [8, 8]
+palettes:
+  brown:
+    af3c58: b7631e
