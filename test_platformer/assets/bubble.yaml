@@ -3,3 +3,30 @@ tile_size: [8, 8]
 palettes:
   brown:
     af3c58: b7631e
+sprites:
+  bub:
+    animations:
+      idle:
+        frames:
+          - tex: [0,239,20,17]
+            anchor: [14, 0]
+          - tex: [21,239,20,17]
+            anchor: [14, 0]
+      jump:
+        frames:
+          - tex: [0,239,20,17]
+            anchor: [14, 0]
+          - tex: [21,239,20,17]
+            anchor: [14, 0]
+      jump_up:
+        frames:
+          - tex: [84,239,20,17]
+            anchor: [14,0]
+          - tex: [105,239,20,17]
+            anchor: [14,0]
+      walk:
+        frames:
+          - tex: [0,239,20,17]
+            anchor: [14, 0]
+          - tex: [21,239,20,17]
+            anchor: [14, 0]

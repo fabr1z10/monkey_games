@@ -29,23 +29,30 @@ class Mario(monkey.Node):
 		else:
 			self.remove()
 
-	def __init__(self, x, y):
+	def __init__(self, x, y, sprite, width, height, **kwargs):
 		super().__init__()
 		#monkey.engine().storeRef(self)
 		self.time=0
 		self.vx=0
 		self.vy=0
 		#self.tag = 'Mario'
-		self.set_position(x, y)
+		self.set_position(x, y, 1)
 		# model
-		self.set_model(monkey.models.getSprite('gfx/mario'), batch='gfx')
+		batch = sprite[:sprite.find('/')]
+		self.set_model(monkey.models.getSprite(sprite), batch=batch)
 		# add collider
-		collider = monkey.components.Collider(values.FLAG_PLAYER, values.FLAG_FOE, values.TAG_PLAYER, monkey.shapes.AABB(-8, 8, 0, 16))
+		collider = monkey.components.Collider(values.FLAG_PLAYER, values.FLAG_FOE, values.TAG_PLAYER, monkey.shapes.AABB(-width//2, width//2, 0, height))
 		#collider.setResponse(values.TAG_FOE, on_enter=self.on_hit_by_foe)
 		self.add_component(collider)
 		# add controller
+		walk = kwargs.get('walk', 'walk')
+		idle = kwargs.get('idle', 'idle')
+		slide = kwargs.get('slide', 'slide')
+		jumpUp = kwargs.get('jumpUp', 'jump')
+		jumpDown = kwargs.get('jumpDown', 'jump')
 		self.controller = monkey.components.PlayerController2D(size=(16, 16), speed=100,
-			acceleration=500, jump_height=64, time_to_jump_apex=0.5)
+			acceleration=500, jump_height=64, time_to_jump_apex=0.5,
+			walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
 		#self.controller.addCallback(self.dead)
 		self.add_component(self.controller)
 

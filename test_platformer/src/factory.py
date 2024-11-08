@@ -71,7 +71,7 @@ def test2():
 
 def test3():
   level_info = monkey.read_data_file('bblevels.yaml')
-  level = level_info[2]
+  level = level_info[3]
 
   room = GameRoom((320, 200), (320,200), 'bubble')
   root = room.root()
@@ -173,6 +173,8 @@ def test3():
   #print(shade_str)
   shadeNode.set_model(tp.parse(shade_str))
   level.add(shadeNode)
+  root.add(Mario(32, 128, 'gfx/bub', 6, 16, slide='walk',
+                 jumpUp='jump_up'))
 
 
 
