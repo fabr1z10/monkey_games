@@ -4,6 +4,29 @@ palettes:
   brown:
     af3c58: b7631e
 sprites:
+  bubble:
+    animations:
+      default:
+        loop:
+        frames:
+          - tex: [0,224,8,8]
+            anchor: [4,4]
+          - tex: [10,220,12,12]
+            anchor: [6,6]
+  bub_fire:
+    ticks: 4
+    animations:
+      default:
+        frames:
+          - tex: [0,239,20,17]
+            anchor: [14, 0]
+          - tex: [42,238,20,18]
+            anchor: [14,0]
+          - tex: [63,237,20,19]
+            anchor: [14,0]
+          - tex: [42,238,20,18]
+            anchor: [14,0]
+
   bub:
     animations:
       idle:

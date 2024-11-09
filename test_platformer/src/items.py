@@ -2,6 +2,42 @@ import monkey
 from . import values
 
 
+class BubbleController(monkey.components.Controller2D):
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
+    self.addCallback(self.minchia)
+
+  def minchia(self, dt):
+
+    self.node.move((dt,0))
+
+
+class Bubble(monkey.Node):
+
+	def minchia(self, dt):
+		self.move((20*dt, 0, 0))
+		if self.x > self.x0 + 64:
+			self.controller.setState(1)
+
+	def minchia2(self, dt):
+		self.move((0, 20 * dt, 0))
+	def __init__(self, x, y):
+		super().__init__()
+		self.x0 = x
+		self.set_position(x, y)
+		self.set_model(monkey.models.getSprite('gfx/bubble'), batch='gfx')
+		self.collider = monkey.components.Collider(values.FLAG_BUBBLE, values.FLAG_PLAYER | values.FLAG_FOE,
+			values.TAG_FOE, monkey.shapes.AABB(-8, 8, -8, 8))
+		self.controller = monkey.components.Controller2D(size=(16, 16), speed=20, acceleration=500,
+										 jump_height=0, time_to_jump_apex=0)
+		self.controller.addCallback(self.minchia)
+		self.controller.addCallback(self.minchia2)
+		self.add_component(self.collider)
+		self.add_component(self.controller)
+
+
+
+
 class LinePlatform(monkey.Node):
 	def __init__(self, x, y, width, oy=0):
 		super().__init__()

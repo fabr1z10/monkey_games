@@ -1,6 +1,6 @@
 import monkey
 from . import values
-
+from .items import Bubble
 
 
 
@@ -29,6 +29,14 @@ class Mario(monkey.Node):
 		else:
 			self.remove()
 
+	def fire(self):
+		print('FIRE!')
+		self.controller.setModel(1)
+
+	def makeBubble(self):
+		bubble = Bubble(self.x, self.y + 8)
+		self.parent.add(bubble)
+
 	def __init__(self, x, y, sprite, width, height, **kwargs):
 		super().__init__()
 		#monkey.engine().storeRef(self)
@@ -39,7 +47,7 @@ class Mario(monkey.Node):
 		self.set_position(x, y, 1)
 		# model
 		batch = sprite[:sprite.find('/')]
-		self.set_model(monkey.models.getSprite(sprite), batch=batch)
+		#self.set_model(monkey.models.getSprite(sprite), batch=batch)
 		# add collider
 		collider = monkey.components.Collider(values.FLAG_PLAYER, values.FLAG_FOE, values.TAG_PLAYER, monkey.shapes.AABB(-width//2, width//2, 0, height))
 		#collider.setResponse(values.TAG_FOE, on_enter=self.on_hit_by_foe)
@@ -50,9 +58,15 @@ class Mario(monkey.Node):
 		slide = kwargs.get('slide', 'slide')
 		jumpUp = kwargs.get('jumpUp', 'jump')
 		jumpDown = kwargs.get('jumpDown', 'jump')
-		self.controller = monkey.components.PlayerController2D(size=(16, 16), speed=100,
+		self.controller = monkey.components.PlayerController2D(batch, size=(16, 16), speed=100,
 			acceleration=500, jump_height=64, time_to_jump_apex=0.5,
 			walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
+		self.controller.addModel(monkey.models.getSprite(sprite), idle, walk, slide, jumpUp, jumpDown)
+		bf = monkey.models.getSprite('gfx/bub_fire')
+		bf.addFrameCallback('default', 2, self.makeBubble)
+		bf.addFrameCallback('default', 0, lambda: self.controller.setModel(0))
+		self.controller.addModel(bf, 'default', 'default', 'default','default', 'default')
+		self.controller.addKeyEvent(65, self.fire)
 		#self.controller.addCallback(self.dead)
 		self.add_component(self.controller)
 
