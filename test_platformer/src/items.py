@@ -1,6 +1,6 @@
 import monkey
 from . import values
-
+from . import settings
 
 class BubbleController(monkey.components.Controller2D):
   def __init__(self, **kwargs):
@@ -17,14 +17,38 @@ class Bubble(monkey.Node):
 	def minchia(self, dt):
 		self.move((20*dt, 0, 0))
 		if self.x > self.x0 + 64:
+			ix = int(self.x//16)
+			iy = int(self.y//16)
+			self.direction = settings.bubinfo[iy][ix]
+			print('going to ',self.direction)
 			self.controller.setState(1)
 
 	def minchia2(self, dt):
-		self.move((0, 20 * dt, 0))
+		if self.direction == 0:
+			# find cell
+			self.move((0,10*dt,0))
+			iy = int((self.y - 8) // 16)
+			ix = int(self.x // 16)
+		elif self.direction == 1:
+			self.move((0, -10 * dt, 0))
+			iy = int((self.y + 8) // 16)
+			ix = int(self.x // 16)
+		elif self.direction == 2:
+			self.move((-10 * dt, 0, 0))
+			iy = int(self.y // 16)
+			ix = int((self.x + 8) // 16)
+		else:
+			self.move((10 * dt, 0, 0))
+			iy = int(self.y // 16)
+			ix = int((self.x + 8) // 16)
+
+		self.direction = settings.bubinfo[iy][ix]
+
 	def __init__(self, x, y):
 		super().__init__()
+		self.direction = 0	# 0 = UP, 1 = DOWN, 2= LEFT,3 = RIGHT
 		self.x0 = x
-		self.set_position(x, y)
+		self.set_position(x, y, 1)
 		self.set_model(monkey.models.getSprite('gfx/bubble'), batch='gfx')
 		self.collider = monkey.components.Collider(values.FLAG_BUBBLE, values.FLAG_PLAYER | values.FLAG_FOE,
 			values.TAG_FOE, monkey.shapes.AABB(-8, 8, -8, 8))

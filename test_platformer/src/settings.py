@@ -2,7 +2,7 @@ import monkey
 
 device_size = (320, 200)
 title = 'New game'
-
+bubinfo= None
 DRAW_COLLIDER_OUTLINE = 'lines'
 
 shaders = [

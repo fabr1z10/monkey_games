@@ -4,6 +4,7 @@ from .mario import Mario
 from .items import RectangularPlatform, LinePlatform
 from .foes import Goomba
 from .room import GameRoom
+from . import settings
 
 # moving platform
 def make_moving_platform(p0, delta, time):
@@ -71,8 +72,8 @@ def test2():
 
 def test3():
   level_info = monkey.read_data_file('bblevels.yaml')
-  level = level_info[3]
-
+  level = level_info[1]
+  settings.bubinfo = level['bubble']
   room = GameRoom((320, 200), (320,200), 'bubble')
   root = room.root()
   tp = monkey.TileParser('gfx')
