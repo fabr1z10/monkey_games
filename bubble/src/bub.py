@@ -1,13 +1,8 @@
 import monkey
-from . import values
+from . import settings
 from .items import Bubble
 
-
-
-class Mario(monkey.Node):
-	def __del__(self):
-		print('PANZONE',self.id)
-
+class Bub(monkey.Node):
 	def on_hit_by_foe(self, player, foe, delta):
 		print('HIT BY FOE', delta)
 		self.setAnimation('dead')
@@ -33,13 +28,16 @@ class Mario(monkey.Node):
 		print('FIRE!')
 		self.controller.setModel(1)
 
-	def makeBubble(self):
-		bubble = Bubble(self.x, self.y + 8, self.flip_x)
-		self.parent.add(bubble)
+	def makeBubble(node):
+		if node.can_bubble:
+			bubble = Bubble(node.x, node.y + 8, node.flip_x)
+			node.parent.add(bubble)
 
+	def resetModel(node):
+		node.controller.setModel(0)
 	def __init__(self, x, y, sprite, width, height, **kwargs):
 		super().__init__()
-		#monkey.engine().storeRef(self)
+		self.can_bubble = True
 		self.time=0
 		self.vx=0
 		self.vy=0
@@ -49,7 +47,9 @@ class Mario(monkey.Node):
 		batch = sprite[:sprite.find('/')]
 		#self.set_model(monkey.models.getSprite(sprite), batch=batch)
 		# add collider
-		collider = monkey.components.Collider(values.FLAG_PLAYER, values.FLAG_FOE, values.TAG_PLAYER, monkey.shapes.AABB(-width//2, width//2, 0, height))
+		collider = monkey.components.Collider(settings.FLAG_PLAYER,
+			settings.FLAG_FOE | settings.FLAG_BUBBLE, settings.TAG_PLAYER,
+			monkey.shapes.AABB(-width//2, width//2, 0, height))
 		#collider.setResponse(values.TAG_FOE, on_enter=self.on_hit_by_foe)
 		self.add_component(collider)
 		# add controller
@@ -63,15 +63,18 @@ class Mario(monkey.Node):
 			walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
 		self.controller.addModel(monkey.models.getSprite(sprite), idle, walk, slide, jumpUp, jumpDown)
 		bf = monkey.models.getSprite('gfx/bub_fire')
-		bf.addFrameCallback('default', 2, self.makeBubble)
-		bf.addFrameCallback('default', 0, lambda: self.controller.setModel(0))
+		# add event when frame is 2
+		bf.addFrameCallback('default', 2, Bub.makeBubble)
+		# add event when frame count resets to 0
+		bf.addFrameCallback('default', 0, Bub.resetModel)
+
 		self.controller.addModel(bf, 'default', 'default', 'default','default', 'default')
+		# add key event: when player hits key A, bub will create a bubble
 		self.controller.addKeyEvent(65, self.fire)
-		#self.controller.addCallback(self.dead)
+
 		self.add_component(self.controller)
-
-
-		self.add_component(monkey.components.Follow(0))
+		# no need to follow, no scrolling
+		#self.add_component(monkey.components.Follow(0))
 
 
 

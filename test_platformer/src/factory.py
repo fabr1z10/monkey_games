@@ -3,8 +3,10 @@ import yaml
 from .mario import Mario
 from .items import RectangularPlatform, LinePlatform
 from .foes import Goomba
-from .room import GameRoom
+from .room import GameRoom, BubbleRoom
 from . import settings
+from . import values
+from .rle import rle_decode
 
 # moving platform
 def make_moving_platform(p0, delta, time):
@@ -72,15 +74,15 @@ def test2():
 
 def test3():
   level_info = monkey.read_data_file('bblevels.yaml')
-  level = level_info[1]
-  settings.bubinfo = level['bubble']
-  room = GameRoom((320, 200), (320,200), 'bubble')
+  li = level_info[1]
+  settings.bubinfo = rle_decode(li['bubble'])
+  room = BubbleRoom((320, 200), (320,200), 'bubble')
   root = room.root()
   tp = monkey.TileParser('gfx')
 
-  tile = level['tile']
-  a=level['desc']#'[28,1,28*4,0,1,1,0,0,0,18,1,0,0,0,1,1,28*4,0,1,1,0,0,0,18,1,0,0,0,1,1,28*4,0,1,1,0,0,0,18,1,0,0,0,1,1,28*8,0,28,1]
-  pal=level['pal']
+  tile = li['tile']
+  a=li['desc']#'[28,1,28*4,0,1,1,0,0,0,18,1,0,0,0,1,1,28*4,0,1,1,0,0,0,18,1,0,0,0,1,1,28*4,0,1,1,0,0,0,18,1,0,0,0,1,1,28*8,0,28,1]
+  pal=li['pal']
   rows = 25
   cols = 28
   array = [[0 for _ in range(cols)] for _ in range(rows)]
@@ -106,35 +108,51 @@ def test3():
       i += 2
   print(array)
   # find horizontal platforms
-  i = 0
-  j = 0
+  ix = 0
+  iy = 0
   level = monkey.Node()
   level.set_position(16, 0)
-  while i < rows:
-    while j < cols:
-      if array[i][j] == 1:
-        is_platform = (i < rows-1 and array[i+1][j] == 0)
-        value_to_check = 0 if is_platform else 1
-        # find length
-        istart = j
-        while j < cols and array[i][j] == 1 and (i==rows-1 or array[i+1][j] == value_to_check):
-          j += 1
-        length = j-istart
-        print('Found horizontal platform starting at (',i,', ',istart,') with length ', length)
-        if is_platform:
-          lp = LinePlatform(istart*8, i*8, length, oy=10) if is_platform else monkey.Node()
-        else:
-          lp = monkey.Node()
-          lp.set_position(istart * 8, i * 8)
-        model ='Q {0},{1},1,1,{2},1'.format(tile[0], tile[1], length)
-        print(model)
-        lp.set_model(tp.parse(model))
-        level.add(lp)
-      else:
-        j += 1
-    i += 1
-    j = 0
+  while iy < rows:
+    while ix < cols:
+      print(ix,iy)
+      if array[iy][ix] == 1:
+        # set initial platform dimensions
+        w = 1
+        h = 1
+        extend = True
+        while extend:
+          # try extending horizontally
+          ext_hor = ix + w < cols
+          if ext_hor:
+            for u in range(h):
+              if array[iy+u][ix+w] != 1:
+                ext_hor = False
+                break
+            if ext_hor:
+              w += 1
+          ext_ver = iy + h < rows
+          if ext_ver:
+            for u in range(w):
+              if array[iy+h][ix+u] != 1:
+                ext_ver = False
+                break
+            if ext_ver:
+              h += 1
+          extend = ext_hor or ext_ver
+        print('found platorm at',ix,iy,'size is',w,h)
+        for u in range(ix, ix+w):
+          for v in range(iy, iy + h):
+            array[v][u] = 2
+        p= RectangularPlatform(ix * values.TILESIZE, iy * values.TILESIZE,
+          w, h, tw=1, th=1, tx=tile[0], ty=tile[1])
+        level.add(p)
+      ix += 1
+    ix = 0
+    iy += 1
   root.add(level)
+  root.add(Mario(32, 128.1, 'gfx/bub', 6, 16, slide='walk',
+                 jumpUp='jump_up'))
+  return room
   # shade effect
   shade_tiles = {
     (0,0,1): (1,2),
@@ -174,11 +192,24 @@ def test3():
   #print(shade_str)
   shadeNode.set_model(tp.parse(shade_str))
   level.add(shadeNode)
-  root.add(Mario(32, 128, 'gfx/bub', 6, 16, slide='walk',
-                 jumpUp='jump_up'))
 
 
+  # side
+  print(level_info)
+  side_desc = li['side']
 
+  leftSide = monkey.Node()
+  leftSide.set_model(tp.parse(side_desc))
+  leftSide.add_component(monkey.components.Collider(values.FLAG_PLATFORM, 0, 1,
+			monkey.shapes.AABB(0, 16, 0, 25*8)))
+  root.add(leftSide)
+
+  rightSide = monkey.Node()
+  rightSide.set_position(30*8,0,0)
+  rightSide.set_model(tp.parse(side_desc))
+  rightSide.add_component(monkey.components.Collider(values.FLAG_PLATFORM, 0, 1,
+                                                    monkey.shapes.AABB(0, 16, 0, 25 * 8)))
+  root.add(rightSide)
 
 
 

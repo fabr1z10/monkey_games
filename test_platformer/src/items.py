@@ -15,39 +15,45 @@ class BubbleController(monkey.components.Controller2D):
 class Bubble(monkey.Node):
 
 	def minchia(self, dt):
-		self.move((20*dt, 0, 0))
-		if self.x > self.x0 + 64:
-			ix = int(self.x//16)
-			iy = int(self.y//16)
-			self.direction = settings.bubinfo[iy][ix]
+		f = -1 if self.flip else 1
+		self.move((f*settings.BUBBLE_SHOOT_SPEED*dt, 0, 0))
+		x = self.x - 16
+		y = self.y - 8
+		if abs(x - self.x0) >= 64:
+			ix = int(x//8)
+			iy = int(y//8)
+			self.direction = settings.bubinfo[iy*28+ix]
 			print('going to ',self.direction)
 			self.controller.setState(1)
 
 	def minchia2(self, dt):
-		if self.direction == 0:
+		x = self.x - 16
+		y = self.y - 8
+		if self.direction == 'U':
 			# find cell
-			self.move((0,10*dt,0))
-			iy = int((self.y - 8) // 16)
-			ix = int(self.x // 16)
-		elif self.direction == 1:
-			self.move((0, -10 * dt, 0))
-			iy = int((self.y + 8) // 16)
-			ix = int(self.x // 16)
-		elif self.direction == 2:
-			self.move((-10 * dt, 0, 0))
-			iy = int(self.y // 16)
-			ix = int((self.x + 8) // 16)
+			self.move((0,settings.BUBBLE_DRIFT_SPEED*dt,0))
+			iy = int((y - 4) // 8)
+			ix = int(x // 8)
+		elif self.direction == 'D':
+			self.move((0, -settings.BUBBLE_DRIFT_SPEED * dt, 0))
+			iy = int((y + 4) // 8)
+			ix = int(x // 8)
+		elif self.direction == 'L':
+			self.move((-settings.BUBBLE_DRIFT_SPEED * dt, 0, 0))
+			iy = int(y // 8)
+			ix = int((x + 4) // 8)
 		else:
-			self.move((10 * dt, 0, 0))
-			iy = int(self.y // 16)
-			ix = int((self.x + 8) // 16)
+			self.move((settings.BUBBLE_DRIFT_SPEED * dt, 0, 0))
+			iy = int(y // 8)
+			ix = int((x + 4) // 8)
 
-		self.direction = settings.bubinfo[iy][ix]
+		self.direction = settings.bubinfo[iy*28+ix]
 
-	def __init__(self, x, y):
+	def __init__(self, x, y, flip):
 		super().__init__()
+		self.flip = flip
 		self.direction = 0	# 0 = UP, 1 = DOWN, 2= LEFT,3 = RIGHT
-		self.x0 = x
+		self.x0 = x - 16
 		self.set_position(x, y, 1)
 		self.set_model(monkey.models.getSprite('gfx/bubble'), batch='gfx')
 		self.collider = monkey.components.Collider(values.FLAG_BUBBLE, values.FLAG_PLAYER | values.FLAG_FOE,
@@ -72,14 +78,15 @@ class LinePlatform(monkey.Node):
 
 
 class RectangularPlatform(monkey.Node):
-	def __init__(self, x, y, tx, ty, width, height, tw=1, th=1):
+	def __init__(self, x, y, width, height, tw=1, th=1, tx=-1, ty=-1):
 		super().__init__()
 		self.set_position(x, y)
 		platform_width = width * tw * values.TILESIZE
 		platform_height = height * th * values.TILESIZE
-		tp= monkey.TileParser('gfx')
-		self.set_model(tp.parse('Q {0},{1},{2},{3},{4},{5}'.format(tx, ty, tw, th, width, height)))
-		self.add_component(monkey.components.Collider(values.FLAG_PLATFORM, 0, 1,
+		if tx != -1:
+			tp= monkey.TileParser('gfx')
+			self.set_model(tp.parse('Q {0},{1},{2},{3},{4},{5}'.format(tx, ty, tw, th, width, height)))
+		self.add_component(monkey.components.Collider(values.FLAG_PLATFORM_SEMI, 0, 1,
 			monkey.shapes.AABB(0, platform_width, 0, platform_height)))
 
 

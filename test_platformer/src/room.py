@@ -19,6 +19,12 @@ class GameRoom(monkey.Room):
 		kb = monkey.components.Keyboard()
 		kb.add(299, 1, 0, lambda: monkey.close_room())
 		root.add_component(kb)
-		self.add_batch('lines', monkey.LineBatch(max_elements=200, cam=0))
+		self.add_batch('lines', monkey.LineBatch(max_elements=800, cam=0))
 		self.add_batch('gfx', monkey.SpriteBatch(max_elements=10000, cam=0, sheet=sheet))
 		monkey.engine().setCurrentRoom(self)
+		settings.bubinfo = rle_decode(li['bubble'])
+
+
+class BubbleRoom(GameRoom):
+	def __init__(self, camSize: tuple, worldSize: tuple, sheet: str):
+		super().__init__(camSize, worldSize, sheet)

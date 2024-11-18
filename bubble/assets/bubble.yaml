@@ -18,7 +18,12 @@ sprites:
             anchor: [8,7]
           - tex: [40,216,16,16]
             anchor: [8,8]
-
+      burst:
+        frames:
+          - tex: [56,216,16,16]
+            anchor: [8,8]
+          - tex: [72,216,16,16]
+            anchor: [8,8]
   bub_fire:
     ticks: 2
     animations:
