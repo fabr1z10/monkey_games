@@ -12,8 +12,9 @@ class RectangularPlatform(monkey.Node):
 		if tx != -1:
 			tp= monkey.TileParser('gfx')
 			self.set_model(tp.parse('Q {0},{1},{2},{3},{4},{5}'.format(tx, ty, tw, th, width, height)))
-		self.add_component(monkey.components.Collider(settings.FLAG_PLATFORM_SEMI, 0, 1,
-			monkey.shapes.AABB(0, platform_width, 0, platform_height)))
+		if y < 24:
+			self.add_component(monkey.components.Collider(settings.FLAG_PLATFORM_SEMI, 0, 1,
+				monkey.shapes.AABB(0, platform_width, 0, platform_height)))
 
 class Bubble(monkey.Node):
 	def rm(node):
@@ -21,7 +22,7 @@ class Bubble(monkey.Node):
 	def __init__(self, x, y, flip):
 		super().__init__()
 		self.timer = 0
-		self.timeout = 5
+		self.timeout = 2225
 		if x > 239.9 - 8:
 			x = 239.9 - 8
 		if x < 16.1 + 8:
@@ -36,7 +37,7 @@ class Bubble(monkey.Node):
 
 
 		self.collider = monkey.components.Collider(settings.FLAG_BUBBLE, settings.FLAG_PLAYER | settings.FLAG_FOE,
-			settings.TAG_FOE, monkey.shapes.AABB(-8, 8, -8, 8))
+			settings.TAG_BUBBLE, monkey.shapes.AABB(-8, 8, -8, 8))
 		self.controller = monkey.components.Controller2D(size=(16, 16), speed=20, acceleration=500,
 			jump_height=0, time_to_jump_apex=0)
 		self.controller.addCallback(self.shoot)
@@ -63,6 +64,11 @@ class Bubble(monkey.Node):
 
 	def burst(self, dt):
 		pass
+
+	def blow_up(self):
+		self.setAnimation('burst')
+		self.controller.setState(2)
+
 	def drift(self, dt):
 		self.timer += dt
 		if self.timer >= self.timeout:

@@ -2,6 +2,8 @@ import monkey
 from . import settings
 from .items import RectangularPlatform
 from .bub import Bub
+from .foes import ZenChan
+from .collision import PlayerVsBubble
 from re import sub
 
 class GameRoom(monkey.Room):
@@ -25,7 +27,7 @@ class GameRoom(monkey.Room):
 							  bounds_x=(dw//2, dw//2), bounds_y=(dh//2, dh//2))
 		self.add_camera(cam)
 		collision_engine = monkey.CollisionEngine2D(64, 64)
-		#collision_engine.addResponse(MarioVsGoomba(values.TAG_PLAYER, values.TAG_FOE))
+		collision_engine.addResponse(PlayerVsBubble(settings.TAG_PLAYER, settings.TAG_BUBBLE))
 		self.add_runner(collision_engine)
 		root = self.root()
 		kb = monkey.components.Keyboard()
@@ -43,7 +45,8 @@ class GameRoom(monkey.Room):
 		root.add(self.generateSide(30, 0, li))
 
 		root.add(Bub(24, 8.1, 'gfx/bub', 6, 16, slide='walk', jumpUp='jump_up'))
-
+		# place foes
+		root.add(ZenChan(96, 8.1, 'gfx/zenchan',1))
 
 	def rle_decode(s: str):
 		return sub(r'(\d+)(\D)', lambda m: m.group(2) * int(m.group(1)), s)

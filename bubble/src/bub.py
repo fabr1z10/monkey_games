@@ -28,6 +28,10 @@ class Bub(monkey.Node):
 		print('FIRE!')
 		self.controller.setModel(1)
 
+	def bounce(self):
+		v = self.controller.velocity
+		self.controller.velocity = (v[0], self.controller.jumpVelocity)
+
 	def makeBubble(node):
 		if node.can_bubble:
 			bubble = Bubble(node.x, node.y + 8, node.flip_x)
@@ -49,7 +53,7 @@ class Bub(monkey.Node):
 		# add collider
 		collider = monkey.components.Collider(settings.FLAG_PLAYER,
 			settings.FLAG_FOE | settings.FLAG_BUBBLE, settings.TAG_PLAYER,
-			monkey.shapes.AABB(-width//2, width//2, 0, height))
+			monkey.shapes.AABB(-12, 4, 0, height))
 		#collider.setResponse(values.TAG_FOE, on_enter=self.on_hit_by_foe)
 		self.add_component(collider)
 		# add controller

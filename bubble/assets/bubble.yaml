@@ -37,7 +37,18 @@ sprites:
             anchor: [14,0]
           - tex: [42,238,20,18]
             anchor: [14,0]
-
+  zenchan:
+    animations:
+      idle:
+        frames:
+          - tex: [0,191,18,17]
+            anchor: [10,0]
+          - tex: [19,192,18,16]
+            anchor: [10,0]
+          - tex: [38,191,18,17]
+            anchor: [10,0]
+          - tex: [57,190,16,18]
+            anchor: [8,0]
   bub:
     animations:
       idle:
