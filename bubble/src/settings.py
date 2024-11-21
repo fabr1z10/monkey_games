@@ -20,7 +20,9 @@ BUBBLE_SHOOT_SPEED = 200
 BUBBLE_DRIFT_SPEED = 30
 DRAW_COLLIDER_OUTLINE = 'lines'
 
+id_player = None
 level_data = {}
+jmp = {}
 level = 1
 bubble_path = None
 

@@ -44,7 +44,9 @@ class GameRoom(monkey.Room):
 		root.add(self.generateSide(0, 0, li))
 		root.add(self.generateSide(30, 0, li))
 
-		root.add(Bub(24, 8.1, 'gfx/bub', 6, 16, slide='walk', jumpUp='jump_up'))
+		player = Bub(24, 8.1, 'gfx/bub', 6, 16, slide='walk', jumpUp='jump_up')
+		settings.id_player = player.id
+		root.add(player)
 		# place foes
 		root.add(ZenChan(96, 8.1, 'gfx/zenchan',1))
 
@@ -118,7 +120,33 @@ class GameRoom(monkey.Room):
 		# change all 2s to 1s
 		self.array = [[1 if i != 0 else 0 for i in row] for row in self.array]
 		level.add(self.generateShade(desc))
+		settings.jmp = self.generateJumpPattern()
+		#print(settings.jmp)
+		#exit(1)
 		return level
+
+	def generateJumpPattern(self):
+		jmp = [[0 for _ in range(self.width)] for _ in range(self.height)]
+		for j in range(1, self.height):
+			for i in range(0, self.width):
+				if self.array[j][i] == 0 and self.array[j-1][i] == 1:
+					#print('found platform @ row',j,'col',i)
+					# check if jump up is possible
+					k = j-2
+					while k > 0 and k > j-6:
+						if self.array[k][i] == 0 and self.array[k-1][i] == 1:
+							jmp[k][i] |= 1
+							print('can go up at',i,k)
+						k -= 1
+					# check jump right
+					if i < self.width-1 and self.array[j-1][i+1] == 0:
+						jmp[j][i] |= 2
+					if i > 0 and self.array[j-1][i-1] == 0:
+						jmp[j][i] |= 4
+		#exit(1)
+		#print(jmp)
+
+		return jmp
 
 	def generateSide(self, x, y, desc):
 		side_desc = desc['side']

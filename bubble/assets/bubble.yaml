@@ -49,6 +49,11 @@ sprites:
             anchor: [10,0]
           - tex: [57,190,16,18]
             anchor: [8,0]
+      prepare_jump:
+        frames:
+          - tex: [0,191,18,17]
+            anchor: [10,0]
+
   bub:
     animations:
       idle:
