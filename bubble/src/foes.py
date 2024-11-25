@@ -74,7 +74,7 @@ class Walk(monkey.ControllerState):
 class ZenChan(monkey.Node):
 	def create_bubble(self):
 		from .items import Bubble
-		bubble = Bubble(self.x, self.y, False, model='gfx/zenchan_bubble',state=1)
+		bubble = Bubble(self.x, self.y + 8, False, model='gfx/zenchan_bubble',state=1)
 		self.parent.add(bubble)
 
 	def __init__(self, x, y, dir, **kwargs):

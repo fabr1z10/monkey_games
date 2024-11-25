@@ -40,15 +40,22 @@ class BubbleDrift(monkey.ControllerState):
 	def start(self):
 		self.timer = 0
 		self.timeout = 10
+		self.timeout2 = 12
+		self.frame = 0
 		self.direction = 0	# 0 = UP, 1 = DOWN, 2= LEFT,3 = RIGHT
 
 
 	def update(self, dt):
 		self.timer += dt
+		self.frame += 1
 		if self.timer >= self.timeout:
+			c = (self.frame // 6) % 2
+			self.node.getRenderer().setState(monkey.NodeState.ACTIVE if c == 0 else monkey.NodeState.INACTIVE)
 			#self.node.setAnimation('burst')
+		if self.timer >= self.timeout2:
 			self.node.controller.setState(2)
 			return
+
 		x = self.node.x - 16
 		y = self.node.y - 8
 		if self.direction == 'U':
