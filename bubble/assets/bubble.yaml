@@ -3,6 +3,11 @@ tile_size: [8, 8]
 palettes:
   brown:
     af3c58: b7631e
+  angry_zenchan:
+    af3c58: af3c58
+    ffffff: ffffff
+    000000: 000000
+    949494: ee7b95
 sprites:
   bubble:
     animations:
@@ -37,6 +42,12 @@ sprites:
             anchor: [14,0]
           - tex: [42,238,20,18]
             anchor: [14,0]
+  zenchan_bubble:
+    animations:
+      default:
+        frames:
+          - tex: [74,192,18,16]
+            anchor: [9,8]
   zenchan:
     animations:
       idle:

@@ -2,6 +2,7 @@ import monkey
 from . import settings
 import random
 
+
 class PrepareJump(monkey.ControllerState):
 	def start(self):
 		self.node.setAnimation('prepare_jump')
@@ -71,9 +72,14 @@ class Walk(monkey.ControllerState):
 
 
 class ZenChan(monkey.Node):
+	def create_bubble(self):
+		from .items import Bubble
+		bubble = Bubble(self.x, self.y, False, model='gfx/zenchan_bubble',state=1)
+		self.parent.add(bubble)
 
-	def __init__(self, x, y, sprite, dir, **kwargs):
+	def __init__(self, x, y, dir, **kwargs):
 		super().__init__()
+		pal = kwargs.get('pal', None)
 		self.time = 0
 		# vertical velocity - should be stored here as it keeps its value
 		# across different states
@@ -84,8 +90,11 @@ class ZenChan(monkey.Node):
 		self.flip_x = dir < 0
 		self.set_position(x, y, 1)
 		# model
+		sprite = 'gfx/zenchan'
 		batch = sprite[:sprite.find('/')]
 		self.set_model(monkey.models.getSprite(sprite), batch=batch)
+		if pal:
+			self.setPalette(pal)
 		# add collider
 		collider = monkey.components.Collider(settings.FLAG_FOE,
 			settings.FLAG_PLAYER | settings.FLAG_BUBBLE, settings.TAG_FOE,

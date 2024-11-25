@@ -3,7 +3,7 @@ from . import settings
 from .items import RectangularPlatform
 from .bub import Bub
 from .foes import ZenChan
-from .collision import PlayerVsBubble
+from .collision import PlayerVsBubble, BubbleVsFoe
 from re import sub
 
 class GameRoom(monkey.Room):
@@ -28,6 +28,8 @@ class GameRoom(monkey.Room):
 		self.add_camera(cam)
 		collision_engine = monkey.CollisionEngine2D(64, 64)
 		collision_engine.addResponse(PlayerVsBubble(settings.TAG_PLAYER, settings.TAG_BUBBLE))
+		collision_engine.addResponse(BubbleVsFoe(settings.TAG_BUBBLE, settings.TAG_FOE))
+
 		self.add_runner(collision_engine)
 		root = self.root()
 		kb = monkey.components.Keyboard()
@@ -48,7 +50,7 @@ class GameRoom(monkey.Room):
 		settings.id_player = player.id
 		root.add(player)
 		# place foes
-		root.add(ZenChan(96, 8.1, 'gfx/zenchan',1))
+		root.add(ZenChan(96, 8.1, 1))
 
 	def rle_decode(s: str):
 		return sub(r'(\d+)(\D)', lambda m: m.group(2) * int(m.group(1)), s)
