@@ -15,11 +15,19 @@ FLAG_BUBBLE = 8
 FLAG_PLATFORM_SEMI = 32
 TAG_PLAYER = 0
 TAG_FOE =1
+TAG_BONUS = 4
 TAG_BUBBLE = 2
 TAG_PLATFORM = 3
 BUBBLE_SHOOT_SPEED = 200
 BUBBLE_DRIFT_SPEED = 30
 DRAW_COLLIDER_OUTLINE = 'lines'
+
+score1 = 0
+score2 = 0
+scoreTop=20000
+lives1 = 3
+lives2 = 3
+credits = 9
 
 id_player = None
 level_data = {}

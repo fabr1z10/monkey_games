@@ -15,7 +15,7 @@ class PlayerVsBubble(monkey.CollisionResponse):
 				player.node.bounce()
 			else:
 				print('qui')
-				foe.node.blow_up()
+				foe.node.burstByPlayer()
 
 	def onEnd(self, p, f):
 		print('END COLLISION')

@@ -1,7 +1,7 @@
 import monkey
 from . import settings
 import random
-
+import math
 
 class PrepareJump(monkey.ControllerState):
 	def start(self):
@@ -42,6 +42,53 @@ class JumpHor(monkey.ControllerState):
 			self.node.controller.setState(0)
 
 
+class Fly(monkey.ControllerState):
+	def start(self):
+		self.fc = 0
+		self.rot = 0
+
+	def update(self, dt):
+		self.fc += 1
+		if self.fc > 20:
+			self.fc = 0
+			self.rot += 1
+			if self.rot >= 4:
+				self.rot = 0
+			self.node.getRenderer().setAngle(self.rot * math.pi * 0.5)
+
+		if self.node.vy <= -50:
+			self.node.controller.setState(1)
+		self.node.move((self.node.vx * dt, self.node.vy * dt, 0))
+		if self.node.x >= 232 or self.node.x <= 24:
+			self.node.vx *= -1
+		if self.node.y <= 0:
+			self.node.set_position(self.node.x, 320, 1)
+		self.node.vy -= 100*dt
+
+class Fall(monkey.ControllerState):
+	def start(self):
+		self.fc = 0
+		self.rot = 0
+	def update(self, dt):
+		self.fc += 1
+		if self.fc > 20:
+			self.fc = 0
+			self.rot += 1
+			if self.rot >= 4:
+				self.rot = 0
+			self.node.getRenderer().setAngle(self.rot * math.pi * 0.5)
+		self.node.controller.move((0, self.node.vy * dt), False)
+		if self.node.controller.grounded:
+			bonus = Bonus(self.node.x, self.node.y-8, 'gfx/banana')
+			self.node.parent.add(bonus)
+			self.node.remove()
+			# create bonus
+
+
+		if self.node.y <= 0:
+			self.node.set_position(self.node.x, 320, 1)
+
+
 class Walk(monkey.ControllerState):
 
 	def init(self, node):
@@ -70,11 +117,38 @@ class Walk(monkey.ControllerState):
 				elif self.node.flip_x and up & 4 and self.node.player.y > self.node.y - 2:
 					self.ctrl.setState(2)
 
+class DeadFoe(monkey.Node):
+	def __init__(self, x, y, model, pal):
+		super().__init__()
+		self.vx = random.randint(150,  300)
+		self.vx *= -1 if random.random() < 0.5 else 1
+		self.vy = 250
+
+		self.set_position(x, y, 1)
+		self.set_model(monkey.models.getSprite(model), batch='gfx')
+		self.setPalette(pal)
+		collider = monkey.components.Collider(settings.FLAG_FOE,
+			0, 0, monkey.shapes.AABB(-8, 8, -8, 8))
+		self.add_component(collider)
+		# add controller
+		self.controller = monkey.components.Controller2D(size=(16,16), speed=20, acceleration=500,
+			jump_height=48, time_to_jump_apex=1)
+		# add states
+		self.controller.addState(Fly())#addCallback(update=self.updatePosition)
+		self.controller.addState(Fall())#addCallback(update=self.updatePosition)
+
+		self.add_component(self.controller)
+		self.controller.setState(0)
+
 
 class ZenChan(monkey.Node):
+	bubbleModel = 'gfx/zenchan_bubble'
+	deadModel = 'gfx/zenchan_dead'
+	deadPal ='dead_zenchan'
+
 	def create_bubble(self):
-		from .items import Bubble
-		bubble = Bubble(self.x, self.y + 8, False, model='gfx/zenchan_bubble',state=1)
+		from .items import BubbleFoe
+		bubble = BubbleFoe(self.x, self.y + 8, self.__class__)#False, model='gfx/zenchan_bubble',state=1)
 		self.parent.add(bubble)
 
 	def __init__(self, x, y, dir, **kwargs):
@@ -110,3 +184,14 @@ class ZenChan(monkey.Node):
 		self.controller.addState(PrepareJump())
 		self.add_component(self.controller)
 		self.controller.setState(0)
+
+class Bonus(monkey.Node):
+	def __init__(self, x, y, model):
+		super().__init__()
+		self.set_position(x, y, 1)
+		self.set_model(monkey.models.getSprite(model), batch='gfx')
+		# add collider
+		collider = monkey.components.Collider(settings.FLAG_FOE,
+			settings.FLAG_PLAYER, settings.TAG_BONUS,
+			monkey.shapes.AABB(-8, 8, 0, 16))
+		self.add_component(collider)

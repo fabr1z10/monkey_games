@@ -51,7 +51,29 @@ class GameRoom(monkey.Room):
 		root.add(player)
 		# place foes
 		root.add(ZenChan(96, 8.1, 1))
+		# now add text
+		root.add(monkey.Text('gfx', 'main', '1UP', pal='txt_yellow', pos=(280,168,1)))
+		root.add(monkey.Text('gfx', 'main', '2UP', pal='txt_yellow', pos=(280,112,1)))
+		root.add(monkey.Text('gfx', 'main', 'TOP', pal='txt_yellow', pos=(280,56,1)))
+		root.add(monkey.Text('gfx', 'main', 'CREDITS', pal='txt_cyan', pos=(264,16,1)))
 
+		root.add(monkey.Text('gfx', 'main', '=' *  7, pal='txt_red', pos=(264,184,1)))
+		root.add(monkey.Text('gfx', 'main', '=' *  5, pal='txt_red', pos=(272,128,1)))
+		root.add(monkey.Text('gfx', 'main', '=' *  5, pal='txt_red', pos=(272,72,1)))
+		root.add(monkey.Text('gfx', 'main', '=' *  7, pal='txt_red', pos=(264,24,1)))
+
+		root.add(monkey.Text('gfx', 'main', str(settings.score1).zfill(2),
+			pal='txt_green', pos=(320,160,1), halign=monkey.HALIGN_RIGHT))
+		root.add(monkey.Text('gfx', 'main', str(settings.score2).zfill(2),
+			pal='txt_cyan', pos=(320,102,1), halign=monkey.HALIGN_RIGHT))
+		root.add(monkey.Text('gfx', 'main', str(settings.scoreTop).zfill(2),
+			pos=(320,40,1), halign=monkey.HALIGN_RIGHT))
+		root.add(monkey.Text('gfx', 'main', '@' * settings.lives1,
+			pal='txt_green', pos=(320,144,1), halign=monkey.HALIGN_RIGHT))
+		root.add(monkey.Text('gfx', 'main', '@' * settings.lives2,
+			pal='txt_cyan', pos=(320,88,1), halign=monkey.HALIGN_RIGHT))
+		root.add(monkey.Text('gfx', 'main', str(settings.credits),
+			pal='txt_cyan', pos=(288,8,1)))
 	def rle_decode(s: str):
 		return sub(r'(\d+)(\D)', lambda m: m.group(2) * int(m.group(1)), s)
 
