@@ -35,6 +35,18 @@ def Player(**data): #x, y, speed, acceleration, jh, tja):
 	settings.player_id = node.id
 	return node
 
+def Tiled(**data):
+	node = monkey.Node()
+	model = data['model']
+	pos = data['pos']
+	z = data.get('z', 0)
+	node.set_position(pos[0] * settings.tile_size , pos[1] * settings.tile_size, z)
+	tp = monkey.getTileParser('tiles')
+	node.set_model(tp.parse(settings.data['models'][model]))
+	return node
+
+
+
 def Platform(**data):
 	size = data['size']
 	pos = data['pos']

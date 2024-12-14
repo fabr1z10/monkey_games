@@ -65,10 +65,6 @@ class GameRoom(monkey.Room):
 				node = f(**item)
 				root.add(node)
 
-		tp = monkey.TileParser('tiles')
-		a = monkey.Node()
-		a.set_position(64,64,1)
-		#a.set_model(tp.parse('Q 28,1,2,2,2,1;REP 5;T 0;LOOP'))
-		a.set_model(tp.parse('T35;REP8;T134;LOOP;Th35;UP;T-1,35,134,36,134,134,36,134,h35;UP;T-1,-1,35,134,134,134,134,h35;UP;T-1,-1,-1,35,134,36,h35;UP;T-1,-1,-1,-1,37,h37;'))
 
-		root.add(a)
+
+		#root.add(a)
