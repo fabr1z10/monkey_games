@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 
 import monkey
-import src
 
 game = monkey.engine()
-game.start(src)
+game.start()
 game.run()
 game.shutdown()

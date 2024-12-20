@@ -1,7 +1,8 @@
 import monkey
-from . import settings
-from . import item_builders
+import settings
+from . import items
 from .mario import Mario
+from .collision import PlayerVsBrick
 
 class GameRoom(monkey.Room):
 	def __init__(self):
@@ -24,6 +25,10 @@ class GameRoom(monkey.Room):
 		self.add_camera(cam)
 		self.add_camera(cam_ui)
 		ce = monkey.CollisionEngine2D(80, 80)
+		ce.addResponse(PlayerVsBrick(settings.Tags.PLAYER, settings.Tags.BRICK_SENSOR))
+		#collision_engine.addResponse(BubbleVsFoe(settings.TAG_BUBBLE, settings.TAG_FOE))
+
+
 		self.add_runner(ce)
 		self.add_runner(monkey.Scheduler())
 
@@ -40,12 +45,12 @@ class GameRoom(monkey.Room):
 		# ui part
 		ui = monkey.Node()
 		ui.add(monkey.Text('ui', 'mario', 'MARIO', pos=(3*8, 26*8, 1)))
-		scoreLabel = monkey.Text('ui', 'mario', f"{settings.score:06}", pos=(3*8, 25*8, 1))
+		scoreLabel = monkey.Text('ui', 'mario', f"{settings.score:06}", pos=(3 * 8, 25 * 8, 1))
 		ui.add(scoreLabel)
 		ui.add(monkey.Text('ui', 'mario', 'WORLD', pos=(144, 26 * 8, 1)))
 		ui.add(monkey.Text('ui', 'mario', world['name'], pos=(152, 25 * 8, 1)))
 		ui.add(monkey.Text('ui', 'mario', 'TIME', pos=(200, 26 * 8, 1)))
-		coinLabel = monkey.Text('ui', 'mario', f"*{settings.coins:02}", pos=(96, 25*8, 1))
+		coinLabel = monkey.Text('ui', 'mario', f"*{settings.coins:02}", pos=(96, 25 * 8, 1))
 		ui.add(coinLabel)
 		root.add(ui)
 
@@ -57,14 +62,26 @@ class GameRoom(monkey.Room):
 
 
 		# add all other items
-		items = world.get('items', [])
-		for item in items:
+		objs = world.get('items', [])
+		for item in objs:
 			type = item['type']
-			f = getattr(item_builders, type, None)
+			f = getattr(items, type, None)
 			if f:
 				node = f(**item)
 				root.add(node)
 
-
-
-		#root.add(a)
+		# a = monkey.Node()
+		# a.set_position(8,64,0)
+		# #m1 = monkey.models.TileModel('tiles', 2, 2, 2, 50)
+		# #m1.addTile(0, 0, False, False)
+		# #m1.setTile(0, 0, 0)
+		# m1 = monkey.models.TileModel('tiles', 1, 1, 4, 20)
+		# m1.addTile(58, 0, False, False)
+		# m1.addTile(58, 2, False, False)
+		# m1.addTile(58, 3, False, False)
+		# m1.setTile(0, 0, 0)
+		# m1.setTile(0, 1, 1)
+		# m1.setTile(0, 2, 2)
+		# m1.setTile(0, 3, 1)
+		# a.set_model(m1)
+		# root.add(a)

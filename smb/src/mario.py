@@ -1,5 +1,7 @@
 import monkey
-from . import settings
+import settings
+
+
 #from .items import Bubble
 
 class Mario(monkey.Node):
@@ -46,18 +48,18 @@ class Mario(monkey.Node):
 		batch = sprite[:sprite.find('/')]
 		# add collider
 		collider = monkey.components.Collider(settings.Flags.PLAYER,
-			settings.Flags.FOE, settings.Tags.PLAYER,
-			monkey.shapes.AABB(-8, 8, 0, 16))
+											  settings.Flags.FOE, settings.Tags.PLAYER,
+											  monkey.shapes.AABB(-8, 8, 0, 16))
 		self.add_component(collider)
 		# add controller
-		walk = kwargs.get('walk', 'idle')
+		walk = kwargs.get('walk', 'walk')
 		idle = kwargs.get('idle', 'idle')
 		slide = kwargs.get('slide', 'idle')
-		jumpUp = kwargs.get('jumpUp', 'idle')
-		jumpDown = kwargs.get('jumpDown', 'idle')
+		jumpUp = kwargs.get('jumpUp', 'jump')
+		jumpDown = kwargs.get('jumpDown', 'jump')
 		self.controller = monkey.components.PlayerController2D(batch, size=(16, 16), speed=100,
-			acceleration=500, jump_height=2, time_to_jump_apex=0.5,
-			walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
+															   acceleration=500, jump_height=settings.jumpHeight, time_to_jump_apex=settings.timeToJumpApex,
+															   walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
 		self.controller.addModel(monkey.models.getSprite(sprite), idle, walk, slide, jumpUp, jumpDown)
 		# # add key event: when player hits key A, bub will create a bubble
 		# self.controller.addKeyEvent(65, self.fire)

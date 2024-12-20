@@ -6,7 +6,7 @@ shaders = [
     monkey.SHADER_BATCH_QUAD_PALETTE,
     monkey.SHADER_BATCH_LINES
 ]
-
+DRAW_COLLIDER_OUTLINE='lines'
 room = '1-1'
 start_position = 0
 worlds = dict()
@@ -14,7 +14,8 @@ strings = dict()
 score = 1500
 coins = 1
 tile_size = 16
-
+jumpHeight = 64
+timeToJumpApex = 0.5
 id_main_node = None
 
 state = 0
@@ -42,3 +43,4 @@ class Flags:
 class Tags:
     PLAYER = 0
     FOE = 1
+    BRICK_SENSOR = 2

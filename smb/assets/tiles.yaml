@@ -69,6 +69,41 @@ fonts:
       '-': [64,16,8,8,8]
 models:
   0: 'T35;REP8;T134;LOOP;Th35;UP;T-1,35,134,36,134,134,36,134,h35;UP;T-1,-1,35,134,134,134,134,h35;UP;T-1,-1,-1,35,134,36,h35;UP;T-1,-1,-1,-1,37,h37;'
+animated_tiles:
+  0:
+    size: [1,1]
+    frames: 4
+    ticks_per_frame: 20
+    tiles:
+      - index: 58
+        pal: 0
+      - index: 58
+        pal: 2
+      - index: 58
+        pal: 3
+    data: [0, 0, 0,  0, 1, 1,  0, 2, 2,  0, 3, 1]
+  1:
+    size: [1,1]
+    scale: 2
+    frames: 4
+    ticks_per_frame: 20
+    tiles:
+      - index: 30
+        pal: 0
+      - index: 30
+        pal: 2
+      - index: 30
+        pal: 3
+    data: [0, 0, 0,  0, 1, 1,  0, 2, 2,  0, 3, 1]
+  2:
+    size: [1,1]
+    scale: 2
+    frames: 1
+    ticks_per_frame: 20
+    tiles:
+      - index: 158
+        pal: 0
+    data: [0, 0, 0]
 art:
   pipe: 'rep,[2*height],38,0,39,0,6,2,40,0,b,loop,38,2,39,2,40,2,41,2,b,38,1,39,1,40,1,41,1'
   bush: 'pal,4,32,1,rep,[2*x0],33,1,loop,34,1,b,-1,rep,[x0],33,0,34,0,loop,-1'
@@ -84,6 +119,7 @@ art:
 
 
 sprites:
+
   goomba:
     boxes:
       - [-8, 0, 8, 16]
