@@ -1,6 +1,22 @@
 import monkey
 import settings
 
+def makeScore(score):
+	def f(node):
+		node.remove()
+		s = monkey.Node()
+		s.set_model(monkey.models.getSprite(f'tiles/score_{score}'), batch='tiles')
+		s.set_position(node.x, node.y, 2)
+		m = monkey.components.Mover()
+		m.add(monkey.actions.MoveBy(0, (0, 64), 2, 0,
+			on_end=lambda node: node.remove()))
+		s.add_component(m)
+		node.parent.add(s)
+		settings.score += score
+		monkey.get_node(settings.id_label_score).updateText(f"{settings.score:06}")
+	return f
+
+
 
 
 
@@ -38,19 +54,51 @@ def Player(**data): #x, y, speed, acceleration, jh, tja):
 	settings.player_id = node.id
 	return node
 
-class Brick(monkey.Node):
+class PrizeBrick(monkey.Node):
+
+	def generateCoin(node):
+		node.moving = False
+		coin = monkey.Node()
+		coin.set_model(monkey.models.getSprite('tiles/coin'), batch='tiles')
+		coin.set_position(node.x, node.y, 2)
+		m = monkey.components.Mover()
+		m.add(monkey.actions.MoveAccelerated(0, (0, 120, 0),
+		(0, -150, 0), y_min=node.y+16, on_end=makeScore(100)))
+		coin.add_component(m)
+		node.parent.add(coin)
+
+	def generateBonus(node):
+		node.moving = False
+
+		from . import Bonus
+
+		bonus = Bonus(pos=[node.x / 16 + 0.5, node.y / 16], z=2, model='mushroom', tag=settings.Tags.MUSHROOM)
+		node.parent.add(bonus)
+
+
 	def hit(self):
-		model = AnimatedTile(2,'tiles')
-		self.set_model(model)
+		if self.hitsLeft == 0 and not self.moving:
+			return
+		if not self.moving:
+			self.hitsLeft -= 1
+			if self.hitsLeft == 0:
+				model = AnimatedTile(2,'tiles')
+				self.set_model(model)
 		self.mover.clear()
-		self.mover.add(monkey.actions.MoveAccelerated(0, (0, 50, 0), (0, -150, 0),
-													  y_min=self.yMin))
+		self.mover.add(monkey.actions.MoveAccelerated(
+			0, (0, 50, 0), (0, -150, 0), y_min=self.yMin,
+			on_end=getattr(PrizeBrick, self.callback)))
+		self.moving = True
 
 
 	def __init__(self, **data):
 		super().__init__()
+		self.hitsLeft = data.get('hits', 1)
+		self.moving = False
 		pos = data['pos']
 		z = data.get('z', 0)
+		self.callback = data.get('callback')
+
 		self.yMin = pos[1] * settings.tile_size
 		self.set_position(pos[0] * settings.tile_size , pos[1] * settings.tile_size, z)
 		model = AnimatedTile(1,'tiles')
@@ -71,6 +119,34 @@ class Brick(monkey.Node):
 			batch='lines'
 		))
 		self.add(sensor)
+
+class Brick(monkey.Node):
+	"""A plain Mario brick block
+	Mario can break the block only if he's Super
+	"""
+	def __init__(self, **data):
+		super().__init__()
+		pos = data['pos']
+		z = data.get('z', 0)
+		self.yMin = pos[1] * settings.tile_size
+		self.set_position(pos[0] * settings.tile_size , pos[1] * settings.tile_size, z)
+		model = AnimatedTile(3,'tiles')
+		self.set_model(model)
+		self.add_component(monkey.components.Collider(
+			shape=monkey.shapes.AABB(0, settings.tile_size, 0, settings.tile_size),
+			flag=2, mask=0, tag=0, batch='lines'))
+		self.mover = monkey.components.Mover()
+		self.add_component(self.mover)
+		sensor = monkey.Node()
+		sensor.add_component (monkey.components.Collider(
+			shape=monkey.shapes.AABB(4,12,-2,2),
+			flag=settings.Flags.FOE,
+			mask=settings.Flags.PLAYER,
+			tag=settings.Tags.BRICK_SENSOR,
+			batch='lines'
+		))
+		self.add(sensor)
+
 
 class Tiled(monkey.Node):
 	def __init__(self, **data):

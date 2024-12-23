@@ -1,8 +1,8 @@
 import monkey
 import settings
 from . import items
-from .mario import Mario
-from .collision import PlayerVsBrick
+
+from .collision import PlayerVsBrick, PlayerVsMushroom
 
 class GameRoom(monkey.Room):
 	def __init__(self):
@@ -26,6 +26,7 @@ class GameRoom(monkey.Room):
 		self.add_camera(cam_ui)
 		ce = monkey.CollisionEngine2D(80, 80)
 		ce.addResponse(PlayerVsBrick(settings.Tags.PLAYER, settings.Tags.BRICK_SENSOR))
+		ce.addResponse(PlayerVsMushroom(settings.Tags.PLAYER, settings.Tags.MUSHROOM))
 		#collision_engine.addResponse(BubbleVsFoe(settings.TAG_BUBBLE, settings.TAG_FOE))
 
 
@@ -52,11 +53,12 @@ class GameRoom(monkey.Room):
 		ui.add(monkey.Text('ui', 'mario', 'TIME', pos=(200, 26 * 8, 1)))
 		coinLabel = monkey.Text('ui', 'mario', f"*{settings.coins:02}", pos=(96, 25 * 8, 1))
 		ui.add(coinLabel)
+		settings.id_label_score = scoreLabel.id
 		root.add(ui)
 
 
 		start_pos = world['start_positions'][settings.start_position]
-		root.add(Mario(32, 64, 'tiles/mario'))
+		root.add(items.Mario(32, 64))
 		#root.add(item_builders.Player(pos=[start_pos[0], start_pos[1]], speed=200,
 		#                              jump_height=96, time_to_jump_apex=0.5))
 

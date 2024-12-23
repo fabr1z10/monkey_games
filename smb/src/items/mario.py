@@ -41,15 +41,18 @@ class Mario(monkey.Node):
 
 	def resetModel(node):
 		node.controller.setModel(0)
-	def __init__(self, x, y, sprite, **kwargs):
+	def __init__(self, x, y, **kwargs):
 		super().__init__()
-		width=16
+
+		state = settings.mario_states[settings.state]
+		sprite = state['model']
+		height = state['height']
 		self.set_position(x, y, 1)
 		batch = sprite[:sprite.find('/')]
 		# add collider
 		collider = monkey.components.Collider(settings.Flags.PLAYER,
 											  settings.Flags.FOE, settings.Tags.PLAYER,
-											  monkey.shapes.AABB(-8, 8, 0, 16))
+											  monkey.shapes.AABB(-8, 8, 0, height))
 		self.add_component(collider)
 		# add controller
 		walk = kwargs.get('walk', 'walk')

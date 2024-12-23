@@ -17,17 +17,21 @@ tile_size = 16
 jumpHeight = 64
 timeToJumpApex = 0.5
 id_main_node = None
+id_label_score = None
+
 
 state = 0
 mario_states = [
     {
         'model': 'tiles/mario',
+        'height': 16,
         'size': [10, 10, 0],
         'center': [5, 0, 0]
     },
     {
         'model': 'tiles/supermario',
         'size': [10, 30, 0],
+        'height': 30,
         'center': [5, 0, 0]
     }
 ]
@@ -44,3 +48,5 @@ class Tags:
     PLAYER = 0
     FOE = 1
     BRICK_SENSOR = 2
+    MUSHROOM = 3
+    MUSHROOM_1UP = 4

@@ -104,6 +104,13 @@ animated_tiles:
       - index: 158
         pal: 0
     data: [0, 0, 0]
+  3:
+    size: [2,2]
+    frames: 1
+    ticks_per_frame: 20
+    tiles:
+      - index: 46
+    data: [0,0,0, 1,0,0, 2,0,0, 3,0,0]
 art:
   pipe: 'rep,[2*height],38,0,39,0,6,2,40,0,b,loop,38,2,39,2,40,2,41,2,b,38,1,39,1,40,1,41,1'
   bush: 'pal,4,32,1,rep,[2*x0],33,1,loop,34,1,b,-1,rep,[x0],33,0,34,0,loop,-1'
@@ -223,7 +230,21 @@ sprites:
         box: 0
         frames:
           - tex: [0,464,16,32]
-            anchor: [8,0]
+            anchor: [9,0]
+      jump:
+        frames:
+          - tex: [64,464,16,32]
+            anchor: [9, 0]
+            box: 0
+      walk:
+        box: 0
+        frames:
+          - tex: [16,464,16,32]
+            anchor: [9, 0]
+          - tex: [32,464,16,32]
+            anchor: [10, 0]
+          - tex: [48,464,16,32]
+            anchor: [9, 0]
   brick_piece:
     animations:
       idle:
