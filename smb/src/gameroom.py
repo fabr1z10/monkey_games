@@ -2,7 +2,7 @@ import monkey
 import settings
 from . import items
 
-from .collision import PlayerVsBrick, PlayerVsMushroom
+from .collision import PlayerVsBrick, PlayerVsMushroom, PlayerVsGoomba
 
 class GameRoom(monkey.Room):
 	def __init__(self):
@@ -27,6 +27,7 @@ class GameRoom(monkey.Room):
 		ce = monkey.CollisionEngine2D(80, 80)
 		ce.addResponse(PlayerVsBrick(settings.Tags.PLAYER, settings.Tags.BRICK_SENSOR))
 		ce.addResponse(PlayerVsMushroom(settings.Tags.PLAYER, settings.Tags.MUSHROOM))
+		ce.addResponse(PlayerVsGoomba(settings.Tags.PLAYER, settings.Tags.GOOMBA))
 		#collision_engine.addResponse(BubbleVsFoe(settings.TAG_BUBBLE, settings.TAG_FOE))
 
 

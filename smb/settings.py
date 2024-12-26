@@ -50,3 +50,4 @@ class Tags:
     BRICK_SENSOR = 2
     MUSHROOM = 3
     MUSHROOM_1UP = 4
+    GOOMBA = 5

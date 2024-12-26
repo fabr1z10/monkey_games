@@ -9,7 +9,8 @@ class PlayerVsBrick(monkey.CollisionResponse):
 
     def onStart(self, player, brick, move, who):
         print('START')
-        brick.node.parent.hit()
+        brick.node.parent.hit(player.node)
+
 
     def onEnd(self, p, f):
         print('END COLLISION')
@@ -31,3 +32,25 @@ class PlayerVsMushroom(monkey.CollisionResponse):
 
     def onEnd(self, p, f):
         print('END COLLISION')
+
+class PlayerVsGoomba(monkey.CollisionResponse):
+    def __init__(self, tag1, tag2):
+        super().__init__(tag1, tag2)
+
+    def onStart(self, player, goomba, move, who):
+        if who == 0 and move[1] < 0:
+            goomba.node.die()
+            player.node.bounceOnFoe()
+        else:
+            if settings.state == 0:
+                # dead
+                player.node.controller.setState(1)
+                pass
+            else:
+                pass
+                # if supermario -> revert to mario
+        #print(move[0], move[1], who)
+        pass
+
+    def onEnd(self, p, f):
+        pass

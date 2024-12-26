@@ -76,7 +76,7 @@ class PrizeBrick(monkey.Node):
 		node.parent.add(bonus)
 
 
-	def hit(self):
+	def hit(self, player):
 		if self.hitsLeft == 0 and not self.moving:
 			return
 		if not self.moving:
@@ -147,6 +147,15 @@ class Brick(monkey.Node):
 		))
 		self.add(sensor)
 
+	def hit(self, player):
+		if settings.state == 0:
+			self.mover.clear()
+			self.mover.add(monkey.actions.MoveAccelerated(
+				0, (0, 50, 0), (0, -150, 0), y_min=self.yMin))
+		else:
+			self.remove()
+			v = player.controller.velocity
+			player.controller.velocity = (v[0], 0)
 
 class Tiled(monkey.Node):
 	def __init__(self, **data):

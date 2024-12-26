@@ -63,40 +63,81 @@ class Walk(monkey.ControllerState):
 				self.dir = -self.dir
 			self.node.vy = 0
 
+class Dead(monkey.ControllerState):
+	def __init__(self, timeout: float = 5, anim: str = 'dead'):
+		"""
+		Parameters
+		----------
+		timeout : float
+			Time after which node is removed
+		anim : str
+			The animation played
+		"""
+		super().__init__()
+		self.anim= anim
+		self.timeout = timeout
+		self.timer = 0
 
-class Goomba(monkey.Node):
-    def __init__(self, **data):
-        super().__init__()
-        pos = data['pos']
-        z = data.get('z', 1)
-        self.set_position(pos[0] * settings.tile_size, pos[1] * settings.tile_size, z)
-        pal = data.get('pal', None)
-        self.vy=0
-        #elf.dir = dir
-        #self.flip_x = dir < 0
+	def init(self, node):
+		self.g = self.node.controller.gravity
+		self.ctrl = self.node.controller
 
-        # model
-        sprite = 'tiles/goomba'
-        batch = sprite[:sprite.find('/')]
-        self.set_model(monkey.models.getSprite(sprite), batch=batch)
-        if pal:
-            self.setPalette(pal)
-        # add collider
-        collider = monkey.components.Collider(settings.Flags.FOE,
-                                              settings.Flags.PLAYER, settings.Tags.FOE,
-                                              monkey.shapes.AABB(-4, 4, 0, 16))
-        self.add_component(collider)
-        # add controller
-        self.controller = monkey.components.Controller2D(size=(16, 16), speed=20, acceleration=500,
-                                                      jump_height=48, time_to_jump_apex=1)
-        # add states
-        self.controller.addState(Walk(True, 0.5,
+	def start(self):
+		self.node.setAnimation(self.anim)
+		self.node.collider.setMask(0)
+
+	def update(self, dt):
+		self.node.vy += -self.g * dt
+		self.ctrl.move((0, self.node.vy * dt), False)
+		self.timer += dt
+		if self.timer >= self.timeout:
+			self.node.remove()
+
+
+class Foe(monkey.Node):
+	def __init__(self, **data):
+		super().__init__()
+		pos = data['pos']
+		z = data.get('z', 1)
+		self.set_position(pos[0] * settings.tile_size, pos[1] * settings.tile_size, z)
+		pal = data.get('pal', None)
+		self.vy=0
+		# model
+		m = data.get('model')
+		speed = data.get('speed', 0.5)
+		height = data.get('height', 16)
+		sprite = f'tiles/{m}'
+		#batch = sprite[:sprite.find('/')]
+		self.set_model(monkey.models.getSprite(sprite), batch='tiles')
+		if pal:
+			self.setPalette(pal)
+		# add collider
+		self.collider = monkey.components.Collider(settings.Flags.FOE,
+			settings.Flags.PLAYER, settings.Tags.GOOMBA,
+			monkey.shapes.AABB(-4, 4, 0, height))
+		self.add_component(self.collider)
+		# add controller
+		self.controller = monkey.components.Controller2D(size=(16, 16),
+			speed=speed, acceleration=500, jump_height=48, time_to_jump_apex=1)
+		# add states
+		self.controller.addState(Walk(True, speed,
 			True, -1))  # addCallback(update=self.updatePosition)
-        #self.controller.addState(Jump())
-        #self.controller.addState(JumpHor())
-        #self.controller.addState(PrepareJump())
-        self.add_component(self.controller)
-        self.controller.setState(0)
+		self.add_component(self.controller)
+
+
+class Goomba(Foe):
+	def __init__(self, **data):
+		super().__init__(model='goomba', speed=0.5, height=16, **data)
+		self.controller.addState(Dead())
+		self.controller.setState(0)
+
+	def die(self):
+		self.controller.setState(1)
+
+class Koopa(Foe):
+	def __init__(self, **data):
+		super().__init__(model='koopa', speed=0.5, height=24, **data)
+		self.controller.setState(0)
 
 
 class Bonus(monkey.Node):

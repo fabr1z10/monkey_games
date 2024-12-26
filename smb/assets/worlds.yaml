@@ -23,6 +23,7 @@ define:
     - { type: PrizeBrick, pos: [5,5], callback: generateBonus}
     - { type: Brick, pos: [7, 5]}
     - { type: Goomba, pos: [4, 4.1]}
+    - { type: Koopa, pos: [15, 2.1]}
 1-1b:
   bg_color: [0, 0, 0]
   size: [256, 240]

@@ -126,7 +126,18 @@ art:
 
 
 sprites:
-
+  koopa:
+    animations:
+      walk:
+        frames:
+          - tex: [112, 488, 16, 24]
+            anchor: [8, 0]
+          - tex: [128, 488, 16, 24]
+            anchor: [8, 0]
+      dead:
+        frames:
+          - tex: [144, 496, 16, 16]
+            anchor: [8, 0]
   goomba:
     boxes:
       - [-8, 0, 8, 16]
@@ -147,6 +158,10 @@ sprites:
           - tex: [80, 496, 16, 16]
             anchor: [8, 0]
             fliph: True
+      dead:
+        frames:
+          - tex: [96,504,16,8]
+            anchor: [8, 0]
   coin:
     animations:
       idle:
@@ -222,6 +237,10 @@ sprites:
             anchor: [8, 0]
           - tex: [46,496,11,16]
             anchor: [5, 0]
+      dead:
+        frames:
+          - tex: [80, 480, 16, 16]
+            anchor: [8, 0]
   supermario:
     boxes:
       - [-4,0,4,24]

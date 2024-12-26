@@ -3,6 +3,36 @@ import settings
 
 
 #from .items import Bubble
+class MarioDead(monkey.ControllerState):
+	"""This controller state is used for bonuses (e.g. mushrooms
+	and 1up, when they move up from the bricks that originated them.
+	"""
+	def __init__(self):
+		super().__init__()
+		self.timer = 0
+		self.vy = 150
+
+	def init(self, node):
+		self.g = self.node.controller.gravity
+		self.ctrl = self.node.controller
+
+	def start(self):
+		self.node.setAnimation('dead')
+		self.node.collider.setMask(0)
+
+	def update(self, dt):
+		self.timer += dt
+		if self.timer >= 0.5:
+			self.vy -= self.g*dt
+			self.node.move((0, self.vy * dt, 0))
+			if self.timer >= 2.0:
+				self.node.remove()
+				monkey.close_room()
+		pass
+		#self.ctrl.move((0, 0.2), False)
+		#if self.node.y > self.y0 + 16:
+		#	self.node.controller.setState(1)
+
 
 class Mario(monkey.Node):
 	def on_hit_by_foe(self, player, foe, delta):
@@ -50,10 +80,10 @@ class Mario(monkey.Node):
 		self.set_position(x, y, 1)
 		batch = sprite[:sprite.find('/')]
 		# add collider
-		collider = monkey.components.Collider(settings.Flags.PLAYER,
+		self.collider = monkey.components.Collider(settings.Flags.PLAYER,
 											  settings.Flags.FOE, settings.Tags.PLAYER,
 											  monkey.shapes.AABB(-8, 8, 0, height))
-		self.add_component(collider)
+		self.add_component(self.collider)
 		# add controller
 		walk = kwargs.get('walk', 'walk')
 		idle = kwargs.get('idle', 'idle')
@@ -64,6 +94,7 @@ class Mario(monkey.Node):
 															   acceleration=500, jump_height=settings.jumpHeight, time_to_jump_apex=settings.timeToJumpApex,
 															   walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
 		self.controller.addModel(monkey.models.getSprite(sprite), idle, walk, slide, jumpUp, jumpDown)
+		self.controller.addState(MarioDead())
 		# # add key event: when player hits key A, bub will create a bubble
 		# self.controller.addKeyEvent(65, self.fire)
 		self.add_component(self.controller)
