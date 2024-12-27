@@ -16,7 +16,8 @@ class MarioDead(monkey.ControllerState):
 		self.g = self.node.controller.gravity
 		self.ctrl = self.node.controller
 
-	def start(self):
+	def start(self, **kwargs):
+		print(kwargs)
 		self.node.setAnimation('dead')
 		self.node.collider.setMask(0)
 
@@ -41,6 +42,23 @@ class Mario(monkey.Node):
 		self.time = 0
 		self.controller.setState(1)
 		#player.remove()
+
+	def changeMode(self, mode: int):
+		if settings.state == mode:
+			return
+		settings.state = mode
+		a = Mario(self.x, self.y)
+		self.parent.add(a)
+		self.remove()
+		if mode == 0:
+			# set invincibility
+			a.invincible = True
+			script=monkey.Script()
+			script.add(monkey.actions.Blink(a.id,5, 0.2))
+			script.add(monkey.actions.CallFunc(lambda : setattr(a, 'invincible', False)))
+
+
+			monkey.play(script)
 
 	def bounceOnFoe(self):
 		v = self.controller.velocity
@@ -73,6 +91,7 @@ class Mario(monkey.Node):
 		node.controller.setModel(0)
 	def __init__(self, x, y, **kwargs):
 		super().__init__()
+		self.invincible = False
 
 		state = settings.mario_states[settings.state]
 		sprite = state['model']
@@ -82,7 +101,7 @@ class Mario(monkey.Node):
 		# add collider
 		self.collider = monkey.components.Collider(settings.Flags.PLAYER,
 											  settings.Flags.FOE, settings.Tags.PLAYER,
-											  monkey.shapes.AABB(-8, 8, 0, height))
+											  monkey.shapes.AABB(-6, 6, 0, height))
 		self.add_component(self.collider)
 		# add controller
 		walk = kwargs.get('walk', 'walk')
@@ -90,14 +109,14 @@ class Mario(monkey.Node):
 		slide = kwargs.get('slide', 'idle')
 		jumpUp = kwargs.get('jumpUp', 'jump')
 		jumpDown = kwargs.get('jumpDown', 'jump')
-		self.controller = monkey.components.PlayerController2D(batch, size=(16, 16), speed=100,
-															   acceleration=500, jump_height=settings.jumpHeight, time_to_jump_apex=settings.timeToJumpApex,
-															   walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
+		self.controller = monkey.components.PlayerController2D(batch, bounds=(-10,10,0,height), speed=100,
+		 													   acceleration=500, jump_height=settings.jumpHeight, time_to_jump_apex=settings.timeToJumpApex,
+		 													   walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
 		self.controller.addModel(monkey.models.getSprite(sprite), idle, walk, slide, jumpUp, jumpDown)
 		self.controller.addState(MarioDead())
-		# # add key event: when player hits key A, bub will create a bubble
-		# self.controller.addKeyEvent(65, self.fire)
+
 		self.add_component(self.controller)
+		self.controller.setState(0)
 		self.add_component(monkey.components.Follow(0))
 
 

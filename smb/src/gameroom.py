@@ -2,11 +2,14 @@ import monkey
 import settings
 from . import items
 
-from .collision import PlayerVsBrick, PlayerVsMushroom, PlayerVsGoomba
+from .collision import PlayerVsBrick, PlayerVsMushroom, PlayerVsGoomba, \
+	PlayerVsKoopa
+
 
 class GameRoom(monkey.Room):
 	def __init__(self):
 		super().__init__()
+
 
 		world = settings.worlds[settings.room]
 		bg_color = world.get('bg_color', [0, 0, 0])
@@ -28,6 +31,7 @@ class GameRoom(monkey.Room):
 		ce.addResponse(PlayerVsBrick(settings.Tags.PLAYER, settings.Tags.BRICK_SENSOR))
 		ce.addResponse(PlayerVsMushroom(settings.Tags.PLAYER, settings.Tags.MUSHROOM))
 		ce.addResponse(PlayerVsGoomba(settings.Tags.PLAYER, settings.Tags.GOOMBA))
+		ce.addResponse(PlayerVsKoopa(settings.Tags.PLAYER, settings.Tags.KOOPA))
 		#collision_engine.addResponse(BubbleVsFoe(settings.TAG_BUBBLE, settings.TAG_FOE))
 
 
@@ -59,7 +63,7 @@ class GameRoom(monkey.Room):
 
 
 		start_pos = world['start_positions'][settings.start_position]
-		root.add(items.Mario(32, 64))
+		root.add(items.Mario(32, 200))
 		#root.add(item_builders.Player(pos=[start_pos[0], start_pos[1]], speed=200,
 		#                              jump_height=96, time_to_jump_apex=0.5))
 

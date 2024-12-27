@@ -51,3 +51,4 @@ class Tags:
     MUSHROOM = 3
     MUSHROOM_1UP = 4
     GOOMBA = 5
+    KOOPA =6

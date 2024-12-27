@@ -38,6 +38,9 @@ class PlayerVsGoomba(monkey.CollisionResponse):
         super().__init__(tag1, tag2)
 
     def onStart(self, player, goomba, move, who):
+        print('figsa')
+        if player.node.invincible:
+            return
         if who == 0 and move[1] < 0:
             goomba.node.die()
             player.node.bounceOnFoe()
@@ -45,12 +48,38 @@ class PlayerVsGoomba(monkey.CollisionResponse):
             if settings.state == 0:
                 # dead
                 player.node.controller.setState(1)
-                pass
             else:
-                pass
-                # if supermario -> revert to mario
-        #print(move[0], move[1], who)
+                player.node.changeMode(0)
+
+
+    def onEnd(self, p, f):
         pass
+
+
+class PlayerVsKoopa(monkey.CollisionResponse):
+    def __init__(self, tag1, tag2):
+        super().__init__(tag1, tag2)
+
+    def onStart(self, player, koopa, move, who):
+        if player.node.invincible:
+            return
+
+        if koopa.node.controller.state == 1:
+            print(player.node.x, koopa.node.x, koopa.node.dir)
+            koopa.node.dir = 1 if player.node.x < koopa.node.x else -1
+            print(player.node.x, koopa.node.x, koopa.node.dir)
+            koopa.node.controller.setState(2)
+        else:
+            if who == 0 and move[1] < 0:
+                koopa.node.die()
+                player.node.bounceOnFoe()
+            else:
+                if settings.state == 0:
+                    # dead
+                    player.node.controller.setState(1)
+                else:
+                    player.node.changeMode(0)
+
 
     def onEnd(self, p, f):
         pass

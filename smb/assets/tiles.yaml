@@ -127,17 +127,30 @@ art:
 
 sprites:
   koopa:
+    boxes:
+      - [ -8, 0, 8, 24 ]
+      - [ -8, 0, 8, 16 ]
     animations:
       walk:
+        box: 0
         frames:
           - tex: [112, 488, 16, 24]
             anchor: [8, 0]
           - tex: [128, 488, 16, 24]
             anchor: [8, 0]
       dead:
+        box: 1
         frames:
           - tex: [144, 496, 16, 16]
             anchor: [8, 0]
+      restore:
+        box: 1
+        frames:
+          - tex: [144, 496, 16, 16]
+            anchor: [8, 0]
+          - tex: [144, 480, 16, 16]
+            anchor: [8, 0]
+
   goomba:
     boxes:
       - [-8, 0, 8, 16]
