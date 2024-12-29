@@ -34,6 +34,41 @@ class MarioDead(monkey.ControllerState):
 		#if self.node.y > self.y0 + 16:
 		#	self.node.controller.setState(1)
 
+class PipeDown(monkey.ControllerState):
+	def __init__(self):
+		super().__init__()
+
+	def start(self, **kwargs):
+		self.node.setAnimation('idle')
+		self.y0 = self.node.y
+
+	def update(self, dt):
+		self.node.move((0, -20 * dt, 0))
+		if self.node.y < self.y0 - 64:
+			monkey.close_room()
+
+class PipeRight(monkey.ControllerState):
+	def __init__(self):
+		super().__init__()
+
+	def init(self, node):
+		self.g = self.node.controller.gravity
+		self.ctrl = self.node.controller
+
+	def start(self):
+		self.vy = 0
+		self.timer=0
+		self.node.setAnimation('walk')
+		self.node.flip_x = False
+
+	def update(self, dt):
+		self.timer += dt
+		if self.timer >=2:
+			monkey.close_room()
+		self.vy += -self.g * dt
+		self.ctrl.move((50 * dt, self.vy * dt), False)
+		if self.ctrl.grounded:
+			self.node.vy = 0
 
 class Mario(monkey.Node):
 	def on_hit_by_foe(self, player, foe, delta):
@@ -82,10 +117,17 @@ class Mario(monkey.Node):
 		v = self.controller.velocity
 		self.controller.velocity = (v[0], self.controller.jumpVelocity)
 
-	def makeBubble(node):
-		if node.can_bubble:
-			bubble = Bubble(node.x, node.y + 8, node.flip_x)
-			node.parent.add(bubble)
+	# def makeBubble(node):
+	# 	if node.can_bubble:
+	# 		bubble = Bubble(node.x, node.y + 8, node.flip_x)
+	# 		node.parent.add(bubble)
+
+	def enterHole(self):
+		if settings.hotspot:
+			settings.room = settings.hotspot.warp
+			self.controller.setState(2)
+			#monkey.close_room()
+
 
 	def resetModel(node):
 		node.controller.setModel(0)
@@ -109,11 +151,14 @@ class Mario(monkey.Node):
 		slide = kwargs.get('slide', 'idle')
 		jumpUp = kwargs.get('jumpUp', 'jump')
 		jumpDown = kwargs.get('jumpDown', 'jump')
-		self.controller = monkey.components.PlayerController2D(batch, bounds=(-10,10,0,height), speed=100,
+		self.controller = monkey.components.PlayerController2D(batch, bounds=(-10,10,0,height), speed=settings.MarioSpeed,
 		 													   acceleration=500, jump_height=settings.jumpHeight, time_to_jump_apex=settings.timeToJumpApex,
 		 													   walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
+		self.controller.addKeyEvent(264, self.enterHole)
 		self.controller.addModel(monkey.models.getSprite(sprite), idle, walk, slide, jumpUp, jumpDown)
 		self.controller.addState(MarioDead())
+		self.controller.addState(PipeDown())
+		self.controller.addState(PipeRight())
 
 		self.add_component(self.controller)
 		self.controller.setState(0)

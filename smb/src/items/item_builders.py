@@ -1,6 +1,6 @@
 import monkey
 import settings
-
+from .curly import evaluate_curly_braces
 def makeScore(score):
 	def f(node):
 		node.remove()
@@ -18,7 +18,16 @@ def makeScore(score):
 
 
 
-
+class Line(monkey.Node):
+	def __init__(self, **data):
+		super().__init__()
+		pos = data['pos']
+		z = data.get('z', 0)
+		width = data.get('width')
+		self.set_position(pos[0] * settings.tile_size, pos[1] * settings.tile_size, z)
+		self.add_component(monkey.components.Collider(
+			shape=monkey.shapes.Segment(0, 0, 32, 0),
+			flag=2, mask=0, tag=0, batch='lines'))
 
 
 def Text(**data):
@@ -167,7 +176,7 @@ class Tiled(monkey.Node):
 		size = data.get('size', None)
 		solid = data.get('solid', True)
 		if 'tiled' in data:
-			model = TileModel(data['tiled'], sheet)
+			model = TileModel(data['tiled'], sheet, data.get('t_args', None))
 		elif 'atiled' in data:
 			model = AnimatedTile(data['atiled'], sheet)
 		elif 'quad' in data and size:
@@ -191,9 +200,10 @@ class Tiled(monkey.Node):
 				self.add_component(mover)
 
 
-def TileModel(name: str, sheet: str):
+def TileModel(name: str, sheet: str, args: dict):
 	tp = monkey.getTileParser(sheet)
-	model = tp.parse(settings.data['models'][name])
+	data = evaluate_curly_braces(settings.data['models'][name], args)
+	model = tp.parse(data)
 	return model
 
 def AnimatedTile(id: str, sheet: str):
@@ -229,3 +239,22 @@ def Platform(**data):
 			shape=monkey.shapes.AABB(0, size[0]*settings.tile_size, 0, size[1]*settings.tile_size),
 			flag=2, mask=0, tag=0, batch='lines'))
 	return node
+
+class HotSpot(monkey.Node):
+	def __init__(self, **kwargs):
+		"""
+		A hotspot sends Mario to another room / start position
+		"""
+		super().__init__()
+		pos = kwargs['pos']
+		z = kwargs.get('z', 0)
+		tag = kwargs.get('tag', settings.Tags.HOTSPOT)
+		self.warp = kwargs['warp']
+		self.start_pos = kwargs.get('start_pos', 0)
+		self.set_position(pos[0] * settings.tile_size, pos[1] * settings.tile_size, z)
+		self.add_component(monkey.components.Collider(
+			shape=monkey.shapes.AABB(-2, 2, 0, 2),
+			flag=settings.Flags.FOE,
+			mask=settings.Flags.PLAYER,
+			tag=tag,
+			batch='lines'))

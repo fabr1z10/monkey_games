@@ -7,13 +7,35 @@ define:
   size: [3584, 224]
   name: '1-1'
   start_positions:
-    - [3, 5]
+    - [1, 5]
   items:
     # left boundary
     - { type: Tiled, pos: [-1, 0], size: [ 1,20 ] }
+    # platform 1
     - { type: Tiled, quad: *block, pos: [0, -0.5], size: [69,2]}
     - { type: Tiled, quad: *block, pos: [71, -0.5], size: [16, 2]}
+    - { type: Tiled, quad: *block, pos: [89, -0.5 ], size: [64, 2 ]}
+    - { type: Tiled, quad: *block, pos: [155, -0.5 ], size: [69, 2]}
+    # platform 2
+    - { type: Tiled, quad: *block2, size: [5, 1], multi: [148,1.5,185,5.5]}
+    - { type: Tiled, quad: *block2, size: [6, 1], multi: [184,4.5]}
+    - { type: Tiled, quad: *block2, size: [7, 1], multi: [183,3.5]}
+    - { type: Tiled, quad: *block2, size: [8, 1], multi: [182,2.5]}
+    - { type: Tiled, quad: *block2, size: [9, 1], multi: [181,1.5]}
+    - { type: Tiled, quad: *block2, size: [4, 1], multi: [134, 1.5, 140, 1.5,
+        149, 2.5, 155, 1.5, 186, 6.5]}
+    - { type: Tiled, quad: *block2, size: [3, 1], multi: [135, 2.5, 140, 2.5,
+        150, 3.5, 155, 2.5, 187, 7.5]}
+    - { type: Tiled, quad: *block2, size: [2, 1], multi: [136, 3.5, 140, 3.5,
+        151, 4.5, 155, 3.5, 188, 8.5]}
+    - { type: Tiled, quad: *block2, size: [1, 1], multi: [137, 4.5, 140, 4.5,
+        155, 4.5, 198, 1.5]}
     #- { type: Tiled, quad: *block, pos: [3, 3], size: [ 3,1 ] }
+    # pipes
+    - {type: Tiled, tiled: 1, t_args: {'h': 4}, multi: [28,1.5,163,1.5,179,1.5], size: [2,2]}
+    - {type: Tiled, tiled: 1, t_args: {'h': 6}, pos: [38,1.5], size: [2,3]}
+    - {type: Tiled, tiled: 1, t_args: { 'h': 8 }, multi: [46,1.5,57,1.5 ], size: [ 2,4 ], z: 2 }
+    - {type: HotSpot, pos: [58,5.5], warp: 1-1b}
 
     #- { type: Tiled, pos: [4,4], z: -1, tiled: 0}
     #- { type: Tiled, pos: [ 10,4 ], tiled: 0 }
@@ -23,36 +45,51 @@ define:
     - { type: PrizeBrick, pos: [5,5], callback: generateBonus}
     - { type: Brick, pos: [7, 5]}
     - { type: Goomba, pos: [4, 4.1]}
-    - { type: Koopa, pos: [15, 2.1]}
+    - { type: Koopa, multi: [15, 2.1, 17, 2.1]}
 1-1b:
   bg_color: [0, 0, 0]
-  size: [256, 240]
+  size: [256, 224]
   name: '1-1'
+  start_positions:
+    - [2, 10]
   items:
-    - type: platform
-      quad: *brick
-      solid: True
-      pal: 5
-      loc: [ 0, 2, 1, 11, 4, 2, 7, 3, 4, 12, 7, 1]
-    - type: platform
-      quad: *block
-      solid: True
-      pal: 5
-      loc: [0, 0, 16, 2]
-    - type: coin
-      loc: [4, 5, 5, 5, 6, 5, 7, 5, 8, 5, 9, 5, 10, 5,
-            4, 7, 5, 7, 6, 7, 7, 7, 8, 7, 9, 7, 10, 7,
-            5, 9, 6, 9, 7, 9, 8, 9, 9, 9]
+    - { type: Tiled, quad: *block, pal: 5, pos: [ 0, -0.5 ], size: [ 69,2 ] }
+    - { type: Tiled, quad: *brick, pal: 5, pos: [0, 1.5], size: [1, 11]}
+    - { type: Tiled, quad: *brick, pal: 5, pos: [4, 1.5 ], size: [7, 3] }
+    - { type: Tiled, quad: *brick, pal: 5, pos: [4, 11.5], size: [7, 1]}
+    - { type: Coin, multi: [4, 4.5, 5, 4.5, 6, 4.5, 7, 4.5, 8, 4.5, 9, 4.5, 10, 4.5,
+          4, 6.5, 5, 6.5, 6, 6.5, 7, 6.5, 8, 6.5, 9, 6.5, 10, 6.5,
+          5,8.5,6,8.5,7,8.5,8,8.5,9,8.5]}
+    - { type: Tiled, tiled: 2, pos: [13, 1.5], z: 2}
+    - { type: Tiled, pos: [14.5, 0], size: [ 2,12.5 ] }
+    - { type: Line, pos: [13,3.5], width: 334}
+    - {type: HotSpot, pos: [13,1.5], warp: 1-1, tag: 9}
 
-#    - type: tiled
-#      tiled: 'tiles/pipeh'
-#      solid: [4,2]
-#      args:
-#        width: 1
-#      loc: [13,2]
-#    - type: tiled
-#      tiled: 'tiles/pipeh2'
-#      solid: [1,9]
-#      args:
-#        height: 9
-#      loc: [15,4]
+#
+#    - type: platform
+#      quad: *brick
+#      solid: True
+#      pal: 5
+#      loc: [ 0, 2, 1, 11, 4, 2, 7, 3, 4, 12, 7, 1]
+#    - type: platform
+#      quad: *block
+#      solid: True
+#      pal: 5
+#      loc: [0, 0, 16, 2]
+#    - type: coin
+#      loc: [4, 5, 5, 5, 6, 5, 7, 5, 8, 5, 9, 5, 10, 5,
+#            4, 7, 5, 7, 6, 7, 7, 7, 8, 7, 9, 7, 10, 7,
+#            5, 9, 6, 9, 7, 9, 8, 9, 9, 9]
+#
+##    - type: tiled
+##      tiled: 'tiles/pipeh'
+##      solid: [4,2]
+##      args:
+##        width: 1
+##      loc: [13,2]
+##    - type: tiled
+##      tiled: 'tiles/pipeh2'
+##      solid: [1,9]
+##      args:
+##        height: 9
+##      loc: [15,4]

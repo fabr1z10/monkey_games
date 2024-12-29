@@ -14,11 +14,13 @@ strings = dict()
 score = 1500
 coins = 1
 tile_size = 16
-jumpHeight = 64
+jumpHeight = 72
 timeToJumpApex = 0.5
 id_main_node = None
 id_label_score = None
-
+id_label_coins = None
+MarioSpeed = 300
+hotspot= None
 
 state = 0
 mario_states = [
@@ -52,3 +54,6 @@ class Tags:
     MUSHROOM_1UP = 4
     GOOMBA = 5
     KOOPA =6
+    HOTSPOT=7
+    COIN = 8
+    HOTSPOT_HOR = 9

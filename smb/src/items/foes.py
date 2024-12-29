@@ -87,6 +87,7 @@ class Dead(monkey.ControllerState):
 		self.ctrl = self.node.controller
 
 	def start(self, **kwargs):
+		print('cfififi')
 		self.node.setAnimation(self.anim)
 		self.node.collider.setMask(0)
 
@@ -180,7 +181,7 @@ class Foe(monkey.Node):
 class Goomba(Foe):
 	def __init__(self, **data):
 		super().__init__(model='goomba', speed=0.5, height=16, tag=settings.Tags.GOOMBA, **data)
-		#self.controller.addState(Dead())
+		self.controller.addState(Dead())
 		self.controller.setState(0)
 
 	def die(self):
@@ -225,3 +226,18 @@ class Bonus(monkey.Node):
 		self.controller.addState(Walk(False, 0.5, False, 'idle'))  # addCallback(update=self.updatePosition)
 		self.add_component(self.controller)
 		self.controller.setState(0)
+
+
+class Coin(monkey.Node):
+	def __init__(self, **data):
+		super().__init__()
+		pos = data['pos']
+		z = data.get('z', 1)
+		self.set_position(pos[0] * settings.tile_size, pos[1] * settings.tile_size, z)
+		pal = data.get('pal', None)
+		self.set_model(monkey.models.getSprite('tiles/coin'), batch='tiles')
+		self.collider = monkey.components.Collider(settings.Flags.FOE,
+			settings.Flags.PLAYER, settings.Tags.COIN,
+			monkey.shapes.AABB(4, 12, 0, 16), batch='lines')
+		self.add_component(self.collider)
+

@@ -83,3 +83,33 @@ class PlayerVsKoopa(monkey.CollisionResponse):
 
     def onEnd(self, p, f):
         pass
+
+class PlayerVsHotspot(monkey.CollisionResponse):
+    def __init__(self, tag1, tag2):
+        super().__init__(tag1, tag2)
+
+    def onStart(self, player, hotspot, move, who):
+        print('ENETRING HOTSPOT')
+        settings.hotspot = hotspot.node
+
+    def onEnd(self, p, f):
+        print('LEAVING HOTSPOT')
+        settings.hotspot = None
+
+class PlayerVsCoin(monkey.CollisionResponse):
+    def __init__(self, tag1, tag2):
+        super().__init__(tag1, tag2)
+
+    def onStart(self, player, coin, move, who):
+        coin.node.remove()
+        settings.coins +=1
+        monkey.get_node(settings.id_label_coins).updateText(f"*{settings.coins:02}")
+
+class PlayerVsHotspotHor(monkey.CollisionResponse):
+    def __init__(self, tag1, tag2):
+        super().__init__(tag1, tag2)
+
+    def onStart(self, player, hotspot, move, who):
+        settings.room = hotspot.node.warp
+        settings.start_position = hotspot.node.start_pos
+        player.node.controller.setState(3)
