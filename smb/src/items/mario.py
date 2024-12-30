@@ -47,6 +47,20 @@ class PipeDown(monkey.ControllerState):
 		if self.node.y < self.y0 - 64:
 			monkey.close_room()
 
+
+class PipeUp(monkey.ControllerState):
+	def __init__(self):
+		super().__init__()
+
+	def start(self, **kwargs):
+		self.node.setAnimation('idle')
+		self.y0 = self.node.y
+
+	def update(self, dt):
+		self.node.move((0, 20 * dt, 0))
+		if self.node.y > self.y0 + 64:
+			self.node.controller.setState(0)
+
 class PipeRight(monkey.ControllerState):
 	def __init__(self):
 		super().__init__()
@@ -124,7 +138,9 @@ class Mario(monkey.Node):
 
 	def enterHole(self):
 		if settings.hotspot:
-			settings.room = settings.hotspot.warp
+			hnode = monkey.get_node(settings.hotspot)
+			settings.room = hnode.warp[0]
+			settings.start_position = hnode.warp[1]
 			self.controller.setState(2)
 			#monkey.close_room()
 
@@ -159,6 +175,7 @@ class Mario(monkey.Node):
 		self.controller.addState(MarioDead())
 		self.controller.addState(PipeDown())
 		self.controller.addState(PipeRight())
+		self.controller.addState(PipeUp())
 
 		self.add_component(self.controller)
 		self.controller.setState(0)

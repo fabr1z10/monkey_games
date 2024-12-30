@@ -6,14 +6,19 @@ from .collision import PlayerVsBrick, PlayerVsMushroom, PlayerVsGoomba, \
 	PlayerVsKoopa, PlayerVsHotspot, PlayerVsCoin, PlayerVsHotspotHor
 
 def pairwise(iterable):
-    "s -> (s0, s1), (s2, s3), (s4, s5), ..."
-    a = iter(iterable)
-    return zip(a, a)
+	"s -> (s0, s1), (s2, s3), (s4, s5), ..."
+	a = iter(iterable)
+	return zip(a, a)
+
+
 class GameRoom(monkey.Room):
+	def commonStart(self):
+		print('FIGA22')
+		settings.hotspot = None
+
 	def __init__(self):
 		super().__init__()
-
-
+		self.addOnStart(self.commonStart)
 		world = settings.worlds[settings.room]
 		bg_color = world.get('bg_color', [0, 0, 0])
 		world_size = world['size']
@@ -23,11 +28,11 @@ class GameRoom(monkey.Room):
 		hdw = device_width // 2
 		hdh = device_height // 2
 		cam = monkey.CamOrtho(device_width, device_height,
-		                      viewport=(0, 0, device_width, device_height),
-		                      bounds_x=(hdw, world_size[0] - hdw), bounds_y=(hdh, world_size[1] - hdh))
+			viewport=(0, 0, device_width, device_height),
+			bounds_x=(hdw, world_size[0] - hdw), bounds_y=(hdh, world_size[1] - hdh))
 		cam_ui = monkey.CamOrtho(device_width, device_height,
-		                         viewport=(0, 0, device_width, device_height),
-		                         bounds_x=(hdw, hdw), bounds_y=(hdh, hdh))
+			viewport=(0, 0, device_width, device_height),
+			bounds_x=(hdw, hdw), bounds_y=(hdh, hdh))
 		self.add_camera(cam)
 		self.add_camera(cam_ui)
 		ce = monkey.CollisionEngine2D(80, 80)
@@ -39,12 +44,8 @@ class GameRoom(monkey.Room):
 		ce.addResponse(PlayerVsCoin(settings.Tags.PLAYER, settings.Tags.COIN))
 		ce.addResponse(PlayerVsHotspotHor(settings.Tags.PLAYER, settings.Tags.HOTSPOT_HOR))
 
-		#collision_engine.addResponse(BubbleVsFoe(settings.TAG_BUBBLE, settings.TAG_FOE))
-
-
 		self.add_runner(ce)
 		self.add_runner(monkey.Scheduler())
-
 		self.add_batch('tiles', monkey.SpriteBatch(max_elements=10000, cam=0, sheet='tiles'))
 		self.add_batch('lines', monkey.LineBatch(max_elements=2000, cam=0))
 		self.add_batch('ui', monkey.SpriteBatch(max_elements=1000, cam=1, sheet='tiles'))
@@ -65,18 +66,22 @@ class GameRoom(monkey.Room):
 		ui.add(monkey.Text('ui', 'mario', 'TIME', pos=(200, 27 * 8, 1)))
 		coinLabel = monkey.Text('ui', 'mario', f"*{settings.coins:02}", pos=(96, 26 * 8, 1))
 		ui.add(coinLabel)
+		ui.add(items.Tiled(pos=[5.5,12.5], atiled=0, sheet='ui'))
+
+
 		settings.id_label_score = scoreLabel.id
 		settings.id_label_coins = coinLabel.id
 		root.add(ui)
 
+		start_loc = world['start_positions'][settings.start_position]
+		start_pos = start_loc['pos']
+		onStart = start_loc.get('on_start', None)
+		if onStart:
+			self.addOnStart(getattr(items, onStart))
+		mario = items.Mario(start_pos[0] * settings.tile_size, start_pos[1] * settings.tile_size)
+		settings.id_player = mario.id
+		root.add(mario)
 
-		start_pos = world['start_positions'][settings.start_position]
-		root.add(items.Mario(start_pos[0] * settings.tile_size, start_pos[1] * settings.tile_size))
-		#root.add(item_builders.Player(pos=[start_pos[0], start_pos[1]], speed=200,
-		#                              jump_height=96, time_to_jump_apex=0.5))
-
-
-		# add all other items
 		objs = world.get('items', [])
 		for item in objs:
 			type = item['type']
@@ -90,19 +95,3 @@ class GameRoom(monkey.Room):
 				else:
 					node = f(**item)
 					root.add(node)
-
-	# a = monkey.Node()
-		# a.set_position(8,64,0)
-		# #m1 = monkey.models.TileModel('tiles', 2, 2, 2, 50)
-		# #m1.addTile(0, 0, False, False)
-		# #m1.setTile(0, 0, 0)
-		# m1 = monkey.models.TileModel('tiles', 1, 1, 4, 20)
-		# m1.addTile(58, 0, False, False)
-		# m1.addTile(58, 2, False, False)
-		# m1.addTile(58, 3, False, False)
-		# m1.setTile(0, 0, 0)
-		# m1.setTile(0, 1, 1)
-		# m1.setTile(0, 2, 2)
-		# m1.setTile(0, 3, 1)
-		# a.set_model(m1)
-		# root.add(a)

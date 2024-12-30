@@ -203,6 +203,7 @@ class Tiled(monkey.Node):
 def TileModel(name: str, sheet: str, args: dict):
 	tp = monkey.getTileParser(sheet)
 	data = evaluate_curly_braces(settings.data['models'][name], args)
+	print(data, args)
 	model = tp.parse(data)
 	return model
 
@@ -250,7 +251,7 @@ class HotSpot(monkey.Node):
 		z = kwargs.get('z', 0)
 		tag = kwargs.get('tag', settings.Tags.HOTSPOT)
 		self.warp = kwargs['warp']
-		self.start_pos = kwargs.get('start_pos', 0)
+		#self.start_pos = kwargs.get('start_pos', 0)
 		self.set_position(pos[0] * settings.tile_size, pos[1] * settings.tile_size, z)
 		self.add_component(monkey.components.Collider(
 			shape=monkey.shapes.AABB(-2, 2, 0, 2),

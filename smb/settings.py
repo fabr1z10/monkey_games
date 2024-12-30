@@ -19,6 +19,7 @@ timeToJumpApex = 0.5
 id_main_node = None
 id_label_score = None
 id_label_coins = None
+id_player = None
 MarioSpeed = 300
 hotspot= None
 

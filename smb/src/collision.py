@@ -90,7 +90,7 @@ class PlayerVsHotspot(monkey.CollisionResponse):
 
     def onStart(self, player, hotspot, move, who):
         print('ENETRING HOTSPOT')
-        settings.hotspot = hotspot.node
+        settings.hotspot = hotspot.node.id
 
     def onEnd(self, p, f):
         print('LEAVING HOTSPOT')
@@ -110,6 +110,6 @@ class PlayerVsHotspotHor(monkey.CollisionResponse):
         super().__init__(tag1, tag2)
 
     def onStart(self, player, hotspot, move, who):
-        settings.room = hotspot.node.warp
-        settings.start_position = hotspot.node.start_pos
+        settings.room = hotspot.node.warp[0]
+        settings.start_position = hotspot.node.warp[1]
         player.node.controller.setState(3)
