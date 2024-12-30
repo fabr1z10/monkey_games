@@ -78,10 +78,16 @@ class PrizeBrick(monkey.Node):
 
 	def generateBonus(node):
 		node.moving = False
-
 		from . import Bonus
-
-		bonus = Bonus(pos=[node.x / 16 + 0.5, node.y / 16], z=2, model='mushroom', tag=settings.Tags.MUSHROOM)
+		if settings.state == 0:
+			model = 'mushroom'
+			tag = settings.Tags.MUSHROOM
+			speed = 0.5
+		else:
+			model = 'flower'
+			tag = settings.Tags.FLOWER
+			speed = 0
+		bonus = Bonus(pos=[node.x / 16 + 0.5, node.y / 16], z=2, model=model, tag=tag, speed=speed)
 		node.parent.add(bonus)
 
 

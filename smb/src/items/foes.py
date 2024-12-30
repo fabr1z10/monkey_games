@@ -204,6 +204,7 @@ class Bonus(monkey.Node):
 		super().__init__()
 		self.dir = -1
 		pos = data['pos']
+		speed = data.get('speed', 0.5)
 		z = data.get('z', 1)
 		self.set_position(pos[0] * settings.tile_size, pos[1] * settings.tile_size, z)
 		pal = data.get('pal', None)
@@ -223,7 +224,7 @@ class Bonus(monkey.Node):
 			jump_height=48, time_to_jump_apex=1)
 		# add states
 		self.controller.addState(Rise())
-		self.controller.addState(Walk(False, 0.5, False, 'idle'))  # addCallback(update=self.updatePosition)
+		self.controller.addState(Walk(False, speed, False, 'idle'))  # addCallback(update=self.updatePosition)
 		self.add_component(self.controller)
 		self.controller.setState(0)
 

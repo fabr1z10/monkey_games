@@ -48,7 +48,7 @@ define:
     #- { type: Tiled, pos: [ 10,4 ], tiled: 0 }
     #- { type: Tiled, pos: [ 3, 3], atiled: 1, size: [1, 1], canMove: True}
     - { type: PrizeBrick, pos: [3, 3], callback: generateCoin}
-    - { type: PrizeBrick, pos: [5,5], callback: generateBonus}
+    - { type: PrizeBrick, multi: [5,5, 10, 5], callback: generateBonus}
     - { type: Brick, pos: [7, 5]}
     - { type: Goomba, pos: [4, 4.1]}
     - { type: Koopa, multi: [15, 2.1, 17, 2.1]}

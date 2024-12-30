@@ -23,6 +23,9 @@ id_player = None
 MarioSpeed = 300
 hotspot= None
 
+BUTTON_WARP = 264
+BUTTON_FIRE = 341
+
 state = 0
 mario_states = [
     {
@@ -58,3 +61,4 @@ class Tags:
     HOTSPOT=7
     COIN = 8
     HOTSPOT_HOR = 9
+    FLOWER = 10

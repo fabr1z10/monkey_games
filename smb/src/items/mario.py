@@ -4,9 +4,6 @@ import settings
 
 #from .items import Bubble
 class MarioDead(monkey.ControllerState):
-	"""This controller state is used for bonuses (e.g. mushrooms
-	and 1up, when they move up from the bricks that originated them.
-	"""
 	def __init__(self):
 		super().__init__()
 		self.timer = 0
@@ -29,10 +26,6 @@ class MarioDead(monkey.ControllerState):
 			if self.timer >= 2.0:
 				self.node.remove()
 				monkey.close_room()
-		pass
-		#self.ctrl.move((0, 0.2), False)
-		#if self.node.y > self.y0 + 16:
-		#	self.node.controller.setState(1)
 
 class PipeDown(monkey.ControllerState):
 	def __init__(self):
@@ -144,6 +137,8 @@ class Mario(monkey.Node):
 			self.controller.setState(2)
 			#monkey.close_room()
 
+	def fire(self):
+		print('FIRE AT',self.x)
 
 	def resetModel(node):
 		node.controller.setModel(0)
@@ -170,7 +165,8 @@ class Mario(monkey.Node):
 		self.controller = monkey.components.PlayerController2D(batch, bounds=(-10,10,0,height), speed=settings.MarioSpeed,
 		 													   acceleration=500, jump_height=settings.jumpHeight, time_to_jump_apex=settings.timeToJumpApex,
 		 													   walk=walk, idle=idle, slide=slide, jumpUp=jumpUp, jumpDown=jumpDown)
-		self.controller.addKeyEvent(264, self.enterHole)
+		self.controller.addKeyEvent(settings.BUTTON_WARP, self.enterHole)
+		self.controller.addKeyEvent(settings.BUTTON_FIRE, self.fire)
 		self.controller.addModel(monkey.models.getSprite(sprite), idle, walk, slide, jumpUp, jumpDown)
 		self.controller.addState(MarioDead())
 		self.controller.addState(PipeDown())
