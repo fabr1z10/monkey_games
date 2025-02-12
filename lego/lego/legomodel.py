@@ -3,7 +3,7 @@ import monkey2
 from .util import *
 
 class LegoModel:
-	def __init__(self, file: str, mainColor=None, transf=IDENTITY):
+	def __init__(self, file: str, mainColor=-1, transf=IDENTITY):
 		self.submodels = []
 		self.mainColour = mainColor
 		self.name = file
@@ -33,6 +33,8 @@ class LegoModel:
 	def readSubFileReference(self, values: list):
 		dep = values[-1]
 		colour = int(values[1])
+		if colour == 16:
+			colour = self.mainColour
 		fv = [float(x) for x in values[2:14]]
 		sub_transf = [fv[3], fv[4], fv[5], 0,
 			fv[6], fv[7], fv[8], 0,
@@ -69,11 +71,11 @@ class LegoModel:
 			cc[0], cc[1], cc[2], cc[3]])
 
 	def getColour(self, id: int):
-		if id == 16 and self.mainColour:
+		if id == 16 and self.mainColour != -1:
 			id = self.mainColour
 			col = colors[id].value
 		elif id == 24:
-			id = self.mainColour if self.mainColour else id
+			id = self.mainColour if self.mainColour != -1 else id
 			col = colors[id].edge
 		else:
 			col = colors[id].value
@@ -83,17 +85,17 @@ class LegoModel:
 	def instantiate(self):
 		node = monkey2.Node()
 		if self.points:
-			print('points:',self.points)
+			#print('points:',self.points)
 			model = monkey2.TriangleNormalModel(self.points)
 			node.setModel(model,2)
 		if self.lines:
-			print('lines:', self.lines)
-			#model = monkey2.models.LineModel('lines', color=self.lineColors, points = self.lines)
-			#lnode = monkey2.Node()
-			#lnode.set_model(model)
-			#node.add(lnode)
+			#print('lines:', self.lines)
+			model = monkey2.LineModel(self.lines)
+			lnode = monkey2.Node()
+			lnode.setModel(model, 0)
+			node.add(lnode)
 		node.setTransform(self.transf)
-		print('instantiating with transform',self.transf)
+		#print(f'instantiating {self.name} with transform {self.transf}')
 		for s in self.submodels:
 			node.add(s.instantiate())
 		return node

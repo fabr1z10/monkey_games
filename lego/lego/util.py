@@ -3,7 +3,7 @@ import monkey2
 from .colour import Colour
 
 LEGO_HOME = '/home/fabrizio/Downloads/complete/ldraw/'
-PATH = [LEGO_HOME, LEGO_HOME + 'p/', LEGO_HOME + 'parts/']
+PATH = [LEGO_HOME, LEGO_HOME + 'p/', LEGO_HOME + 'parts/', LEGO_HOME + 'parts/s/', '/home/fabrizio/monkey_games/lego/assets/']
 IDENTITY = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
 colors = dict()
 

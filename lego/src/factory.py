@@ -9,14 +9,16 @@ def create_room():
 
 
     room = monkey2.Room()
-    cam = monkey2.CamPerspective()
+    room.setClearColor((0,0.8,0.8))
+    cam = monkey2.CamPerspective(far=1000)
     room.addCamera(cam)
-    cam.setPosition([0,2,5], [0,0,-1], [0,1,0])
+    cam.setPosition([0,20,0], [0,0,-1], [0,1,0])
+    #cam.setPosition([0,80,0], [0,-1,0], [0,0,1])
 
-    room.addBatch(monkey2.LineBatch(100, 0))
-    room.addBatch(monkey2.TriangleBatch(100, 0))
-    nb = monkey2.TriangleNormalBatch(10000, 0)
-    nb.addLight(monkey2.DirectionalLight((-1, -1, -1), (1,1,1), 0.2))
+    room.addBatch(monkey2.LineBatch(100000, 0))
+    room.addBatch(monkey2.TriangleBatch(10, 0))
+    nb = monkey2.TriangleNormalBatch(200000, 0)
+    nb.addLight(monkey2.DirectionalLight((-1, -1, -1), (1,1,1), 0.4))
     room.addBatch(nb)
 
     root = room.root()
@@ -40,11 +42,13 @@ def create_room():
     # root.add(n4)
 
     n3 = monkey2.Node()
-    n3.addComponent(monkey2.CamControl3D(0,5,2))
+    n3.addComponent(monkey2.CamControl3D(0,20,2))
     root.add(n3)
 
-    lm = lego.LegoModel('4-4cyli.dat')
+    lm = lego.LegoModel('police.dat')
     k = lm.instantiate()
+    scale=0.2
+    root.setTransform([scale,0,0,0, 0,scale,0,0, 0,0,scale,0, 0,0,0,1])
     root.add(k)
 
 
