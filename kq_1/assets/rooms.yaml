@@ -5,12 +5,44 @@ rooms:
   start:
     size: *size
     walkareas:
-      - [0,0, 288, 0, 288, 10, 316,10, 316,128, 164,128,164,30,184,30,184,20,0,20]
-      - [ 0, 0, 316, 0, 244,18,241,18,228,6,0,6 ]
+      - poly: [0,0, 288, 0, 288, 10, 316,10, 316,128, 164,128,164,30,184,30,184,20,0,20]
+      - poly: [ 0, 0, 316, 0, 244,18,241,18,228,6,0,6 ]
+    nodes:
+      - pos: [0, 0, -1]
+        model: main/bg1
+      - pos: [5, 5, 0]
+        model: main/alligator
+        script: move_alligator
+        depth: 1
+#      - pos: [25, 5, 0]
+#        model: main/alligator
+#        script: move_alligator
+#        depth: 1
+#      - pos: [45, 5, 0]
+#        model: main/alligator
+#        script: move_alligator
+#        depth: 1
+      - pos: [80, 5, 0]
+        model: main/alligator
+        script: move_alligator
+        depth: 1
+      - pos: [198, 39, -1]
+        model: main/tree_0
+        depth: 1
+        walk: { 'poly': [68, 0, 84, 0, 84, 2, 68, 2] }
+#      - pos: [198, 39]
+#        model: main/
+      #- ["prova", 140, 20]
+      #- ["tree_castle", 198, 39]
+      #- ["tree_castle", 178, 49]
+
+
   prova:
     size: *size
     walkareas:
       - poly: [0,0,100,0,100,100,316,100,316,140,50,140,50,100,0,100]
+        #lines:
+        #  - [50,50,100,110]
         holes:
           - [20,20,30,20,30,30,20,30]
 
