@@ -1,42 +1,111 @@
 size: &size [316, 166]
-
-
+items:
+  alligator:
+    model: main/alligator
+    script: move_alligator
+    hotspot:
+      rect: [ 25, 10, 0.2, 0 ]
+      actions:
+        look: [ 'message', { 'text': 2 } ]
+    depth: 1
+  flag-purple:
+    model: main/flag1
+    hotspot:
+      rect: [ 25, 10 ]
+      actions:
+        look: [ 'message', { 'text': 1 } ]
+  flag-yellow:
+    model: main/flag2
+    hotspot:
+      rect: [25, 10]
+      actions:
+        look: [ 'message', { 'text': 1 } ]
+  flag-cyan:
+    model: main/flag3
+    hotspot:
+      rect: [25, 10]
+      actions:
+        look: [ 'message', { 'text': 1 } ]
+  wall_garden_east:
+    model: main/wall_garden_east
+    depth: 1
+    walk: { 'poly': [-1, 72, 161, 72, 282,0,300, 0, 300, 2, 170, 74, -1, 74]}
+      
 rooms:
+  garden_east:
+    size: *size
+    textures: [2]
+    walkareas:
+      - poly: [0,0,316,0,316,166,0,166]
+    nodes:
+      - pos: [ 0, 0, -1 ]
+        model: main/bg2
+      - id: wall_garden_east
+        pos: [0,35,0]
   start:
     size: *size
+    textures: [1]
     walkareas:
       - poly: [0,0, 288, 0, 288, 10, 316,10, 316,128, 164,128,164,30,184,30,184,20,0,20]
       - poly: [ 0, 0, 316, 0, 244,18,241,18,228,6,0,6 ]
     nodes:
       - pos: [0, 0, -1]
         model: main/bg1
-      - pos: [5, 5, 0]
-        model: main/alligator
-        script: move_alligator
-        depth: 1
-#      - pos: [25, 5, 0]
-#        model: main/alligator
-#        script: move_alligator
-#        depth: 1
-#      - pos: [45, 5, 0]
-#        model: main/alligator
-#        script: move_alligator
-#        depth: 1
-      - pos: [80, 5, 0]
-        model: main/alligator
-        script: move_alligator
-        depth: 1
+      - id: alligator
+        pos: [5, 5, 0]
+      - id: alligator
+        pos: [80, 5, 0]
+
+      - id: flag-purple
+        pos: [6,155,0]
+
+      - id: flag-yellow
+        pos: [36,155,0]
+
+      - id: flag-cyan
+        pos: [66,155,0]
+
       - pos: [198, 39, -1]
         model: main/tree_0
         depth: 1
         walk: { 'poly': [68, 0, 84, 0, 84, 2, 68, 2] }
-#      - pos: [198, 39]
-#        model: main/
-      #- ["prova", 140, 20]
-      #- ["tree_castle", 198, 39]
-      #- ["tree_castle", 178, 49]
+        hotspot:
+          id: tree_0
+          actions:
+            look: ['message', {'text': 0}]
+      - pos: [118,24,-1]
+        model: main/castle_0
+        hotspot:
+          poly: [-118,0,60,0,60,135,-20,135,-20,90,-118,90]
+          actions:
+            look: [ 'message', { 'text': 5 } ]
+        depth: 1
 
-
+      # drown area 1
+      - collider:
+          poly: [ 0, 0, 316, 0, 244,18,241,18,228,6,0,6 ]
+          flag: 2
+          mask: 1
+          tag: drown
+        user_data:
+          y: 3
+      # drown area 2
+      - collider:
+          poly: [175,45,164,45,164,26,175,26,186,22,199,35,204,36]
+          flag: 2
+          mask: 1
+          tag: drown
+        user_data:
+          x: 184
+          y: 34
+      # north
+      - collider:
+          poly: [0,120,316,120,316,122,0,122]
+          flag: 2
+          mask: 1
+          tag: goto
+        user_data:
+          room: garden_east
   prova:
     size: *size
     walkareas:

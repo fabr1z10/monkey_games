@@ -2,7 +2,9 @@ import monkey2
 
 sprites = None
 rooms = {}
-
+items = {}
+quads = None
+strings = {}
 
 def makeSpriteNode(id: str, x, y, batchId: int, batch, z=0, dynamicDepth=False,wa=None):
 	m = monkey2.Node()
