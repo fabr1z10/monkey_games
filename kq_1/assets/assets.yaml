@@ -2,6 +2,8 @@ textures:
   0: kq1.png
   1: start.png
   2: gardene.png
+  3: gardenw.png
+  4: castle.png
 fonts:
   sierra:
     tex: 0
@@ -85,13 +87,35 @@ fonts:
       '(': [40,216,8,8,8]
       ')': [48,216,8,8,8]
 sprites:
+  door_castle:
+    tex: 4
+    data: [
+      1, 167, 38, 50, 0, 0,
+      41, 168, 38, 49, 0, 0,
+      81, 167, 42, 50, 0, 0]
+    animations:
+      closed: [0]
+      open: [2]
+      opening: [0,1,2]
+      closing: [2,1,0]
+
   cursor:
     tex: 0
-    data: [34,53,11,16,5,8,
-      46,53,12,9,6,5]
+    data: [
+      34,53,11,16,5,8,      # walk
+      46,53,12,9,6,5,       # look
+      1,53,15,16,8,8,       # use
+      17,53,16,16,8,8,      # talk
+      1,174,11,16,0,16,     # arrow
+      15,176,13,12,6,6      # carrot
+    ]
     animations:
       walk: [0]
       look: [1]
+      use: [2]
+      talk: [3]
+      arrow: [4]
+      carrot: [5]
   flag1:
     tex: 0
     data: [
@@ -188,10 +212,17 @@ sprites:
 #      b: [0]
 quads:
   bg1: {'tex': 1, data: [0, 0, 316, 166, 0, 0]}
-  bg2: {'tex': 2, data: [0,0,316,166,0,0] }
+  bg_garden_east: {'tex': 2, data: [0,0,316,166,0,0] }
+  bg_garden_west: {'tex': 3, data: [0,0,316,166,0,0] }
+  bg_castle_west: { 'tex': 4, data: [ 0,0,316,166,0,0 ] }
+
   tree_0: {'tex': 1, data: [86,167,118,127,0,0]}
+  tree_1: {'tex': 2, data: [2,269,126,56,0,0]}
+  tree_2: {'tex': 2, data: [133,283,80,42,0,0]}
   castle_0: {'tex': 1, data: [208,167,70,137,0,0]}
   wall_garden_east: {'tex': 2, data: [1,170,300,89,0,0]}
+  wall_garden_west: { 'tex': 3, data: [ 1,167,272,89,0,0 ] }
+
 #nodes:
 #  tree_0000:
 #    quad: [1, 86, 167, 118, 127, 0, 0]

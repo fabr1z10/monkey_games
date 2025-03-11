@@ -1,9 +1,11 @@
 import monkey2
 import yaml
+import colorama
 from . import assetman
 from . import state
 from . import scripts
 from . import code
+from .scripts import exit_with_err
 
 class ObjectHotSpot(monkey2.HotSpot):
     def __init__(self, data, shape, priority, camera):
@@ -18,13 +20,11 @@ class ObjectHotSpot(monkey2.HotSpot):
         pass
 
     def onClick(self, pos):
-        print(f'CLICKING {state.action}, {self.data}')
         action = self.actions.get(state.action, None)
         if action:
             f = getattr(code, action[0], None)
             if not f:
-                print(f' ERROR: function "{action[0]}" not found')
-                exit(1)
+                exit_with_err(f' ERROR: function "{action[0]}" not found')
             args = action[1] if len(action)>1 else {}
             f(**args)
         else:
@@ -35,7 +35,9 @@ class ObjectHotSpot(monkey2.HotSpot):
                     turn = self.data.get('turn', None)
                 code.walk_player_to(pos, turn=turn)
             else:
-                print(f'No "{state.action}" defined.')
+                # print a default message
+                code.message(text=8)
+                #print(f'No "{state.action}" defined.')
 
 
 class RoomStart:
@@ -61,7 +63,9 @@ def init():
 
 def create_room():
     print(f" -- Loading room: {state.room}")
-    #assert(state.room in assetman.rooms)
+    if state.room not in assetman.rooms:
+        exit_with_err(f"Don't know room: {state.room}")
+
     ri = assetman.rooms[state.room]
     tex_list = [0]
     tex_list.extend(ri['textures'])
@@ -93,16 +97,26 @@ def create_room():
     monkey2.loadAsset('ui', 'assets.yaml', 1, tex_list)
     room.addBatch(monkey2.LineBatch(1000, 0))
     room.addBatch(monkey2.TriangleBatch(1000, 0))
+    room.addBatch(monkey2.LineBatch(1000, 1))
+    room.addBatch(monkey2.TriangleBatch(1000, 1))
 
     line_batch = 2
 
     root = room.root()
+    kb = monkey2.Keyboard()
+    kb.add(state.KEY_RESTART_ROOM, 1, 0, scripts.restart)
+    kb.add(state.KEY_INVENTORY, 1, 0, scripts.enter_inventory)
+    kb.add(state.KEY_ESC, 1, 0, scripts.exit_inventory)
+    root.addComponent(kb)
     state.IDS['ROOT'] = root.id
 
-    print('FANCULAMI',root.id)
+
     gameRoot = monkey2.Node()
+    uiRoot = monkey2.Node()
     state.IDS['GAME_ROOT'] = gameRoot.id
+    state.IDS['UI_ROOT'] = uiRoot.id
     root.add(gameRoot)
+    root.add(uiRoot)
 
     # a = monkey2.Node()
     # tree = monkey2.shapes.fromImage('main', 1, [86, 167, 118, 127], 10)
@@ -144,8 +158,11 @@ def create_room():
     player.setPosition(state.PLAYER_POS)
     player.addComponent(monkey2.Collider(monkey2.shapes.Point(), 1, 2, 'player'))
     pn = monkey2.Node()
-    pn.setModel(monkey2.shapes.Point().toModel((1,1,0,1), 0),2)
+    pn.setModel(monkey2.shapes.Point().toModel(monkey2.ModelType.WIRE), 2)
     player.add(pn)
+    dir = 'e' if state.PLAYER_DIR == 'w' else state.PLAYER_DIR
+    player.setAnimation(f"idle-{dir}")
+    player.flipX(state.PLAYER_DIR == 'w')
     gameRoot.add(player)
     state.IDS['PLAYER'] = player.id
     print(' -- player id:',player.id)
@@ -157,7 +174,7 @@ def create_room():
     #player=None
     i = 0
     for w in ri.get('walkareas', []):
-        n = monkey2.adventure.WalkArea(w['poly'], line_batch, state.WALKAREA_COLORS[i])
+        n = monkey2.adventure.WalkArea(w['poly'], line_batch, state.COLORS.WALKAREA)
         for hole in w.get('holes', []):
             n.addHole(hole)
         for l in w.get('lines', []):
@@ -172,6 +189,7 @@ def create_room():
     # #root.add(assetman.makeSpriteNode('prova', 42, 50, 0, batch, dynamicDepth=True, wa=main_walkarea))
     # add room nodes
     for item in ri.get('nodes', []):
+
         pos = item.get('pos', [0,0,0])
         if 'id' in item:
             item = assetman.items[item['id']]
@@ -180,6 +198,9 @@ def create_room():
         nodo.setPosition(pos)
         if model:
             nodo.setModel(monkey2.getModel(model))
+        anim = item.get('anim', None)
+        if anim:
+            nodo.setAnimation(anim)
         if item.get('depth'):
             nodo.addComponent(monkey2.DepthScale(166, 0, state.FLAG_WALK_BLOCK))
         walk = item.get('walk', None)
@@ -199,7 +220,7 @@ def create_room():
             tag = cl['tag']
             shape = monkey2.shapes.Polygon(cl['poly'])
             nodo.addComponent(monkey2.Collider(shape, flag, mask, tag))
-            sm = shape.toModel([0,1,0,1], 0)
+            sm = shape.toModel(monkey2.ModelType.WIRE)
             ab = monkey2.Node()
             ab.setModel(sm, line_batch)
             nodo.add(ab)
@@ -216,16 +237,19 @@ def create_room():
                 mm = model.split('/')
                 qq = assetman.quads[mm[1]]
                 shape = monkey2.shapes.fromImage(mm[0], qq['tex'], qq['data'], 10)
-            a.setModel(shape.toModel((0, 0, 1, 1), 0), line_batch)
+            a.setModel(shape.toModel(monkey2.ModelType.WIRE), line_batch)
+            a.setMultiplyColor(state.COLORS.HOTSPOT)
             hotspot = ObjectHotSpot(item['hotspot'], shape, 0, 0)# monkey2.HotSpot(shape, 0, 0)
             nodo.addComponent(hotspot)
             nodo.userData = item['hotspot']
             nodo.add(a)
         if 'user_data' in item:
+            print('USER=DATA=',item['user_data'])
             if nodo.userData:
                 nodo.userData.update(item['user_data'])
             else:
                 nodo.userData = item['user_data']
+            print('FUCK',nodo.userData)
 
         script = item.get('script', None)
         if script:
@@ -259,7 +283,9 @@ def create_room():
     c.setOnClick(scripts.on_left_click)
     c.setOnRightClick(scripts.on_right_click)
 
-    c.setCursor(cursor, ['walk', 'look'])
+    c.setCursor(cursor)
+    c.addSequence(['walk', 'look', 'use', 'talk', ''])
+    c.addSequence(['arrow'])
     gameRoot.add(c)
     state.IDS['MOUSE_CTRL'] = c.id
     room.hotSpotManager = c

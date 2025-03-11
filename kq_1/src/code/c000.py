@@ -2,6 +2,7 @@ import monkey2
 
 from .. import state
 from .. import assetman
+from .. import scripts
 
 def walk_player_to(pos, turn=None):
 	script = monkey2.Script('__PLAYER')
@@ -41,41 +42,47 @@ def addText(id: int):
 
 def addNode(node):
 	def f():
-		print('FIFIFIFIFIFIFIFI')
-		monkey2.getNode(state.IDS['GAME_ROOT']).add(node)
+		monkey2.getNode(state.IDS['UI_ROOT']).add(node)
 	return f
 
 def rmNode(id: int):
 	def f():
 		monkey2.getNode(id).remove()
 	return f
-def createText(s: str):
 
-	a = monkey2.Text('main/sierra', s, (0,0,0,1), align=monkey2.Alignment.LEFT, width=state.TEXT_WIDTH, anchor=(0.5, 0.5))
-	rect = monkey2.shapes.Rect(a.size[0] + 2*state.TEXT_MARGIN_X, a.size[1]+ 2 *state.TEXT_MARGIN_Y, anchor=(0.5, 0.5))
-	rectModel = rect.toModel((1,1,1,1), 1)
-	rect2 = monkey2.shapes.Rect(a.size[0] + 2*6, a.size[1]+ 2 *3, anchor=(0.5, 0.5))
-	rectModel2 = rect2.toModel(monkey2.fromHex('#AA0000'), 0)
-	rect3 = monkey2.shapes.Rect(a.size[0] + 2*7, a.size[1]+ 2 *3, anchor=(0.5, 0.5))
-	rectModel3 = rect3.toModel(monkey2.fromHex('#AA0000'), 0)
+
+def createText(s: str):
 	main = monkey2.Node()
-	main.setModel(rectModel, 3)
-	main.setPosition([158, 83, 10])
-	a.setPosition([0,0,0.1])
+	main.setPosition([160, 100, 5])
+	a = monkey2.Text('ui/sierra', s, (0,0,0,1), align=monkey2.Alignment.LEFT, width=state.TEXT_WIDTH, anchor=(0.5, 0.5))
+	rect = scripts.makeRect(0, 0, a.size[0] + 2*state.TEXT_MARGIN_X, a.size[1]+ 2 *state.TEXT_MARGIN_Y,
+	                        state.COLORS.WHITE, (0.5, 0.5), monkey2.ModelType.SOLID)
+	rect2 = scripts.makeRect(0, 0, a.size[0] + 12, a.size[1] + 6, state.COLORS.RED, (0.5, 0.5), monkey2.ModelType.WIRE)
+	rect3 = scripts.makeRect(0, 0, a.size[0] + 14, a.size[1] + 6, state.COLORS.RED, (0.5, 0.5), monkey2.ModelType.WIRE)
+	main.add(rect)
+	main.add(rect2)
+	main.add(rect3)
+	a.setPosition([0, 0, 0.1])
 	main.add(a)
-	b = monkey2.Node()
-	b.setModel(rectModel2, 2)
-	b.setPosition([0,0,0.1])
-	main.add(b)
-	b2 = monkey2.Node()
-	b2.setModel(rectModel3, 2)
-	b2.setPosition([0,0,0.1])
-	main.add(b2)
 	return main
 
 
+def take(**kwargs):
+	item = kwargs['item']
+	if item in state.inventory:
+		message(text=10, env={'x': item})
+	else:
+		msg_ok = kwargs['ok']
+		state.inventory[item] = 1
+		message(text=msg_ok)
+
+
+
+
 def message(**kwargs):
-	text = assetman.strings[kwargs.get('text')]
+	id = kwargs.get('text')
+	env = kwargs.get('env', None)
+	text = scripts.eval_string(kwargs.get('text'), env)
 
 	# let's create a script that:
 	# set game node inactive
@@ -100,8 +107,12 @@ def addMessage(s: monkey2.Script, textId: int):
 
 
 def gotoRoom(player, hotspot):
-	state.room = 'garden_east'
-	state.PLAYER_POS = [50, 50, 0]
+	print('SUCAMENO',hotspot.userData)
+	state.room = hotspot.userData['room']
+	x = hotspot.userData.get('x', player.x)
+	y = hotspot.userData.get('y', player.y)
+	state.PLAYER_POS = [x, y, 0]
+	state.PLAYER_DIR = hotspot.userData['dir']
 	monkey2.closeRoom()
 
 
