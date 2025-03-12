@@ -66,20 +66,54 @@ def createText(s: str):
 	main.add(a)
 	return main
 
+def change_room(room):
+	def f():
+		state.room = room
+		monkey2.closeRoom()
+	return f
 
-def take(**kwargs):
+def walk_door(hotspot, **kwargs):
+	s = monkey2.Script(state.PLAYER_SCRIPT_ID)
+	scripts.walk_to(s, hotspot.data['hotspot']['goto'], hotspot.data['hotspot'].get('dir', None))
+	if hotspot.node.animation in ['open', 'opening']:
+		s.addAction(monkey2.actions.CallFunc(change_room(kwargs['room'])))
+	monkey2.getNode(state.IDS['SCHEDULER']).play(s)
+
+def baseScript(hotspot):
+	s = monkey2.Script(state.PLAYER_SCRIPT_ID)
+	if 'goto' in hotspot.data['hotspot']:
+		scripts.walk_to(s, hotspot.data['hotspot']['goto'], hotspot.data['hotspot'].get('dir', None))
+	return s
+
+
+def toggle(hotspot, **kwargs):
+	s = baseScript(hotspot)
+	if hotspot.node.animation in ['open', 'opening']:
+		s.addAction(monkey2.actions.Animate(hotspot.node,'closing'))
+		hotspot.data['anim'] = 'closed'
+	else:
+		s.addAction(monkey2.actions.Animate(hotspot.node,'opening'))
+		hotspot.data['anim'] = 'open'
+	monkey2.getNode(state.IDS['SCHEDULER']).play(s)
+
+def take(hotspot, **kwargs):
+	# default take
 	item = kwargs['item']
 	if item in state.inventory:
-		message(text=10, env={'x': item})
+		message(hotspot, text=10, env={'x': item})
 	else:
+		s = baseScript(hotspot)
 		msg_ok = kwargs['ok']
 		state.inventory[item] = 1
-		message(text=msg_ok)
+		addMessage(s, msg_ok)
+		monkey2.getNode(state.IDS['SCHEDULER']).play(s)
+
+		#message(text=msg_ok)
 
 
 
 
-def message(**kwargs):
+def message(hotspot, **kwargs):
 	id = kwargs.get('text')
 	env = kwargs.get('env', None)
 	text = scripts.eval_string(kwargs.get('text'), env)
@@ -98,13 +132,16 @@ def message(**kwargs):
 
 def nullo():
 	return
+
 def addMessage(s: monkey2.Script, textId: int):
 	t = assetman.strings[textId]
 	text = createText(t)
+	# s.addAction(monkey2.actions.CallFunc(addNode(text)))
+	# s.addAction(monkey2.actions.WaitForMouseClick(pause(False), pause(True)))#setMainNodeActive(False)))
+	# s.addAction(monkey2.actions.CallFunc(rmNode(text.id)))
 	s.addAction(monkey2.actions.CallFunc(addNode(text)))
-	s.addAction(monkey2.actions.WaitForMouseClick(pause(False), pause(True)))#setMainNodeActive(False)))
+	s.addAction(monkey2.actions.WaitForMouseClick(setMainNodeActive(True), setMainNodeActive(False)))
 	s.addAction(monkey2.actions.CallFunc(rmNode(text.id)))
-
 
 def gotoRoom(player, hotspot):
 	print('SUCAMENO',hotspot.userData)

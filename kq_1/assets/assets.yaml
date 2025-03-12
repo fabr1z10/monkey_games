@@ -96,8 +96,8 @@ sprites:
     animations:
       closed: [0]
       open: [2]
-      opening: [0,1,2]
-      closing: [2,1,0]
+      opening: [0,1,2,-1,2]
+      closing: [2,1,0,-1,2]
 
   cursor:
     tex: 0

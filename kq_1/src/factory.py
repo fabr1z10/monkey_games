@@ -11,7 +11,7 @@ class ObjectHotSpot(monkey2.HotSpot):
     def __init__(self, data, shape, priority, camera):
         super().__init__(shape, priority, camera)
         self.data = data
-        self.actions = data.get('actions', {})
+        self.actions = data['hotspot'].get('actions', {})
 
     def onEnter(self):
         pass
@@ -26,7 +26,7 @@ class ObjectHotSpot(monkey2.HotSpot):
             if not f:
                 exit_with_err(f' ERROR: function "{action[0]}" not found')
             args = action[1] if len(action)>1 else {}
-            f(**args)
+            f(self, **args)
         else:
             if state.action == 'walk':
                 turn = None
@@ -161,7 +161,7 @@ def create_room():
     pn.setModel(monkey2.shapes.Point().toModel(monkey2.ModelType.WIRE), 2)
     player.add(pn)
     dir = 'e' if state.PLAYER_DIR == 'w' else state.PLAYER_DIR
-    player.setAnimation(f"idle-{dir}")
+    player.animation = f"idle-{dir}"
     player.flipX(state.PLAYER_DIR == 'w')
     gameRoot.add(player)
     state.IDS['PLAYER'] = player.id
@@ -200,7 +200,7 @@ def create_room():
             nodo.setModel(monkey2.getModel(model))
         anim = item.get('anim', None)
         if anim:
-            nodo.setAnimation(anim)
+            nodo.animation = anim
         if item.get('depth'):
             nodo.addComponent(monkey2.DepthScale(166, 0, state.FLAG_WALK_BLOCK))
         walk = item.get('walk', None)
@@ -239,7 +239,7 @@ def create_room():
                 shape = monkey2.shapes.fromImage(mm[0], qq['tex'], qq['data'], 10)
             a.setModel(shape.toModel(monkey2.ModelType.WIRE), line_batch)
             a.setMultiplyColor(state.COLORS.HOTSPOT)
-            hotspot = ObjectHotSpot(item['hotspot'], shape, 0, 0)# monkey2.HotSpot(shape, 0, 0)
+            hotspot = ObjectHotSpot(item, shape, 0, 0)# monkey2.HotSpot(shape, 0, 0)
             nodo.addComponent(hotspot)
             nodo.userData = item['hotspot']
             nodo.add(a)

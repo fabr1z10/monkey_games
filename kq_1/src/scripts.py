@@ -28,6 +28,16 @@ class InventoryHotSpot(monkey2.HotSpot):
 		monkey2.getNode(state.IDS['MOUSE_CTRL']).addAction(0, 4, self.key)
 		exit_inventory()
 
+def walk_to(s: monkey2.Script, pos, dir):
+	player = monkey2.getNode(state.IDS['PLAYER'])
+	walkarea = monkey2.getNode(state.IDS['WALKAREA_0'])
+	s.addAction(monkey2.actions.Walk(player, walkarea, pos, state.PLAYER_SPEED))
+	if dir:
+		d = dir if dir != 'w' else 'e'
+		s.addAction(monkey2.actions.Animate(player, f"idle-{d}"))
+		s.addAction(monkey2.actions.CallFunc(lambda: player.flipX(dir=='w')))
+
+
 
 def eval_string(id: int, env=None):
 	"""

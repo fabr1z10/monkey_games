@@ -66,10 +66,25 @@ rooms:
         model: main/bg_castle_west
       - model: main/door_castle           # castle door
         pos: [210,47,0]
+        anim: closed
         hotspot:
           rect: [40,50]
+          goto: [227, 43]
+          dir: n
           actions:
             look: ['message', {text: 15}]
+            use: ['toggle']
+            walk: ['walk_door', {room: start}]
+      # north
+      - collider:
+          poly: [0,120,316,120,316,122,0,122]
+          flag: 2
+          mask: 1
+          tag: goto
+        user_data:
+          room: garden_west
+          y: 7
+          dir: n
         #anim: open
       - id: flag-purple
         pos: [228,148,0]
@@ -87,6 +102,8 @@ rooms:
           actions:
             look: [ 'message', { 'text': 14 } ]
         pos: [255,50,0]
+      - collider: *east
+        user_data: { room: start, x: 10, dir: e}
   garden_west:
     size: *size
     textures: [3]
@@ -99,6 +116,7 @@ rooms:
         pos: [44,35,0]
       - hotspot:
           poly: [86,29,316,29,316,100,194,100]
+          goto: [ 255, 50 ]
           actions:
             look: [ 'message', { 'text': 11 } ]
             use: ['take', {'item': 'carrot', 'ok': 13}]
@@ -131,6 +149,7 @@ rooms:
         pos: [0,35,0]
       - hotspot:
           poly: [0,25,250,25,162,100,0,100]
+          goto: [75, 50]
           actions:
             look: [ 'message', { 'text': 6 } ]
             use: ['take', {'item': 'carrot', 'ok': 9}]
