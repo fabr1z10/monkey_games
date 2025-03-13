@@ -5,39 +5,10 @@ from . import assetman
 from . import state
 from . import scripts
 from . import code
-from .scripts import exit_with_err
+from .util import readYAML, exit_with_err
+#from .scripts import exit_with_err
+from .object_hotspot import ObjectHotSpot
 
-class ObjectHotSpot(monkey2.HotSpot):
-    def __init__(self, data, shape, priority, camera):
-        super().__init__(shape, priority, camera)
-        self.data = data
-        self.actions = data['hotspot'].get('actions', {})
-
-    def onEnter(self):
-        pass
-
-    def onLeave(self):
-        pass
-
-    def onClick(self, pos):
-        action = self.actions.get(state.action, None)
-        if action:
-            f = getattr(code, action[0], None)
-            if not f:
-                exit_with_err(f' ERROR: function "{action[0]}" not found')
-            args = action[1] if len(action)>1 else {}
-            f(self, **args)
-        else:
-            if state.action == 'walk':
-                turn = None
-                if 'walk_to' in self.data:
-                    pos = self.data['walk_to']
-                    turn = self.data.get('turn', None)
-                code.walk_player_to(pos, turn=turn)
-            else:
-                # print a default message
-                code.message(text=8)
-                #print(f'No "{state.action}" defined.')
 
 
 class RoomStart:
@@ -48,16 +19,18 @@ class RoomStart:
         for g in self.f:
             g()
 
-def readYAML(file):
-    with open(file, 'r') as f:
-        data = yaml.safe_load(f)
-        return data
+
 
 def init():
+    rooms =readYAML('assets/rooms.yaml')
+    assetman.rooms = rooms['rooms']
+    print(assetman.rooms['castle_west'])
+    #exit(1)
+    #assetman.items = rooms['items']
+
     assetman.sprites = readYAML('assets/assets.yaml')['sprites']
     assetman.quads = readYAML('assets/assets.yaml')['quads']
-    assetman.rooms = readYAML('assets/rooms.yaml')['rooms']
-    assetman.items = readYAML('assets/rooms.yaml')['items']
+    #assetman.items = readYAML('assets/rooms.yaml')['items']
     assetman.strings = readYAML('assets/strings.yaml')['strings']
 
 
@@ -188,11 +161,12 @@ def create_room():
     print( ' -- walkarea:',walkarea_node.id)
     # #root.add(assetman.makeSpriteNode('prova', 42, 50, 0, batch, dynamicDepth=True, wa=main_walkarea))
     # add room nodes
-    for item in ri.get('nodes', []):
 
+    #pnodes = [scripts.eval_field(item, env={'item':item}) for item in ri.get('nodes', [])]
+    for key, source_item in ri.get('nodes', {}).items():
+        print('source=',source_item)
+        item = scripts.eval_field(source_item, env={'item': source_item, 'state': state})
         pos = item.get('pos', [0,0,0])
-        if 'id' in item:
-            item = assetman.items[item['id']]
         model = item.get('model')
         nodo = monkey2.Node()
         nodo.setPosition(pos)
@@ -239,7 +213,7 @@ def create_room():
                 shape = monkey2.shapes.fromImage(mm[0], qq['tex'], qq['data'], 10)
             a.setModel(shape.toModel(monkey2.ModelType.WIRE), line_batch)
             a.setMultiplyColor(state.COLORS.HOTSPOT)
-            hotspot = ObjectHotSpot(item, shape, 0, 0)# monkey2.HotSpot(shape, 0, 0)
+            hotspot = ObjectHotSpot(source_item, shape, item['hotspot'].get('priority', 0), 0)# monkey2.HotSpot(shape, 0, 0)
             nodo.addComponent(hotspot)
             nodo.userData = item['hotspot']
             nodo.add(a)

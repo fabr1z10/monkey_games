@@ -3,7 +3,6 @@ from . import state
 import random
 from . import assetman
 from . import code
-import colorama
 import re
 
 class InventoryHotSpot(monkey2.HotSpot):
@@ -37,6 +36,27 @@ def walk_to(s: monkey2.Script, pos, dir):
 		s.addAction(monkey2.actions.Animate(player, f"idle-{d}"))
 		s.addAction(monkey2.actions.CallFunc(lambda: player.flipX(dir=='w')))
 
+
+def eval_field(data, env=None):
+	if isinstance(data, list):  # process each item in the list
+		return [eval_field(item, env) for item in data]
+
+	elif isinstance(data, dict):
+		processed_dict = {}
+		for key, value in data.items():
+			processed_dict[key] = eval_field(value, env)
+		return processed_dict
+
+	elif isinstance(data, str):
+		match = re.fullmatch(r"\{(.+?)\}", data)
+		if match:
+			try:
+				return eval(match.group(1), env)  # Evaluate the expression
+			except Exception as e:
+				print(f"Error evaluating expression {match.group(1)}: {e}")
+				return data  # Return unchanged if eval fails
+
+	return data  # return original data if it's not a string, list or dict
 
 
 def eval_string(id: int, env=None):
@@ -80,9 +100,6 @@ def makeText(x, y, text, color, align, anchor, z=0):
 	t.setPosition((x, y, z))
 	return t
 
-def exit_with_err(msg: str):
-	print(f"{colorama.Fore.RED}{msg}{colorama.Style.RESET_ALL}")
-	exit(1)
 
 def restart():
 	monkey2.closeRoom()

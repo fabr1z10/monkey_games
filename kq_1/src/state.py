@@ -38,7 +38,7 @@ class COLORS:
 	RED = monkey2.fromHex('#AA0000')
 
 
-room = 'garden_west'
+room = 'rock'
 PLAYER_POS = [10, 10, 0]
 PLAYER_DIR = 'n'
 inventory_mode = 0

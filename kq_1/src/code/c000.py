@@ -3,6 +3,7 @@ import monkey2
 from .. import state
 from .. import assetman
 from .. import scripts
+from .. import util
 
 def walk_player_to(pos, turn=None):
 	script = monkey2.Script('__PLAYER')
@@ -85,6 +86,16 @@ def baseScript(hotspot):
 		scripts.walk_to(s, hotspot.data['hotspot']['goto'], hotspot.data['hotspot'].get('dir', None))
 	return s
 
+def push_rock(hotspot, **kwargs):
+	if hotspot.data['moved']:
+		message(hotspot, text=17)
+	else:
+		hotspot.data['moved'] = True
+		s = baseScript(hotspot)
+		addMessage(s, textId=18)
+		s.addAction(monkey2.actions.MoveTo(hotspot.node, [236, 21], 10))
+		monkey2.getNode(state.IDS['SCHEDULER']).play(s)
+
 
 def toggle(hotspot, **kwargs):
 	s = baseScript(hotspot)
@@ -114,9 +125,9 @@ def take(hotspot, **kwargs):
 
 
 def message(hotspot, **kwargs):
-	id = kwargs.get('text')
+	id = scripts.eval_field(kwargs.get('text'))
 	env = kwargs.get('env', None)
-	text = scripts.eval_string(kwargs.get('text'), env)
+	text = scripts.eval_string(id, env)
 
 	# let's create a script that:
 	# set game node inactive
@@ -157,6 +168,8 @@ def drown(player, hotspot):
 	s = monkey2.Script(state.PLAYER_SCRIPT_ID)
 	pos = player.getPosition()
 	args = hotspot.userData
+	print(hotspot.userData)
+
 	x = args.get('x', pos[0])
 	y = args.get('y', pos[1])
 

@@ -4,6 +4,8 @@ textures:
   2: gardene.png
   3: gardenw.png
   4: castle.png
+  5: rock.png
+  6: goldegg.png
 fonts:
   sierra:
     tex: 0
@@ -116,7 +118,7 @@ sprites:
       talk: [3]
       arrow: [4]
       carrot: [5]
-  flag1:
+  flag-purple:
     tex: 0
     data: [
       1,1,24,9,0,0,
@@ -127,7 +129,7 @@ sprites:
     ]
     animations:
       default: [0,1,2,3,4]
-  flag2:
+  flag-yellow:
     tex: 0
     data: [
       26,1,24,9,0,0,
@@ -138,7 +140,7 @@ sprites:
     ]
     animations:
       default: [0,1,2,3,4]
-  flag3:
+  flag-cyan:
     tex: 0
     data: [
       51,1,22,9,0,0,
@@ -215,11 +217,19 @@ quads:
   bg_garden_east: {'tex': 2, data: [0,0,316,166,0,0] }
   bg_garden_west: {'tex': 3, data: [0,0,316,166,0,0] }
   bg_castle_west: { 'tex': 4, data: [ 0,0,316,166,0,0 ] }
+  bg_rock: { 'tex': 5, data: [ 0,0,316,166,0,0 ] }
+  bg_egg: { 'tex': 6, data: [ 0,0,316,166,0,0 ] }
 
   tree_0: {'tex': 1, data: [86,167,118,127,0,0]}
   tree_1: {'tex': 2, data: [2,269,126,56,0,0]}
   tree_2: {'tex': 2, data: [133,283,80,42,0,0]}
+  tree_3: {'tex': 4, data: [128,168,86,122,0,0]}
+  tree_4: {'tex': 5, data: [0,194,64,138,0,0] }
+  tree_5: { 'tex': 5, data: [81,237,60,58,0,0] }
+  tree_6: { 'tex': 5, data: [80,195,98,36,0,0] }
+
   castle_0: {'tex': 1, data: [208,167,70,137,0,0]}
+  rock: {'tex': 5, data: [280,168,34,23,0,0]}
   wall_garden_east: {'tex': 2, data: [1,170,300,89,0,0]}
   wall_garden_west: { 'tex': 3, data: [ 1,167,272,89,0,0 ] }
 

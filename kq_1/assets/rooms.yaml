@@ -1,19 +1,22 @@
-size: &size [316, 166]
-walk_all: &walk_all [0,0,316,0,316,166,0,166]
-#east: &east [311,0,316,0,316,166,311,166]
-
-east: &east
-  poly: [311,0,316,0,316,166,311,166]
-  flag: 2
-  mask: 1
-  tag: goto
-south: &south
-  poly: [0,0,316,0,316,5,0,5]
-  flag: 2
-  mask: 1
-  tag: goto
-items:
-  alligator:
+templates:
+  ITEM1: |
+    pos: [ {{ arg0 }}, {{ arg1 }}, -1 ]
+    model: main/{{ arg2 }}
+    depth: 1
+    walk: { 'poly': {{ arg3 }} }
+    hotspot:
+      id: {{ arg2 }}
+      actions:
+        look: [ 'message', { 'text': {{ arg4 }} } ]
+  ITEM2: |
+    pos: [ {{ arg0 }}, {{ arg1 }}, 0]
+    model: main/{{ arg2 }}
+    hotspot:
+      rect: [ 25, 10 ]
+      actions:
+        look: [ 'message', { 'text': {{ arg3 }} } ]
+  ALLIGATOR: |
+    pos: [{{ arg0 }}, {{ arg1 }}, 0]
     model: main/alligator
     script: move_alligator
     hotspot:
@@ -21,40 +24,63 @@ items:
       actions:
         look: [ 'message', { 'text': 2 } ]
     depth: 1
-  flag-purple:
-    model: main/flag1
-    hotspot:
-      rect: [ 25, 10 ]
-      actions:
-        look: [ 'message', { 'text': 1 } ]
-  flag-yellow:
-    model: main/flag2
-    hotspot:
-      rect: [25, 10]
-      actions:
-        look: [ 'message', { 'text': 1 } ]
-  flag-cyan:
-    model: main/flag3
-    hotspot:
-      rect: [25, 10]
-      actions:
-        look: [ 'message', { 'text': 1 } ]
-  wall_garden_east:
-    model: main/wall_garden_east
-    depth: 1
-    walk: { 'poly': [-1, 72, 161, 72, 282,0,300, 0, 300, 2, 170, 74, -1, 74]}
-    hotspot:
-      id: wall_garden_east
-      actions:
-        look: [ 'message', { 'text': 7 } ]
-  wall_garden_west:
-    model: main/wall_garden_west
-    depth: 1
-    walk: { 'poly': [0,0,20,0,139,72,274,72,274,75,135,75,0,3]}
-    hotspot:
-      id: wall_garden_west
-      actions:
-        look: [ 'message', { 'text': 12 } ]
+
+  EAST: |
+    collider:
+      poly: [311, 0, 316, 0, 316, 166, 311, 166]
+      flag: 2
+      mask: 1
+      tag: goto
+    user_data: 
+      room: {{ arg0 }} 
+      x: 10      
+      {% if arg1 is defined %}
+      y: {{ arg1 }}
+      {% endif %}
+      dir: e
+  NORTH: |
+    collider:
+      poly: [0,120,316,120,316,122,0,122]
+      flag: 2
+      mask: 1
+      tag: goto
+    user_data:
+      room: {{ arg0 }}
+      y: 10
+      {% if arg1 is defined %}
+      x: {{ arg1 }}
+      {% endif %}
+      dir: n
+  WEST: |
+    collider:
+      poly: [0, 0, 5, 0, 5, 166, 0, 166]
+      flag: 2
+      mask: 1
+      tag: goto
+    user_data:
+      room: {{ arg0 }}
+      x: 306
+      {% if arg1 is defined %}
+      y: {{ arg1 }}
+      {% endif %}
+      dir: w
+  SOUTH: |
+    collider:
+      poly: [0, 0, 316, 0, 316, 5, 0, 5]
+      flag: 2
+      mask: 1
+      tag: goto
+    user_data:
+      room: {{ arg0 }}
+      y: 116
+      {% if arg1 is defined %}
+      x: {{ arg1 }}
+      {% endif %}
+      dir: n
+size: &size [316, 166]
+walk_all: &walk_all [0,0,316,0,316,166,0,166]
+#east: &east [311,0,316,0,316,166,311,166]
+
 rooms:
   castle_west:
     size: *size
@@ -62,9 +88,12 @@ rooms:
     walkareas:
       - poly: [0,10,20,10,20,0,316,0,316,20,260,20,251,47,203,47,191,20,128,20,149,46,149,130,0,130,0,20]
     nodes:
-      - pos: [ 0, 0, -1 ]
+      bg:
+        pos: [ 0, 0, -1 ]
         model: main/bg_castle_west
-      - model: main/door_castle           # castle door
+      tree: ITEM1(8, 44, "tree_3", [23, 0, 54, 0, 52, 3, 26, 3], 0)
+      door:
+        model: main/door_castle           # castle door
         pos: [210,47,0]
         anim: closed
         hotspot:
@@ -75,35 +104,24 @@ rooms:
             look: ['message', {text: 15}]
             use: ['toggle']
             walk: ['walk_door', {room: start}]
-      # north
-      - collider:
-          poly: [0,120,316,120,316,122,0,122]
-          flag: 2
-          mask: 1
-          tag: goto
-        user_data:
-          room: garden_west
-          y: 7
-          dir: n
-        #anim: open
-      - id: flag-purple
-        pos: [228,148,0]
-      - id: flag-yellow
-        pos: [258,149,0]
-      - id: flag-cyan
-        pos: [288,148,0]
-      - hotspot:
+      flag1: ITEM2(228, 148, "flag-purple", 1)
+      flag2: ITEM2(258, 149, "flag-yellow", 1)
+      flag3: ITEM2(288, 149, "flag-cyan", 1)
+      lion-left:
+        hotspot:
           rect: [30,30]
           actions:
             look: [ 'message', { 'text': 14 } ]
         pos: [166,50,0]
-      - hotspot:
+      lion-right:
+        hotspot:
           rect: [30,30]
           actions:
             look: [ 'message', { 'text': 14 } ]
         pos: [255,50,0]
-      - collider: *east
-        user_data: { room: start, x: 10, dir: e}
+      e: EAST("start", 10)
+      n: NORTH("garden_west")
+      w: WEST("rock")
   garden_west:
     size: *size
     textures: [3]
@@ -112,7 +130,13 @@ rooms:
     nodes:
       - pos: [ 0, 0, -1 ]
         model: main/bg_garden_west
-      - id: wall_garden_west
+      - model: main/wall_garden_west
+        depth: 1
+        walk: { 'poly': [ 0,0,20,0,139,72,274,72,274,75,135,75,0,3 ] }
+        hotspot:
+          id: wall_garden_west
+          actions:
+            look: [ 'message', { 'text': 12 } ]
         pos: [44,35,0]
       - hotspot:
           poly: [86,29,316,29,316,100,194,100]
@@ -121,54 +145,88 @@ rooms:
             look: [ 'message', { 'text': 11 } ]
             use: ['take', {'item': 'carrot', 'ok': 13}]
         depth: 1
-      - collider:
-          *east
-        user_data:
-          room: garden_east
-          x: 10
-          dir: e
-      - collider: *south
-        user_data: { room: castle_west, y: 110, x: 50, dir: s}
+      - EAST("garden_east")
+      - SOUTH("castle_west", 50)
   garden_east:
     size: *size
     textures: [2]
     walkareas:
       - poly: [0,0,316,0,316,166,0,166]
     nodes:
-      - pos: [ 0, 0, -1 ]
+      bg:
+        pos: [ 0, 0, -1 ]
         model: main/bg_garden_east
-      - pos: [190, 110, -1]
+      tree1:
+        pos: [190, 110, -1]
         model: main/tree_1
         depth: 1
         walk: { 'poly': [52, 0, 90, 0, 88,4, 54,4] }
-      - pos: [92, 124, -1]
+      tree2:
+        pos: [92, 124, -1]
         model: main/tree_2
         depth: 1
         walk: { 'poly': [30,0,50,0,48,2,32,2] }
-      - id: wall_garden_east
+      wall:
+        model: main/wall_garden_east
+        depth: 1
+        walk: { 'poly': [ -1, 72, 161, 72, 282,0,300, 0, 300, 2, 170, 74, -1, 74 ] }
+        hotspot:
+          id: wall_garden_east
+          actions:
+            look: [ 'message', { 'text': 7 } ]
         pos: [0,35,0]
-      - hotspot:
+      patch:
+        hotspot:
           poly: [0,25,250,25,162,100,0,100]
           goto: [75, 50]
           actions:
             look: [ 'message', { 'text': 6 } ]
             use: ['take', {'item': 'carrot', 'ok': 9}]
         depth: 1
+      s: SOUTH("start", 200)
+      w: WEST("garden_west")
+  rock:
+    size: *size
+    textures: [5]
+    walkareas:
+      - poly: *walk_all
+    nodes:
+      bg:
+        pos: [0,0,-1]
+        model: main/bg_rock
+      hole:
+        pos: [245, 40, -1]    # hole
+        hotspot:
+          rect: [20, 10]
+          goto: [ 252, 42 ]
+
+          priority: 1
+          actions:
+            look: ['message', { 'text': "{21 if 'dagger' in state.inventory else 19}"}]
+            use: ['take', {'item': 'dagger', 'ok': 20}]
+      rock:
+        pos: [236, "{21 if item['moved'] else 33}", -1]
+        model: main/rock
+        depth: 1
+        moved: False
+        hotspot:
+          rect: [32,22]
+          goto: [252, 42]
+          priority: 0
+          dir: s
+          actions:
+            look: [ 'message', { 'text': 16 } ]
+            use: ['push_rock']
+      tree1: ITEM1(0, 0, "tree_4", [0, 0, 54, 0, 54, 2, 0,2], 22)
+      tree2: ITEM1(120, 108, "tree_5", [-2,0,44,0,42,4,0,4], 22)
+      tree3: ITEM1(131, 71, "tree_6", [-2,0,100,0,98,2,0,2], 22)
+
+      e: EAST("castle_west")
 
 
 
-      # south
-      - collider: *south
-        user_data: { room: start, y: 115, x: 200, dir: s}
-      - collider:
-          poly: [0,0,5,0,5,166,0,166]
-          flag: 2
-          mask: 1
-          tag: goto
-        user_data:
-          room: garden_west
-          x: 306
-          dir: w
+
+
   start:
     size: *size
     textures: [1]
@@ -178,11 +236,8 @@ rooms:
     nodes:
       - pos: [0, 0, -1]
         model: main/bg1
-      - id: alligator
-        pos: [5, 5, 0]
-      - id: alligator
-        pos: [80, 5, 0]
-
+      - ALLIGATOR(5, 5)
+      - ALLIGATOR(80, 5)
       - id: flag-purple
         pos: [6,155,0]
 
@@ -192,14 +247,15 @@ rooms:
       - id: flag-cyan
         pos: [66,155,0]
 
-      - pos: [198, 39, -1]
-        model: main/tree_0
-        depth: 1
-        walk: { 'poly': [68, 0, 84, 0, 84, 2, 68, 2] }
-        hotspot:
-          id: tree_0
-          actions:
-            look: ['message', {'text': 0}]
+      - ITEM1(198, 39, "tree_0", [68, 0, 84, 0, 84, 2, 68, 2], 0)
+#        pos: [198, 39, -1]
+#        model: main/tree_0
+#        depth: 1
+#        walk: { 'poly': [68, 0, 84, 0, 84, 2, 68, 2] }
+#        hotspot:
+#          id: tree_0
+#          actions:
+#            look: ['message', {'text': 0}]
       - pos: [118,24,-1]
         model: main/castle_0
         hotspot:
@@ -226,15 +282,8 @@ rooms:
           x: 184
           y: 34
       # north
-      - collider:
-          poly: [0,120,316,120,316,122,0,122]
-          flag: 2
-          mask: 1
-          tag: goto
-        user_data:
-          room: garden_east
-          y: 7
-          dir: n
+      - NORTH("garden_east")
+      - WEST("castle_west")
   prova:
     size: *size
     walkareas:
