@@ -76,7 +76,7 @@ templates:
       {% if arg1 is defined %}
       x: {{ arg1 }}
       {% endif %}
-      dir: n
+      dir: s
 size: &size [316, 166]
 walk_all: &walk_all [0,0,316,0,316,166,0,166]
 #east: &east [311,0,316,0,316,166,311,166]
@@ -128,9 +128,11 @@ rooms:
     walkareas:
       - poly: *walk_all
     nodes:
-      - pos: [ 0, 0, -1 ]
+      bg:
+        pos: [ 0, 0, -1 ]
         model: main/bg_garden_west
-      - model: main/wall_garden_west
+      wall:
+        model: main/wall_garden_west
         depth: 1
         walk: { 'poly': [ 0,0,20,0,139,72,274,72,274,75,135,75,0,3 ] }
         hotspot:
@@ -138,15 +140,16 @@ rooms:
           actions:
             look: [ 'message', { 'text': 12 } ]
         pos: [44,35,0]
-      - hotspot:
+      patch:
+        hotspot:
           poly: [86,29,316,29,316,100,194,100]
           goto: [ 255, 50 ]
           actions:
             look: [ 'message', { 'text': 11 } ]
             use: ['take', {'item': 'carrot', 'ok': 13}]
         depth: 1
-      - EAST("garden_east")
-      - SOUTH("castle_west", 50)
+      e: EAST("garden_east")
+      s: SOUTH("castle_west", 50)
   garden_east:
     size: *size
     textures: [2]
@@ -185,6 +188,17 @@ rooms:
         depth: 1
       s: SOUTH("start", 200)
       w: WEST("garden_west")
+  goldegg:
+    size: *size
+    textures: [6]
+    walkareas:
+      - poly: *walk_all
+    nodes:
+      bg:
+        pos: [0,0,-1]
+        model: main/bg_egg
+      s: SOUTH("rock")
+      e: EAST("garden_west")
   rock:
     size: *size
     textures: [5]
@@ -222,7 +236,7 @@ rooms:
       tree2: ITEM1(120, 108, "tree_5", [-2,0,44,0,42,4,0,4], 22)
       tree3: ITEM1(131, 71, "tree_6", [-2,0,100,0,98,2,0,2], 0)
       tree4: ITEM1(242, 87, "tree_7", [0,3,8,0,26,0,38,2,44,5,44,8,0,8], 22)
-
+      n: NORTH("goldegg")
       e: EAST("castle_west")
 
 

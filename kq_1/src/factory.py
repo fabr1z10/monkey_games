@@ -43,6 +43,7 @@ def create_room():
     tex_list = [0]
     tex_list.extend(ri['textures'])
     room = monkey2.Room()
+    monkey2.game().makeCurrent(room)
 
     state.IDS = {}
     startUp = RoomStart()
@@ -118,7 +119,7 @@ def create_room():
 
     #
     #
-    # monkey2.game().makeCurrent(room)
+
     #
     # root = room.root()
     # #root.add(assetman.makeSpriteNode('bg', 0, 0, 0, batch, z=-1))
