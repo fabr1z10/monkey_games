@@ -209,6 +209,7 @@ rooms:
         model: main/rock
         depth: 1
         moved: False
+        walk: {poly: [0,0,34,0,34,6,0,6]}
         hotspot:
           rect: [32,22]
           goto: [252, 42]
@@ -219,7 +220,8 @@ rooms:
             use: ['push_rock']
       tree1: ITEM1(0, 0, "tree_4", [0, 0, 54, 0, 54, 2, 0,2], 22)
       tree2: ITEM1(120, 108, "tree_5", [-2,0,44,0,42,4,0,4], 22)
-      tree3: ITEM1(131, 71, "tree_6", [-2,0,100,0,98,2,0,2], 22)
+      tree3: ITEM1(131, 71, "tree_6", [-2,0,100,0,98,2,0,2], 0)
+      tree4: ITEM1(242, 87, "tree_7", [0,3,8,0,26,0,38,2,44,5,44,8,0,8], 22)
 
       e: EAST("castle_west")
 
