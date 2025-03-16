@@ -23,8 +23,10 @@ class RoomStart:
 
 def init():
     rooms =readYAML('assets/rooms.yaml')
+    #print(rooms)
+    #exit(1)
     assetman.rooms = rooms['rooms']
-    print(assetman.rooms['castle_west'])
+    #print(assetman.rooms['castle_west'])
     #exit(1)
     #assetman.items = rooms['items']
 
@@ -164,6 +166,7 @@ def create_room():
     # add room nodes
 
     #pnodes = [scripts.eval_field(item, env={'item':item}) for item in ri.get('nodes', [])]
+    print('FANUC:',ri.get('nodes', {}))
     for key, source_item in ri.get('nodes', {}).items():
         print('source=',source_item)
         item = scripts.eval_field(source_item, env={'item': source_item, 'state': state})

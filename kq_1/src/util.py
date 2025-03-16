@@ -10,54 +10,47 @@ def exit_with_err(msg: str):
 env = jinja2.Environment()
 
 def process_string_with_template(template_str, context):
-	"""
-	Applies Jinja2 templating to a string, and returns the result in its raw form
-	(could be a dict, list, string, etc.).
-	"""
-	# Render the template with the context
-	template = env.from_string(template_str)
-	rendered_str = template.render(context)
+    """
+    Applies Jinja2 templating to a string, and returns the result in its raw form
+    (could be a dict, list, string, etc.).
+    """
+    # Render the template with the context
+    template = env.from_string(template_str)
+    rendered_str = template.render(context)
 
-	# Try parsing it as YAML to get structured data (dict, list, etc.)
-	try:
-		return yaml.safe_load(rendered_str)
-	except yaml.YAMLError:
-		print('CANNNNOOTT ', rendered_str)
-		exit(1)
-		# If it's not valid Y, just return the raw string
-		return rendered_str
-
+    # Try parsing it as YAML to get structured data (dict, list, etc.)
+    try:
+        return yaml.safe_load(rendered_str)
+    except yaml.YAMLError:
+        print('CANNNNOOTT parse YAML:', rendered_str)
+        exit(1)
 
 def readYAML(file):
-	with open(file, 'r') as f:
-		data = yaml.safe_load(f)
-	templates = data.get('templates', {})
+    with open(file, 'r') as f:
+        data = yaml.safe_load(f)
 
-	def process_data(data):
-		if isinstance(data, list):      # process each item in the list
-			return [process_data(item) for item in data]
+    templates = data.get('templates', {})
 
-		elif isinstance(data, dict):
-			processed_dict = {}
-			for key, value in data.items():
-				if key != "templates": # skip templates section
-					processed_dict[key] = process_data(value)
-				else:
-					processed_dict[key] = value # don't process template section
-			return processed_dict
+    def process_data(data):
+        if isinstance(data, list):
+            return [process_data(item) for item in data]
 
-		elif isinstance(data, str):
-			match = re.match(r"(\w+)\((.*)\)", data)
-			if match:
-				template_name, args_str = match.groups()
-				args = eval(f"[{args_str}]")
-				arg_dict = {f"arg{i}": arg for i, arg in enumerate(args)}
-				if template_name in templates:
-					#template = env.from_string(templates[template_name])
-					#rendered = template.render(**arg_dict)
-					return process_string_with_template(templates[template_name], arg_dict)
-			return data
-		return data # return original data if it's not a string, list or dict
+        elif isinstance(data, dict):
+            return {k: process_data(v) if k != "templates" else v for k, v in data.items()}
 
-	processed_data = process_data(data)
-	return processed_data
+        elif isinstance(data, str):
+            match = re.match(r"(\w+)\((.*)\)", data.strip())
+            if match:
+                template_name, args_str = match.groups()
+                try:
+                    # Convert to dictionary format
+                    args_dict = eval(f"dict({args_str})")
+                    if template_name in templates:
+                        return process_string_with_template(templates[template_name], args_dict)
+                except Exception as e:
+                    print(f"Error parsing arguments for {template_name}: {e}")
+            return data
+
+        return data
+
+    return process_data(data)

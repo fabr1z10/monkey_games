@@ -109,6 +109,7 @@ def toggle(hotspot, **kwargs):
 
 def take(hotspot, **kwargs):
 	# default take
+	print('ciao',hotspot.node.x)
 	item = kwargs['item']
 	if item in state.inventory:
 		message(hotspot, text=10, env={'x': item})
@@ -117,6 +118,7 @@ def take(hotspot, **kwargs):
 		msg_ok = kwargs['ok']
 		state.inventory[item] = 1
 		addMessage(s, msg_ok)
+		s.addAction(monkey2.actions.CallFunc(lambda: hotspot.node.remove()))
 		monkey2.getNode(state.IDS['SCHEDULER']).play(s)
 
 		#message(text=msg_ok)
@@ -183,4 +185,13 @@ def drown(player, hotspot):
 	s.addAction(monkey2.actions.Delay(2))
 	s.addAction(monkey2.actions.CallFunc(rmNode(state.IDS['PLAYER'])))
 	addMessage(s, 4)
+	monkey2.getNode(state.IDS['SCHEDULER']).play(s)
+
+def climb_tree(hotspot, **kwargs):
+	s = baseScript(hotspot)
+	addMessage(s, textId=24)
+	state.room = 'treetop'
+	state.PLAYER_POS = [85, 5, 0]
+	state.PLAYER_DIR = 'n'
+	s.addAction(monkey2.actions.CallFunc(lambda : monkey2.closeRoom()))
 	monkey2.getNode(state.IDS['SCHEDULER']).play(s)

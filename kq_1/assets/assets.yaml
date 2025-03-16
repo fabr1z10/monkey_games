@@ -6,6 +6,7 @@ textures:
   4: castle.png
   5: rock.png
   6: goldegg.png
+  7: treetop.png
 fonts:
   sierra:
     tex: 0
@@ -219,6 +220,7 @@ quads:
   bg_castle_west: { 'tex': 4, data: [ 0,0,316,166,0,0 ] }
   bg_rock: { 'tex': 5, data: [ 0,0,316,166,0,0 ] }
   bg_egg: { 'tex': 6, data: [ 0,0,316,166,0,0 ] }
+  bg_treetop: { 'tex': 7, data: [ 0,0,316,166,0,0 ] }
 
   tree_0: {'tex': 1, data: [86,167,118,127,0,0]}
   tree_1: {'tex': 2, data: [2,269,126,56,0,0]}
@@ -228,7 +230,9 @@ quads:
   tree_5: { 'tex': 5, data: [81,237,60,58,0,0] }
   tree_6: { 'tex': 5, data: [80,195,98,36,0,0] }
   tree_7: { 'tex': 5, data: [194,198,74,79,0,0] }
+  tree_8: {tex: 6, data: [128, 168, 186, 159, 0, 0]}
 
+  egg: {tex: 7, data: [1,167,27,17,0,0]}
   castle_0: {'tex': 1, data: [208,167,70,137,0,0]}
   rock: {'tex': 5, data: [280,168,34,23,0,0]}
   wall_garden_east: {'tex': 2, data: [1,170,300,89,0,0]}
