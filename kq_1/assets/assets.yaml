@@ -7,6 +7,7 @@ textures:
   5: rock.png
   6: goldegg.png
   7: treetop.png
+  8: elf.png
 fonts:
   sierra:
     tex: 0
@@ -152,6 +153,24 @@ sprites:
     ]
     animations:
       default: [0,1,2,3,4]
+  elf:
+    tex: 0
+    data: [
+      374, 147, 14, 21, 8, 0,
+      389, 147, 12, 21, 8, 0,
+      402, 147, 12, 21, 8, 0,
+      374, 169, 14, 21, 8, 0,
+      389, 169, 12, 21, 8, 0,
+      402, 169, 12, 21, 8, 0]
+    ticks: 10
+    animations:
+      walk: [ 0,1,2,3,4,5 ]
+      walk-e:
+      walk-s:
+      walk-n:
+      idle-e:
+      idle-s:
+      idle-n:
   graham:
     tex: 0
     data: [
@@ -221,6 +240,7 @@ quads:
   bg_rock: { 'tex': 5, data: [ 0,0,316,166,0,0 ] }
   bg_egg: { 'tex': 6, data: [ 0,0,316,166,0,0 ] }
   bg_treetop: { 'tex': 7, data: [ 0,0,316,166,0,0 ] }
+  bg_elf: { 'tex': 8, data: [ 0,0,316,166,0,0 ] }
 
   tree_0: {'tex': 1, data: [86,167,118,127,0,0]}
   tree_1: {'tex': 2, data: [2,269,126,56,0,0]}

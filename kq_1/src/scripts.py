@@ -90,7 +90,7 @@ def makeRect(x, y, w, h, color, anchor, style, z=0):
 	rectModel = rect.toModel(style)
 	n = monkey2.Node()
 	n.setModel(rectModel, 4 if style==0 else 5)
-	n.setPosition((x, y, z))
+	n.setPosition(monkey2.Vec3(x, y, z))
 	n.setMultiplyColor(color)
 	return n
 
@@ -99,6 +99,9 @@ def makeText(x, y, text, color, align, anchor, z=0):
 	                 align=align, anchor=anchor)
 	t.setPosition((x, y, z))
 	return t
+
+
+
 
 
 def restart():
@@ -150,6 +153,7 @@ def on_right_click(a: str):
 def on_left_click(camId: int, pos, action):
 	print(f'click on {camId} at {pos}')
 	if camId == 0 and action == 'walk':
+		#print('fff')
 		code.walk_player_to(pos)
 	# if state.target_object:
 	# 	g = f"{state.action}_{state.target_object}"

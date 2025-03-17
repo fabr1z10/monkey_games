@@ -21,8 +21,8 @@ def process_string_with_template(template_str, context):
     # Try parsing it as YAML to get structured data (dict, list, etc.)
     try:
         return yaml.safe_load(rendered_str)
-    except yaml.YAMLError:
-        print('CANNNNOOTT parse YAML:', rendered_str)
+    except yaml.YAMLError as ye:
+        print(f"An error occurred while parsing YAML: {ye}")
         exit(1)
 
 def readYAML(file):

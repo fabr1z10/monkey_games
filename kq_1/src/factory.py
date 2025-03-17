@@ -1,4 +1,5 @@
 import monkey2
+from monkey2 import Vec2, Vec3, Vec4
 import yaml
 import colorama
 from . import assetman
@@ -49,17 +50,23 @@ def create_room():
 
     state.IDS = {}
     startUp = RoomStart()
-    #room.setStartUpFunction(startUp.start)
+    room.setStartUpFunction(startUp.start)
 
     # create main camera
-    viewport = (2, 25, state.ROOM_WIDTH, state.ROOM_HEIGHT)
+    viewport = Vec4(2, 25, state.ROOM_WIDTH, state.ROOM_HEIGHT)
     cam = monkey2.CamOrtho(state.ROOM_WIDTH, state.ROOM_HEIGHT, viewport=viewport)
-    cam.setPosition([state.ROOM_WIDTH // 2,state.ROOM_HEIGHT // 2,5], [0,0,-1], [0,1,0])
+    cam.setPosition(
+        Vec3(state.ROOM_WIDTH // 2,state.ROOM_HEIGHT // 2, 5),
+        Vec3(0, 0, -1),
+        Vec3(0, 1, 0))
     room.addCamera(cam)
 
     # create ui cam
     cam2 = monkey2.CamOrtho(320, 200)
-    cam2.setPosition([160, 100, 5], [0,0,-1], [0,1,0])
+    cam2.setPosition(
+        Vec3(160, 100, 5),
+        Vec3(0, 0, -1),
+        Vec3(0, 1, 0))
     room.addCamera(cam2)
 
     ce = monkey2.CollisionEngine(80, 80)
@@ -168,9 +175,13 @@ def create_room():
     #pnodes = [scripts.eval_field(item, env={'item':item}) for item in ri.get('nodes', [])]
     print('FANUC:',ri.get('nodes', {}))
     for key, source_item in ri.get('nodes', {}).items():
-        print('source=',source_item)
+        print(f' -- creating object: {key} ...', end='')
         item = scripts.eval_field(source_item, env={'item': source_item, 'state': state})
-        pos = item.get('pos', [0,0,0])
+        active = item.get('active', True)
+        if not active:
+            print('NOT ACTIVE')
+            continue
+        pos = Vec3(item.get('pos', [0,0,0]))
         model = item.get('model')
         nodo = monkey2.Node()
         nodo.setPosition(pos)
@@ -207,14 +218,14 @@ def create_room():
             # shape can be automatically generated or can be a rect
             if 'rect' in item['hotspot']:
                 rect = item['hotspot']['rect']
-                anchor = [0, 0] if len(rect) == 2 else [rect[2], rect[3]]
+                anchor = Vec2() if len(rect) == 2 else Vec2(rect[2], rect[3])
                 shape = monkey2.shapes.Rect(rect[0], rect[1], anchor=anchor)
             elif 'poly' in item['hotspot']:
                 shape = monkey2.shapes.Polygon(item['hotspot']['poly'])
             else:
                 mm = model.split('/')
                 qq = assetman.quads[mm[1]]
-                shape = monkey2.shapes.fromImage(mm[0], qq['tex'], qq['data'], 10)
+                shape = monkey2.shapes.fromImage(mm[0], qq['tex'], Vec4(qq['data']), 10)
             a.setModel(shape.toModel(monkey2.ModelType.WIRE), line_batch)
             a.setMultiplyColor(state.COLORS.HOTSPOT)
             hotspot = ObjectHotSpot(source_item, shape, item['hotspot'].get('priority', 0), 0)# monkey2.HotSpot(shape, 0, 0)
@@ -222,17 +233,29 @@ def create_room():
             nodo.userData = item['hotspot']
             nodo.add(a)
         if 'user_data' in item:
-            print('USER=DATA=',item['user_data'])
+            #print('USER=DATA=',item['user_data'])
             if nodo.userData:
                 nodo.userData.update(item['user_data'])
             else:
                 nodo.userData = item['user_data']
-            print('FUCK',nodo.userData)
+            #print('FUCK',nodo.userData)
+        if 'npc' in item:
+            npc = item['npc']
+            walkAreaId = npc['walkarea']
+            walkArea = state.getNode(f"WALKAREA_{walkAreaId}")
+            refresh = npc['refresh']
+            onRefresh = getattr(code, npc['onRefresh'])
+            onReach = getattr(code, npc['onReach'])
+            nodo.addComponent(monkey2.NPC(walkArea, refresh, onRefresh, onReach))
+
 
         script = item.get('script', None)
         if script:
-            startUp.f.append(getattr(scripts, script)(nodo))
-
+            fu = getattr(code, script, None)
+            if not fu:
+                exit_with_err(f"Cannot find script: {script}")
+            startUp.f.append(fu(nodo))
+        print('OK')
         gameRoot.add(nodo)
 
     # #     z = item[3] if len(item)>3 else None

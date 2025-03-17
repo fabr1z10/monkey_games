@@ -1,16 +1,26 @@
 import monkey2
 
+from monkey2 import Vec3
+
 from .. import state
 from .. import assetman
 from .. import scripts
 from .. import util
 
 def walk_player_to(pos, turn=None):
+	print('calling walkplayer',turn, pos)
 	script = monkey2.Script('__PLAYER')
+
 	player = state.getNode('PLAYER')
+	print('fresc',player.x)
 	wa = state.getNode('WALKAREA_0')
+	print(wa)
 	sched = state.getNode('SCHEDULER')
-	script.addAction(monkey2.actions.Walk(player, wa, pos, state.PLAYER_SPEED), -1)
+	print(player,wa,pos,state.PLAYER_SPEED)
+	#ww = monkey2.actions.Walk(player, wa, pos, state.PLAYER_SPEED)
+	#aa = monkey2.actions.Walk( pos)
+	script.addAction(monkey2.actions.Walk(player, wa, pos, state.PLAYER_SPEED))#player, wa, pos, state.PLAYER_SPEED))
+	#script.addAction(monkey2.actions.Animate(player, f"idle-s"))
 	if turn:
 		script.addAction(monkey2.actions.Animate(player, f"idle-{turn}"), 0)
 	sched.play(script)
@@ -54,16 +64,22 @@ def rmNode(id: int):
 
 def createText(s: str):
 	main = monkey2.Node()
-	main.setPosition([160, 100, 5])
-	a = monkey2.Text('ui/sierra', s, (0,0,0,1), align=monkey2.Alignment.LEFT, width=state.TEXT_WIDTH, anchor=(0.5, 0.5))
-	rect = scripts.makeRect(0, 0, a.size[0] + 2*state.TEXT_MARGIN_X, a.size[1]+ 2 *state.TEXT_MARGIN_Y,
-	                        state.COLORS.WHITE, (0.5, 0.5), monkey2.ModelType.SOLID)
-	rect2 = scripts.makeRect(0, 0, a.size[0] + 12, a.size[1] + 6, state.COLORS.RED, (0.5, 0.5), monkey2.ModelType.WIRE)
-	rect3 = scripts.makeRect(0, 0, a.size[0] + 14, a.size[1] + 6, state.COLORS.RED, (0.5, 0.5), monkey2.ModelType.WIRE)
+	main.setPosition(monkey2.Vec3(160, 100, 5))
+	a = monkey2.Text(
+		'ui/sierra',
+		s,
+		monkey2.Color(0, 0, 0, 1),
+		align=monkey2.Alignment.LEFT,
+		width=state.TEXT_WIDTH,
+		anchor=monkey2.Vec2(0.5, 0.5))
+	rect = scripts.makeRect(0, 0, a.size.x + 2*state.TEXT_MARGIN_X, a.size.y + 2 *state.TEXT_MARGIN_Y,
+	                        state.COLORS.WHITE, monkey2.Vec2(0.5, 0.5), monkey2.ModelType.SOLID)
+	rect2 = scripts.makeRect(0, 0, a.size.x + 12, a.size.y + 6, state.COLORS.RED, monkey2.Vec2(0.5, 0.5), monkey2.ModelType.WIRE)
+	rect3 = scripts.makeRect(0, 0, a.size.x + 14, a.size.y + 6, state.COLORS.RED, monkey2.Vec2(0.5, 0.5), monkey2.ModelType.WIRE)
 	main.add(rect)
 	main.add(rect2)
 	main.add(rect3)
-	a.setPosition([0, 0, 0.1])
+	a.setPosition(monkey2.Vec3(0, 0, 0.1))
 	main.add(a)
 	return main
 
@@ -75,7 +91,7 @@ def change_room(room):
 
 def walk_door(hotspot, **kwargs):
 	s = monkey2.Script(state.PLAYER_SCRIPT_ID)
-	scripts.walk_to(s, hotspot.data['hotspot']['goto'], hotspot.data['hotspot'].get('dir', None))
+	scripts.walk_to(s, monkey2.Vec2(hotspot.data['hotspot']['goto']), hotspot.data['hotspot'].get('dir', None))
 	if hotspot.node.animation in ['open', 'opening']:
 		s.addAction(monkey2.actions.CallFunc(change_room(kwargs['room'])))
 	monkey2.getNode(state.IDS['SCHEDULER']).play(s)
@@ -83,14 +99,14 @@ def walk_door(hotspot, **kwargs):
 def baseScript(hotspot):
 	s = monkey2.Script(state.PLAYER_SCRIPT_ID)
 	if 'goto' in hotspot.data['hotspot']:
-		scripts.walk_to(s, hotspot.data['hotspot']['goto'], hotspot.data['hotspot'].get('dir', None))
+		scripts.walk_to(s, monkey2.Vec2(hotspot.data['hotspot']['goto']), hotspot.data['hotspot'].get('dir', None))
 	return s
 
 def push_rock(hotspot, **kwargs):
-	if hotspot.data['moved']:
+	if hotspot.data['state'] == 1:
 		message(hotspot, text=17)
 	else:
-		hotspot.data['moved'] = True
+		hotspot.data['state'] = 1
 		s = baseScript(hotspot)
 		addMessage(s, textId=18)
 		s.addAction(monkey2.actions.MoveTo(hotspot.node, [236, 21], 10))
@@ -107,6 +123,9 @@ def toggle(hotspot, **kwargs):
 		hotspot.data['anim'] = 'open'
 	monkey2.getNode(state.IDS['SCHEDULER']).play(s)
 
+def setActive(hotspot, value):
+	hotspot.data['active'] = value
+
 def take(hotspot, **kwargs):
 	# default take
 	print('ciao',hotspot.node.x)
@@ -114,11 +133,14 @@ def take(hotspot, **kwargs):
 	if item in state.inventory:
 		message(hotspot, text=10, env={'x': item})
 	else:
+		remove_on_pickup = kwargs.get('remove', True)
 		s = baseScript(hotspot)
 		msg_ok = kwargs['ok']
 		state.inventory[item] = 1
 		addMessage(s, msg_ok)
-		s.addAction(monkey2.actions.CallFunc(lambda: hotspot.node.remove()))
+		if remove_on_pickup:
+			s.addAction(monkey2.actions.CallFunc(lambda: hotspot.node.remove()))
+			s.addAction(monkey2.actions.CallFunc(lambda: setActive(hotspot, False)))
 		monkey2.getNode(state.IDS['SCHEDULER']).play(s)
 
 		#message(text=msg_ok)
@@ -161,7 +183,7 @@ def gotoRoom(player, hotspot):
 	state.room = hotspot.userData['room']
 	x = hotspot.userData.get('x', player.x)
 	y = hotspot.userData.get('y', player.y)
-	state.PLAYER_POS = [x, y, 0]
+	state.PLAYER_POS = Vec3(x, y, 0)
 	state.PLAYER_DIR = hotspot.userData['dir']
 	monkey2.closeRoom()
 
@@ -172,11 +194,11 @@ def drown(player, hotspot):
 	args = hotspot.userData
 	print(hotspot.userData)
 
-	x = args.get('x', pos[0])
-	y = args.get('y', pos[1])
+	x = args.get('x', pos.x)
+	y = args.get('y', pos.y)
 
 	s.addAction(monkey2.actions.CallFunc(enableControls(False)))
-	s.addAction(monkey2.actions.CallFunc(lambda: player.setPosition([x, y, 0])))
+	s.addAction(monkey2.actions.CallFunc(lambda: player.setPosition(monkey2.Vec3(x, y, 0))))
 	s.addAction(monkey2.actions.Animate(player, 'drown'))
 	s.addAction(monkey2.actions.Delay(2))
 	#a = createText('Pino')
