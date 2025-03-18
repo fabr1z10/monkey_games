@@ -1,6 +1,32 @@
 import monkey2
 from .. import state
 import random
+from . import callfunc
+from . import c000
+
+def on_start_elf():
+	sched = state.getNode('SCHEDULER')
+	s = monkey2.Script()
+	s.addAction(monkey2.actions.Delay(random.randint(0,5)))
+	s.addAction(monkey2.actions.CallFunc(callfunc.create_node('elf',52,106)))
+	c000.addMessage(s, 27)
+	sched.play(s)
+
+def talkelf(hotspot, **kwargs):
+	ppos = state.getNode('PLAYER').getPosition()
+	epos = hotspot.node.getPosition()
+	d2 = (ppos.x - epos.x)**2 + (ppos.y - epos.y)**2
+	sched = state.getNode('SCHEDULER')
+	s = monkey2.Script()
+	print(d2)
+	if d2 < 500:
+		c000.addMessage(s, 29)
+		s.addAction(monkey2.actions.CallFunc(lambda: hotspot.node.remove()))
+	else:
+		c000.addMessage(s, 30)
+	sched.play(s)
+
+
 
 def go_random():
 	pass

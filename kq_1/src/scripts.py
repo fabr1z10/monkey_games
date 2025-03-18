@@ -5,6 +5,9 @@ from . import assetman
 from . import code
 import re
 
+
+
+
 class InventoryHotSpot(monkey2.HotSpot):
 	def __init__(self, key, node_id, shape, priority, camera):
 		super().__init__(shape, priority, camera)

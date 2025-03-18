@@ -1,4 +1,5 @@
 import monkey2
+import code
 
 from monkey2 import Vec3
 
@@ -6,6 +7,7 @@ from .. import state
 from .. import assetman
 from .. import scripts
 from .. import util
+
 
 def walk_player_to(pos, turn=None):
 	print('calling walkplayer',turn, pos)
@@ -83,17 +85,13 @@ def createText(s: str):
 	main.add(a)
 	return main
 
-def change_room(room):
-	def f():
-		state.room = room
-		monkey2.closeRoom()
-	return f
+
 
 def walk_door(hotspot, **kwargs):
 	s = monkey2.Script(state.PLAYER_SCRIPT_ID)
 	scripts.walk_to(s, monkey2.Vec2(hotspot.data['hotspot']['goto']), hotspot.data['hotspot'].get('dir', None))
 	if hotspot.node.animation in ['open', 'opening']:
-		s.addAction(monkey2.actions.CallFunc(change_room(kwargs['room'])))
+		s.addAction(monkey2.actions.CallFunc(code.change_room(kwargs['room'])))
 	monkey2.getNode(state.IDS['SCHEDULER']).play(s)
 
 def baseScript(hotspot):
@@ -178,36 +176,43 @@ def addMessage(s: monkey2.Script, textId: int):
 	s.addAction(monkey2.actions.WaitForMouseClick(setMainNodeActive(True), setMainNodeActive(False)))
 	s.addAction(monkey2.actions.CallFunc(rmNode(text.id)))
 
-def gotoRoom(player, hotspot):
-	print('SUCAMENO',hotspot.userData)
-	state.room = hotspot.userData['room']
-	x = hotspot.userData.get('x', player.x)
-	y = hotspot.userData.get('y', player.y)
-	state.PLAYER_POS = Vec3(x, y, 0)
-	state.PLAYER_DIR = hotspot.userData['dir']
-	monkey2.closeRoom()
 
 
-def drown(player, hotspot):
-	s = monkey2.Script(state.PLAYER_SCRIPT_ID)
-	pos = player.getPosition()
-	args = hotspot.userData
-	print(hotspot.userData)
 
-	x = args.get('x', pos.x)
-	y = args.get('y', pos.y)
 
-	s.addAction(monkey2.actions.CallFunc(enableControls(False)))
-	s.addAction(monkey2.actions.CallFunc(lambda: player.setPosition(monkey2.Vec3(x, y, 0))))
-	s.addAction(monkey2.actions.Animate(player, 'drown'))
-	s.addAction(monkey2.actions.Delay(2))
-	#a = createText('Pino')
-	#s.addAction(monkey2.actions.CallFunc(addNode(a)))
-	addMessage(s,3)
-	s.addAction(monkey2.actions.Delay(2))
-	s.addAction(monkey2.actions.CallFunc(rmNode(state.IDS['PLAYER'])))
-	addMessage(s, 4)
-	monkey2.getNode(state.IDS['SCHEDULER']).play(s)
+
+
+class TestResponse(monkey2.CollisionResponse):
+	def onStart(self, player, foe):
+		print('Player id: ',player.id, state.IDS['PLAYER'])
+		print('Foe id: ', foe.id)
+		foe.remove()
+
+	def onEnd(self, p, f):
+		pass
+		#foe.remove()
+
+class DrownResponse(monkey2.CollisionResponse):
+	def onStart(self, player, hotspot):
+		print('FUCAMI')
+		s = monkey2.Script(state.PLAYER_SCRIPT_ID)
+		pos = player.getPosition()
+		args = hotspot.userData
+		x = args.get('x', pos.x)
+		y = args.get('y', pos.y)
+		s.addAction(monkey2.actions.CallFunc(enableControls(False)))
+		s.addAction(monkey2.actions.CallFunc(lambda: player.setPosition(monkey2.Vec3(x, y, 0))))
+		s.addAction(monkey2.actions.Animate(player, 'drown'))
+		s.addAction(monkey2.actions.Delay(2))
+		addMessage(s, 3)
+		s.addAction(monkey2.actions.Delay(2))
+		s.addAction(monkey2.actions.CallFunc(rmNode(state.IDS['PLAYER'])))
+		addMessage(s, 4)
+		monkey2.getNode(state.IDS['SCHEDULER']).play(s)
+
+
+
+#def drown(player, hotspot):
 
 def climb_tree(hotspot, **kwargs):
 	s = baseScript(hotspot)
