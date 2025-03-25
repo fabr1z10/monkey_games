@@ -193,6 +193,9 @@ class TestResponse(monkey2.CollisionResponse):
 		#foe.remove()
 
 class DrownResponse(monkey2.CollisionResponse):
+	def __init__(self):
+		super().__init__()
+
 	def onStart(self, player, hotspot):
 		print('FUCAMI')
 		s = monkey2.Script(state.PLAYER_SCRIPT_ID)

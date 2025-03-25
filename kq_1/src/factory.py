@@ -1,7 +1,5 @@
 import monkey2
-from monkey2 import Vec2, Vec3, Vec4
-import yaml
-import colorama
+from monkey2 import Vec3, Vec4
 from . import assetman
 from . import state
 from . import scripts
@@ -10,8 +8,6 @@ from . import builder
 
 from .util import readYAML, exit_with_err
 #from .scripts import exit_with_err
-from .object_hotspot import ObjectHotSpot
-
 
 
 class RoomStart:
@@ -74,9 +70,9 @@ def create_room():
     room.addCamera(cam2)
 
     ce = monkey2.CollisionEngine(80, 80)
-    ce.addResponse('player', 'drown', code.DrownResponse())
-    ce.addResponse('player', 'goto', code.GoToRoom())
-    ce.addResponse('player', 'swim', code.Swim())
+    #ce.addResponse('player', 'drown', code.DrownResponse())
+    #ce.addResponse('player', 'goto', code.GoToRoom())
+    #ce.addResponse('player', 'swim', code.Swim())
     room.collisionEngine = ce
 
     # # this also creates batch / textures etc.

@@ -198,7 +198,7 @@ rooms:
   # ------------------------------------------------
   elf:
     size: *size
-    on_start: on_start_elf
+    #on_start: on_start_elf
     textures: [8]
     walkareas:
       - poly: *walk_all
@@ -206,20 +206,20 @@ rooms:
           - [190,68,286,69,281,78,212,79]
           - [268,88,318,88,318,102,268,102]
       - poly: [0,0,240,0,224,5,209,32,206,42,173,57,173,62,186,71,256,102,256,120,0,120]
-    nodes:
-      bg:
-        pos: [0,0,-1]
-        model: main/bg_elf
-
-      water: SWIM(poly=[248,0,316,0,316,87,307,85,296,85,296,87,272,85,272,83,286,75,285,70,133,69,174,62,174,58,209,42,218,13,231,4])
-      tree1: ITEM1(x=42,y=48,model='tree_9', walk=[0,0,56,0,56,2,0,2],look=0)
-      tree2: ITEM1(x=0,y=87,model='tree_10', walk=[0,0,54,0,54,2,0,2])
-      tree3: ITEM1(x=122,y=62,model='tree_11', walk=[0,0,50,0,50,2,0,2])
-      tree4: ITEM1(x=164,y=82,model='tree_12', walk=[0,0,36,0,36,2,0,2])
-      tree5: ITEM1(x=218,y=80,model='tree_13', walk=[0,0,68,0,68,2,0,2])
-      tree6: ITEM1(x=292,y=108,model='tree_14', walk=[0,0,20,0,20,2,0,2])
-
-      s: SOUTH(room="garden_west")
+    nodes: {}
+#      bg:
+#        pos: [0,0,-1]
+#        model: main/bg_elf
+#
+#      water: SWIM(poly=[248,0,316,0,316,87,307,85,296,85,296,87,272,85,272,83,286,75,285,70,133,69,174,62,174,58,209,42,218,13,231,4])
+#      tree1: ITEM1(x=42,y=48,model='tree_9', walk=[0,0,56,0,56,2,0,2],look=0)
+#      tree2: ITEM1(x=0,y=87,model='tree_10', walk=[0,0,54,0,54,2,0,2])
+#      tree3: ITEM1(x=122,y=62,model='tree_11', walk=[0,0,50,0,50,2,0,2])
+#      tree4: ITEM1(x=164,y=82,model='tree_12', walk=[0,0,36,0,36,2,0,2])
+#      tree5: ITEM1(x=218,y=80,model='tree_13', walk=[0,0,68,0,68,2,0,2])
+#      tree6: ITEM1(x=292,y=108,model='tree_14', walk=[0,0,20,0,20,2,0,2])
+#
+#      s: SOUTH(room="garden_west")
   # ------------------------------------------------
   treetop:
     size: *size
