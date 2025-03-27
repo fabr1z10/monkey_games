@@ -1,0 +1,1 @@
+FLAG_WALK_BLOCK = 16

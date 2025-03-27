@@ -1,6 +1,8 @@
 import monkey2
 
 
+
+
 WIDTH = 320
 HEIGHT = 200
 MAIN_VIEW_HEIGHT = 136
@@ -9,15 +11,15 @@ MAIN_VIEW_Y = 54
 VERBS = {
     'push': {
         'text': 0,
-        'pos': monkey2.Vec3(2, 48, 0)
+        'pos': monkey2.Vec3(2, 47, 0)
     },
     'pull': {
         'text': 1,
-        'pos': monkey2.Vec3(2, 40, 0)
+        'pos': monkey2.Vec3(2, 39, 0)
     },
     'give': {
         'text': 2,
-        'pos': monkey2.Vec3(2, 32, 0),
+        'pos': monkey2.Vec3(2, 31, 0),
         'objects': 2,
         'preposition': 15
     },

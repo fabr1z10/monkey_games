@@ -1,0 +1,37 @@
+rooms:
+  front:
+    textures: [0, 1]
+    nodes:
+      bg-000:
+        pos: [0, 0, -1]
+        model: main/bg_front_000
+
+
+items:
+  dave:
+    pos: [50, 10, 1]
+    room: front
+    anim: walk-n
+    #model: main/dave-body
+
+    models:
+      tree:
+        - model: main/dave-legs
+        - model: main/dave-body
+          parent: 0
+          slot: 0
+          z: 1
+        - model: main/dave-head
+          parent: 1
+          slot: 0
+      anims:
+        idle-e: ['idle-e', 'idle-e', 'idle-e']
+        walk-e: ['walk-e', 'walk-e', 'idle-e']
+        idle-s: ['idle-s', 'idle-s', 'idle-s']
+        walk-s: ['walk-s', 'walk-s', 'idle-s']
+        idle-n: ['idle-n', 'idle-n', 'idle-n']
+        walk-n: ['walk-n', 'walk-n', 'idle-n']
+
+
+state:
+  room: front

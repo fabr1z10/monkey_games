@@ -2,7 +2,8 @@ import colorama
 import yaml
 import jinja2
 import re
-from .assets import strings
+from . import assets
+from box import Box
 
 
 def exit_with_err(msg: str):
@@ -29,13 +30,21 @@ def process_string_with_template(template_str, context):
 
 
 def readStrings(file):
-    strings = readYAML(file)
+    a = readYAML(file)
+    assets.strings = a['strings']
+
+def readRooms(file):
+    a = readYAML(file)
+    assets.rooms = a['rooms']
+    assets.items = a['items']
+    assets.state = Box(a['state'])
 
 
 
 def readYAML(file):
     with open(file, 'r') as f:
         data = yaml.safe_load(f)
+        print(data)
 
     templates = data.get('templates', {})
 
@@ -62,3 +71,34 @@ def readYAML(file):
         return data
 
     return process_data(data)
+
+def eval_string(id):
+    """
+    Replaces `{expression}` in the template string with the evaluated result.
+
+    Args:
+		template (str): The string containing `{...}` expressions.
+		env (dict, optional): A dictionary of variables to be used in evaluation.
+
+	Returns:
+		str: The transformed string with evaluated expressions.
+	"""
+
+    if isinstance(id, int):
+        env = {}
+        sid = id
+    else:
+        sid = id[0]
+        env = id[1]
+
+    s = assets.strings[sid]
+    def eval_match(match):
+        expr = match.group(1).strip()  # Extract the content inside `{...}`
+        try:
+            result = eval(expr, {"__builtins__": {}}, env)  # Secure eval
+            return str(result)  # Convert everything to string
+        except Exception as e:
+            return f"[ERROR: {e}]"  # Handle errors gracefully
+
+    pattern = re.compile(r"\{([^{}]+)\}")  # Match `{...}` without nesting
+    return pattern.sub(eval_match, s)
