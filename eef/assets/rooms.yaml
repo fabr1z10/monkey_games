@@ -1,5 +1,7 @@
 rooms:
   front:
+    walkareas:
+      - poly: [5,5,90,5,80,50]
     textures: [0, 1]
     nodes:
       bg-000:
@@ -34,4 +36,5 @@ items:
 
 
 state:
+  player: dave       # this marks the player item
   room: front

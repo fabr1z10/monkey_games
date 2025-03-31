@@ -4,6 +4,15 @@ from monkey2 import Vec2, Vec3, Vec4
 import re
 from . import assets
 from . import settings
+from . import exit_with_err
+
+def add_tag(key: str, node):
+	assets.ids[key] = node.id
+
+def get_tag(key: str):
+	if key not in assets.ids:
+		exit_with_err(f"Don't know id: {key}")
+	return monkey2.getNode(assets.ids[key])
 
 
 def eval_field(data, env=None):

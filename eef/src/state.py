@@ -8,6 +8,8 @@ HEIGHT = 200
 MAIN_VIEW_HEIGHT = 136
 MAIN_VIEW_Y = 54
 
+
+
 VERBS = {
     'push': {
         'text': 0,
@@ -77,6 +79,7 @@ VERBS = {
 }
 
 class COLORS:
+    WHITE = monkey2.Color("#ffffff")
     GREEN = monkey2.Color("#62d532")
     YELLOW = monkey2.Color("#ffff46")
     PURPLE = monkey2.Color("#aa40f5")
