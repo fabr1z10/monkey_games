@@ -4,13 +4,14 @@ import jinja2
 import re
 from . import assets
 from box import Box
+from .util import exit_with_err
 
 
-def exit_with_err(msg: str):
-    print(f"{colorama.Fore.RED}{msg}{colorama.Style.RESET_ALL}")
-    exit(1)
 
 env = jinja2.Environment()
+
+def addScripts(s):
+    assets.scripts = s
 
 def process_string_with_template(template_str, context):
     """
@@ -38,6 +39,9 @@ def readRooms(file):
     assets.rooms = a['rooms']
     assets.items = a['items']
     assets.state = Box(a['state'])
+    if 'verbs' not in a:
+        exit_with_err(' -- Game file requires a verb section!')
+    assets.verbs = Box(a['verbs'])
 
 
 

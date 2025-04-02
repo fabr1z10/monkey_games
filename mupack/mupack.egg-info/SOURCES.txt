@@ -2,7 +2,10 @@ setup.py
 mupack/__init__.py
 mupack/assets.py
 mupack/builder.py
+mupack/lucas.py
+mupack/object_hotspot.py
 mupack/settings.py
+mupack/util.py
 mupack/yaml_reader.py
 mupack.egg-info/PKG-INFO
 mupack.egg-info/SOURCES.txt

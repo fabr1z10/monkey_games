@@ -6,9 +6,9 @@ import monkey2
 WIDTH = 320
 HEIGHT = 200
 MAIN_VIEW_HEIGHT = 136
-MAIN_VIEW_Y = 54
+MAIN_VIEW_Y = 56
 
-
+DEFAULT_VERB = 'walkto'
 
 VERBS = {
     'push': {
@@ -25,57 +25,57 @@ VERBS = {
         'objects': 2,
         'preposition': 15
     },
-    # 'open': {
-    #     'text': 3,
-    #     'pos': [65, 45]
-    # },
-    # 'close': {
-    #     'text': 4,
-    #     'pos': [65, 37]
-    # },
-    # 'read': {
-    #     'text': 5,
-    #     'pos': [65, 29]
-    # },
-    # 'walkto': {
-    #     'text': 6,
-    #     'pos': [121, 45]
-    # },
-    # 'pickup': {
-    #     'text': 7,
-    #     'pos': [121, 37]
-    # },
-    # 'whatis': {
-    #     'text': 8,
-    #     'pos': [121, 29]
-    # },
-    # 'newkid': {
-    #     'text': 9,
-    #     'pos': [193, 45],
-    #     'on_click': 'newkid'
-    # },
-    # 'unlock': {
-    #     'text': 10,
-    #     'pos': [193, 37]
-    # },
-    # 'use': {
-    #     'text': 11,
-    #     'pos': [193, 29],
+    'open': {
+        'text': 3,
+        'pos': monkey2.Vec3(66, 47, 0)
+    },
+    'close': {
+        'text': 4,
+        'pos': monkey2.Vec3(66, 39, 0)
+    },
+    'read': {
+        'text': 5,
+        'pos': monkey2.Vec3(66, 31, 0)
+    },
+    'walkto': {
+        'text': 6,
+        'pos': monkey2.Vec3(122, 47, 0)
+    },
+    'pickup': {
+        'text': 7,
+        'pos': monkey2.Vec3(122, 39, 0)
+    },
+    'whatis': {
+        'text': 8,
+        'pos': monkey2.Vec3(122, 31, 0)
+    },
+    'newkid': {
+        'text': 9,
+        'pos': monkey2.Vec3(194, 47, 0)
+        #'on_click': 'newkid'
+    },
+    'unlock': {
+        'text': 10,
+        'pos': monkey2.Vec3(194, 39, 0)
+    },
+    'use': {
+        'text': 11,
+        'pos': monkey2.Vec3(194, 31, 0)
     #     'objects': 2,
     #     'preposition': 30
-    # },
-    # 'turnon': {
-    #     'text': 12,
-    #     'pos': [257, 45]
-    # },
-    # 'turnoff': {
-    #     'text': 13,
-    #     'pos': [257, 37]
-    # },
-    # 'fix': {
-    #     'text': 14,
-    #     'pos': [257, 29]
-    # },
+    },
+    'turnon': {
+        'text': 12,
+        'pos': monkey2.Vec3(258,47, 0)
+    },
+    'turnoff': {
+        'text': 13,
+        'pos': monkey2.Vec3(258, 39, 0)
+    },
+    'fix': {
+        'text': 14,
+        'pos': monkey2.Vec3(258, 31, 0)
+    }
 }
 
 class COLORS:

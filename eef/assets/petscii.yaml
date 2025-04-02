@@ -2,7 +2,7 @@ vars:
   ticks: &ticks 5 
 textures:
   0: petscii.png
-  1: test.png
+  1: front.png
 
 
 
@@ -113,7 +113,17 @@ quads:
   bg_front_000: {tex: 1, data: [0, 0, 476, 136, 0, 0]}
   bg_front_001: {tex: 1, data: [0, 138, 484, 136, 0, 0]}
   bg_front_002: {tex: 1, data: [0, 276, 320, 136, 0, 0]}
+  gate: {tex: 1, data: [1, 413, 256, 74, 0, 0]}
 sprites:
+  door-mat:
+    tex: 1
+    data: [
+      322, 285, 88, 8, 0, 0,
+      322, 276, 88, 8, 0, 0
+    ]
+    animations:
+      closed: [0]
+      open: [1]
   dave-legs:
     tex: 0
     ticks: *ticks
@@ -124,7 +134,7 @@ sprites:
     ]
     data: [
       # --- east
-      95, 103, 10, 24, 0, 0,
+      95, 103, 10, 24, 8, 0,
       2, 102, 18, 24, 8, 0,
       23, 102, 24, 25, 14, 0,
       51, 103, 20, 24, 14, 0,

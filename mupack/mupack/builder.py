@@ -1,18 +1,14 @@
 ### build node
 import monkey2
-from monkey2 import Vec2, Vec3, Vec4
+from monkey2 import Vec2, Vec3, Vec4, Color
 import re
 from . import assets
 from . import settings
-from . import exit_with_err
+from . import lucas
 
-def add_tag(key: str, node):
-	assets.ids[key] = node.id
 
-def get_tag(key: str):
-	if key not in assets.ids:
-		exit_with_err(f"Don't know id: {key}")
-	return monkey2.getNode(assets.ids[key])
+from .util import add_tag, get_tag, exit_with_err
+
 
 
 def eval_field(data, env=None):
@@ -39,7 +35,7 @@ def eval_field(data, env=None):
 # create a node from yaml description
 # source_item is a YAML node!!!
 # we also want to convert field that depend on state
-def nodeBuilder(source_item):
+def nodeBuilder(key, source_item):
 	item = eval_field(source_item, env={'item': source_item, 'state': assets.state})
 	active = item.get('active', True)
 	if not active:
@@ -67,17 +63,36 @@ def nodeBuilder(source_item):
 		nodo.addComponent(monkey2.DepthScale(166, 0, settings.FLAG_WALK_BLOCK))
 
 
-	# if walk := item.get('walk', None):
-	# 	wareas = state.getNode('WALKAREA_ROOT')
-	# 	if 'poly' in walk:
-	# 		data = walk['poly']
-	# 		shape = monkey2.shapes.Polygon(data)
-	# 	else:
-	# 		data = walk['lines']
-	# 		shape = monkey2.shapes.Polygon(data)
-	# 	for warea in wareas.getChildren():
-	# 		warea.addHole(data, nodo)
-	# 	nodo.addComponent(monkey2.Collider(shape, state.FLAG_WALK_BLOCK, 0, 'block'))
+	if walk := item.get('walk', None):
+		wareas = get_tag('WALKAREA_ROOT')
+		if 'poly' in walk:
+			data = walk['poly']
+			shape = monkey2.shapes.Polygon(data)
+		else:
+			data = walk['lines']
+			shape = monkey2.shapes.Polygon(data)
+		for warea in wareas.getChildren():
+			warea.addHole(data, nodo)
+		nodo.addComponent(monkey2.Collider(shape, settings.FLAG_WALK_BLOCK, 0, 'block'))
+	if hotspot := item.get('hotspot', None):
+		a = monkey2.Node()
+		# shape can be automatically generated or can be a rect
+		if 'rect' in hotspot:
+			rect = hotspot['rect']
+			anchor = Vec2() if len(rect) == 2 else Vec2(rect[2], rect[3])
+			shape = monkey2.shapes.Rect(rect[0], rect[1], anchor=anchor)
+		# 	elif 'poly' in item['hotspot']:
+		# 		shape = monkey2.shapes.Polygon(item['hotspot']['poly'])
+		# 	else:
+		# 		mm = model.split('/')
+		# 		qq = assetman.quads[mm[1]]
+		# 		shape = monkey2.shapes.fromImage(mm[0], qq['tex'], Vec4(qq['data']), 10)
+		a.setModel(shape.toModel(monkey2.ModelType.WIRE), 2)
+		a.setMultiplyColor(Color(1,0,0,1))
+		hs = lucas.LucasObjectHotSpot(key, shape,
+			hotspot.get('priority', 0), 0)
+		nodo.addComponent(hs)
+		nodo.add(a)
 	# if cl := item.get('collider', None):
 	# 	flag = cl['flag']
 	# 	mask = cl['mask']
@@ -96,26 +111,7 @@ def nodeBuilder(source_item):
 	# 	ab = monkey2.Node()
 	# 	ab.setModel(sm, 2)
 	# 	nodo.add(ab)
-	# if 'hotspot' in item:
-	# 	a = monkey2.Node()
-	# 	# shape can be automatically generated or can be a rect
-	# 	if 'rect' in item['hotspot']:
-	# 		rect = item['hotspot']['rect']
-	# 		anchor = Vec2() if len(rect) == 2 else Vec2(rect[2], rect[3])
-	# 		shape = monkey2.shapes.Rect(rect[0], rect[1], anchor=anchor)
-	# 	elif 'poly' in item['hotspot']:
-	# 		shape = monkey2.shapes.Polygon(item['hotspot']['poly'])
-	# 	else:
-	# 		mm = model.split('/')
-	# 		qq = assetman.quads[mm[1]]
-	# 		shape = monkey2.shapes.fromImage(mm[0], qq['tex'], Vec4(qq['data']), 10)
-	# 	a.setModel(shape.toModel(monkey2.ModelType.WIRE), 2)
-	# 	a.setMultiplyColor(state.COLORS.HOTSPOT)
-	# 	hotspot = ObjectHotSpot(source_item, shape, item['hotspot'].get('priority', 0),
-	# 	                        0)  # monkey2.HotSpot(shape, 0, 0)
-	# 	nodo.addComponent(hotspot)
-	# 	nodo.userData = item['hotspot']
-	# 	nodo.add(a)
+
 	# if 'user_data' in item:
 	# 	# print('USER=DATA=',item['user_data'])
 	# 	if nodo.userData:

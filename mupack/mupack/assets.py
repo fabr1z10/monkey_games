@@ -1,6 +1,10 @@
 
 
+
+
 strings = dict()
+scripts = None
+
 
 rooms = dict()
 items = dict()
