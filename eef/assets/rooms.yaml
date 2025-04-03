@@ -32,6 +32,15 @@ items:
     text_color: *LIGHT_BLUE
     #model: main/dave-body
     depth: 1
+    inventory_offset: 0
+    inventory:
+      - [pippo, 2]
+      - [Pluto, 1]
+      - [Topolino,3]
+      - [Paperone,3]
+      - [ Minnie,4]
+
+
     models:
       tree:
         - model: main/dave-legs
@@ -66,13 +75,26 @@ items:
     room: front
     pos: [432,40, 0]
     text: 21
+    state: 0
     walk_to: [460, 44, 's']
     model: main/door-mat
+    anim: "{'closed' if item['state'] == 0 else 'open'}"
     hotspot:
-      rect: [88, 8]
+      rect: "{[88, 8] if item['state'] == 0 else [40, 8]}"
+  key_main:
+    room: front
+    pos: [500, 42, -0.1]
+    text: 23
+    walk_to: [480, 44, 's']
+    model: main/main-key
+    hotspot:
+      rect: [12, 4]
+      priority: 1
 state:
   _color_verb_inactive: *GREEN
   _color_verb_active: *YELLOW
+  _color_inv_inactive: *PURPLE
+  _color_inv_active: *YELLOW
   _color_action: *PURPLE
   _default_verb: walkto
   action: null

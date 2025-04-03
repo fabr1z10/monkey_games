@@ -17,3 +17,6 @@ strings:
   20: 'Suca'
   21: 'door mat'
   22: "There's nothing to read on it."
+  23: 'key'
+  24: "It doesn't seem to open."
+  25: "That doesn't seem to work."

@@ -1,6 +1,12 @@
 import monkey2
 import mupack
 
+# a script can be interrupted, in this case we might have to do cleanup
+# for instance, if we created
+def play(s):
+	sched = mupack.get_tag('SCHEDULER')
+	sched.play(s)
+
 # walk to an object
 def walkScript(script, char_id, object_id):
 	mupack.m_assert(object_id in mupack.assets.items, f"Unknown object: {object_id}")
@@ -20,6 +26,10 @@ def walkScript(script, char_id, object_id):
 def addNode(node, parent):
 	def f():
 		parent.add(node)
+		s = monkey2.Script()
+		s.addAction(monkey2.actions.Delay(2))
+		s.addAction(monkey2.actions.CallFunc(rmNode(node.id)))
+		play(s)
 	return f
 
 def rmNode(id):
@@ -46,7 +56,7 @@ def say(script, char_id, msg):
 	script.addAction(monkey2.actions.CallFunc(talkDynamic(character, 'talk')))
 	script.addAction(monkey2.actions.Delay(2))
 	script.addAction(monkey2.actions.CallFunc(talkDynamic(character, 'idle')))
-	script.addAction(monkey2.actions.CallFunc(rmNode(text.id)))
+	#script.addAction(monkey2.actions.CallFunc(rmNode(text.id)))
 
 
 def on_left_click(camId: int, pos, action):
@@ -72,9 +82,20 @@ def _walkto(o1, _):
 	walkScript(script, 'PLAYER', o1)
 	sched.play(script)
 
-def _read(o1, _):
+def walkAndSay(item, string_id):
 	script = monkey2.Script('__PLAYER')
-	walkScript(script, 'PLAYER', o1)
-	say(script, 'PLAYER', 22)
+	walkScript(script, 'PLAYER', item)
+	say(script, 'PLAYER', string_id)
 	sched = mupack.get_tag('SCHEDULER')
 	sched.play(script)
+
+
+
+def _read(o1, _):
+	walkAndSay(o1, 22)
+
+def _open(o1, _):
+	walkAndSay(o1, 24)
+
+def _close(o1, _):
+	walkAndSay(o1, 25)

@@ -110,10 +110,13 @@ fonts:
       '…': [296,8,8,8,8]        # ellipsis
 
 quads:
+  arrow_down: {tex: 0, data: [2,17,12,7,6,0]}
+  arrow_up: {tex: 0, data: [15,17,12,7,6,0]}
   bg_front_000: {tex: 1, data: [0, 0, 476, 136, 0, 0]}
   bg_front_001: {tex: 1, data: [0, 138, 484, 136, 0, 0]}
   bg_front_002: {tex: 1, data: [0, 276, 320, 136, 0, 0]}
   gate: {tex: 1, data: [1, 413, 256, 74, 0, 0]}
+  main-key: {tex: 1, data: [322,294,12,4,0,0]}
 sprites:
   door-mat:
     tex: 1

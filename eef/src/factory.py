@@ -59,6 +59,8 @@ def init():
 #     al.setPosition(Vec3(2, 55, 0))
 #     mupack.add_tag('LABEL_ACTION', al)
 #     root.add(al)
+def restart():
+	monkey2.closeRoom()
 
 
 def create_room():
@@ -108,6 +110,13 @@ def create_room():
 
     root = room.root()
 
+    kb = monkey2.Keyboard()
+    kb.add(state.KEY_RESTART_ROOM, 1, 0, restart)
+    root.addComponent(kb)
+
+    #state.IDS['ROOT'] = root.id
+
+
     game_root = Node()
     ui_root = Node()
     mupack.add_tag('UI_ROOT', ui_root)
@@ -129,7 +138,7 @@ def create_room():
     room.hotSpotManager = c
 
 
-    mupack.lucas.create_UI(ui_root, 0)
+    mupack.lucas.create_UI(ui_root, 0, lb1.id)
 
     walkarea_node = monkey2.Node()
     i = 0
@@ -153,7 +162,7 @@ def create_room():
 
     for key, source_item in room_info.get('nodes', {}).items():
         print(f' -- creating object: {key} ...')
-        node = mupack.nodeBuilder(key, source_item)
+        node = mupack.nodeBuilder(key, source_item, lb0.id)
         game_root.add(node)
 
 
@@ -161,12 +170,13 @@ def create_room():
         ir = source_item.get('room', None)
         if ir == assets.state.room:
             print(f' -- adding dynamic item: {key}')
-            node = mupack.nodeBuilder(key, source_item)
+            node = mupack.nodeBuilder(key, source_item, lb0.id)
             if key == mupack.assets.state.player:
                 mupack.add_tag('PLAYER', node)
                 node.addComponent(monkey2.Follow(0))
                 #mupack.assets.state.ID_PLAYER = 1
                 print(' -- this is player.')
+            mupack.add_tag(key, node)
             game_root.add(node)
 
     scheduler = monkey2.Scheduler()

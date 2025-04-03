@@ -35,7 +35,7 @@ def eval_field(data, env=None):
 # create a node from yaml description
 # source_item is a YAML node!!!
 # we also want to convert field that depend on state
-def nodeBuilder(key, source_item):
+def nodeBuilder(key, source_item, debugBatch):
 	item = eval_field(source_item, env={'item': source_item, 'state': assets.state})
 	active = item.get('active', True)
 	if not active:
@@ -75,7 +75,7 @@ def nodeBuilder(key, source_item):
 			warea.addHole(data, nodo)
 		nodo.addComponent(monkey2.Collider(shape, settings.FLAG_WALK_BLOCK, 0, 'block'))
 	if hotspot := item.get('hotspot', None):
-		a = monkey2.Node()
+		#a = monkey2.Node()
 		# shape can be automatically generated or can be a rect
 		if 'rect' in hotspot:
 			rect = hotspot['rect']
@@ -87,12 +87,13 @@ def nodeBuilder(key, source_item):
 		# 		mm = model.split('/')
 		# 		qq = assetman.quads[mm[1]]
 		# 		shape = monkey2.shapes.fromImage(mm[0], qq['tex'], Vec4(qq['data']), 10)
-		a.setModel(shape.toModel(monkey2.ModelType.WIRE), 2)
-		a.setMultiplyColor(Color(1,0,0,1))
+		#a.setModel(shape.toModel(monkey2.ModelType.WIRE), 2)
+		#a.setMultiplyColor(Color(1,0,0,1))
 		hs = lucas.LucasObjectHotSpot(key, shape,
-			hotspot.get('priority', 0), 0)
+			hotspot.get('priority', 0), 0, debugBatch)
+		hs.id = 'HOTSPOT'
 		nodo.addComponent(hs)
-		nodo.add(a)
+		#nodo.add(a)
 	# if cl := item.get('collider', None):
 	# 	flag = cl['flag']
 	# 	mask = cl['mask']
