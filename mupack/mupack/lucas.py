@@ -22,10 +22,10 @@ class ArrowUpHotSpot(monkey2.HotSpot):
         super().__init__(shape, 0, camera, batch)
 
     def onEnter(self):
-        self.node.setMultiplyColor(Color(assets.state._color_inv_active))
+        self.node.setMultiplyColor(Color(assets.state._color_arrow_active))
 
     def onLeave(self):
-        self.node.setMultiplyColor(Color(assets.state._color_inv_inactive))
+        self.node.setMultiplyColor(Color(assets.state._color_arrow_inactive))
 
     def onClick(self, pos):
         print('MANAGIAlPAUTANA')
@@ -38,10 +38,10 @@ class ArrowDownHotSpot(monkey2.HotSpot):
         super().__init__(shape, 0, camera, batch)
 
     def onEnter(self):
-        self.node.setMultiplyColor(Color(assets.state._color_inv_active))
+        self.node.setMultiplyColor(Color(assets.state._color_arrow_active))
 
     def onLeave(self):
-        self.node.setMultiplyColor(Color(assets.state._color_inv_inactive))
+        self.node.setMultiplyColor(Color(assets.state._color_arrow_inactive))
 
     def onClick(self, pos):
         print('FOUDDD')
@@ -108,6 +108,7 @@ def draw_inventory(batchId):
     if arrow_down:
         adown = monkey2.Node()
         adown.setModel(monkey2.getModel('uimain/arrow_down'))
+        adown.setMultiplyColor(Color(assets.state._color_arrow_inactive))
         hotspot = ArrowDownHotSpot(
             monkey2.shapes.Rect(12,8, anchor=monkey2.Vec2(0.5,0)),
         1,
@@ -118,6 +119,7 @@ def draw_inventory(batchId):
     if arrow_up:
         aup = monkey2.Node()
         aup.setModel(monkey2.getModel('uimain/arrow_up'))
+        aup.setMultiplyColor(Color(assets.state._color_arrow_inactive))
         hotspot2 = ArrowUpHotSpot(
             monkey2.shapes.Rect(12,8, anchor=monkey2.Vec2(0.5,0)),
         1,

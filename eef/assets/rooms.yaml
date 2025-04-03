@@ -3,6 +3,7 @@ vars:
   YELLOW: &YELLOW "#ffff46"
   PURPLE: &PURPLE "#aa40f5"
   LIGHT_BLUE: &LIGHT_BLUE "#7385ff"
+  BLUE: &BLUE "#2c3dec"
 
 rooms:
   front:
@@ -96,6 +97,8 @@ state:
   _color_inv_inactive: *PURPLE
   _color_inv_active: *YELLOW
   _color_action: *PURPLE
+  _color_arrow_inactive: *BLUE
+  _color_arrow_active: *YELLOW
   _default_verb: walkto
   action: null
   object1: null
