@@ -10,6 +10,10 @@ def play(s):
 # walk to an object
 def walkScript(script, char_id, object_id):
 	mupack.m_assert(object_id in mupack.assets.items, f"Unknown object: {object_id}")
+	# if object is not active (i.e. has been picked up) do nothing
+	isActive = mupack.assets.items[object_id].get('active', True)
+	if not isActive:
+		return
 	walk_to = mupack.assets.items[object_id].get('walk_to')
 	mupack.m_assert(walk_to, f"Object {object_id} doesn't have <walk_to> property.")
 	character = mupack.get_tag(char_id)
@@ -99,3 +103,9 @@ def _open(o1, _):
 
 def _close(o1, _):
 	walkAndSay(o1, 25)
+
+def _push(o1, _):
+	walkAndSay(o1, 26)
+
+def _pull(o1, _):
+	walkAndSay(o1, 26)

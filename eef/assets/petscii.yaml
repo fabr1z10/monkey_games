@@ -1,5 +1,5 @@
 vars:
-  ticks: &ticks 5 
+  ticks: &ticks 5
 textures:
   0: petscii.png
   1: front.png

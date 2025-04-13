@@ -1,6 +1,6 @@
 import monkey2
 from monkey2 import Color
-
+from . import settings
 from . import assets
 from .util import add_tag, get_tag
 from .yaml_reader import eval_string
@@ -17,9 +17,8 @@ def updateActionLabel():
 
 
 class ArrowUpHotSpot(monkey2.HotSpot):
-    def __init__(self, shape, camera, batch):
-        self.batch = batch
-        super().__init__(shape, 0, camera, batch)
+    def __init__(self, shape, camera):
+        super().__init__(shape, 0, camera, settings.LINE_BATCH_UI)
 
     def onEnter(self):
         self.node.setMultiplyColor(Color(assets.state._color_arrow_active))
@@ -28,14 +27,12 @@ class ArrowUpHotSpot(monkey2.HotSpot):
         self.node.setMultiplyColor(Color(assets.state._color_arrow_inactive))
 
     def onClick(self, pos):
-        print('MANAGIAlPAUTANA')
         assets.items[assets.state.player]['inventory_offset'] -= 2
-        draw_inventory(self.batch)
+        draw_inventory()
 
 class ArrowDownHotSpot(monkey2.HotSpot):
-    def __init__(self, shape, camera, batch):
-        self.batch = batch
-        super().__init__(shape, 0, camera, batch)
+    def __init__(self, shape, camera):
+        super().__init__(shape, 0, camera, settings.LINE_BATCH_UI)
 
     def onEnter(self):
         self.node.setMultiplyColor(Color(assets.state._color_arrow_active))
@@ -44,30 +41,56 @@ class ArrowDownHotSpot(monkey2.HotSpot):
         self.node.setMultiplyColor(Color(assets.state._color_arrow_inactive))
 
     def onClick(self, pos):
-        print('FOUDDD')
         assets.items[assets.state.player]['inventory_offset'] += 2
-        draw_inventory(self.batch)
+        draw_inventory()
 
 
 
 class InventoryHotSpot(monkey2.HotSpot):
-    def __init__(self, shape, camera, key, batch):
+    def __init__(self, shape, camera, key):
         self.key = key
-        super().__init__(shape, 0, camera, batch)
+        super().__init__(shape, 0, camera, settings.LINE_BATCH_UI)
 
     def onEnter(self):
         self.node.setMultiplyColor(Color(assets.state._color_inv_active))
+        if assets.state.object1:
+            assets.state.object2 = self.key
+        else:
+            assets.state.object1 = self.key
+        updateActionLabel()
 
     def onLeave(self):
         self.node.setMultiplyColor(Color(assets.state._color_inv_inactive))
+        if assets.state.object2:
+            assets.state.object2 = None
+        else:
+            assets.state.object1 = None
+        updateActionLabel()
 
     def onClick(self, pos):
-        pass
+        action = assets.state.action
+
+        if assets.state.object2:
+            aid = f"{action}_{assets.state.object1}_{assets.state.object2}"
+        else:
+            aid = f"{action}_{assets.state.object1}"
+        print('action id: ', aid)
+        # try to see if I have script
+        af = getattr(assets.scripts, aid, None)
+        if af:
+            af(assets.state.object1, assets.state.object2)
+        else:
+            print('not found - try default action for ', action)
+            af = getattr(assets.scripts, '_' + action, None)
+            if af:
+                af(assets.state.object1, assets.state.object2)
+            else:
+                print(' -- nothing found.')
 
 class VerbHotSpot(monkey2.HotSpot):
-    def __init__(self, shape, camera, key, batch):
+    def __init__(self, shape, camera, key):
         self.key = key
-        super().__init__(shape, 0, camera, batch)
+        super().__init__(shape, 0, camera, settings.LINE_BATCH_UI)
 
     def onEnter(self):
         self.node.setMultiplyColor(Color(assets.state._color_verb_active))
@@ -82,7 +105,7 @@ class VerbHotSpot(monkey2.HotSpot):
         updateActionLabel()
 
 
-def draw_inventory(batchId):
+def draw_inventory():
     inv_root = get_tag('INVENTORY')
     inv_root.clear()
     inv = assets.items[assets.state.player]['inventory']
@@ -94,15 +117,18 @@ def draw_inventory(batchId):
         if inv_offset + i >= len(inv):
             break
         anchor = monkey2.Vec2(0,0) if i%2==0 else monkey2.Vec2(1,0)
+        item_id = inv[inv_offset+i][0]
+        # get string associated with item
+        text = assets.strings[assets.items[item_id]['text']]
         inv_item = monkey2.Text('uimain/c64',
-            inv[inv_offset+i][0],
+            text,
             Color(assets.state._color_inv_inactive),anchor=anchor)
         x = 2 if i % 2 == 0 else 318
         y = 23 - 8 * (i // 2)
         inv_item.setPosition(monkey2.Vec3(x, y, 0))
         shape = monkey2.shapes.Rect(inv_item.size.x, inv_item.size.y,
                                     anchor=monkey2.Vec2(anchor.x,1))
-        hotspot = InventoryHotSpot(shape, 1,  inv[inv_offset+i][0], batchId)
+        hotspot = InventoryHotSpot(shape, 1,  inv[inv_offset+i][0])
         inv_item.addComponent(hotspot)
         inv_root.add(inv_item)
     if arrow_down:
@@ -111,8 +137,7 @@ def draw_inventory(batchId):
         adown.setMultiplyColor(Color(assets.state._color_arrow_inactive))
         hotspot = ArrowDownHotSpot(
             monkey2.shapes.Rect(12,8, anchor=monkey2.Vec2(0.5,0)),
-        1,
-            batchId)
+        1)
         adown.addComponent(hotspot)
         adown.setPosition(monkey2.Vec3(160, 8, 0))
         inv_root.add(adown)
@@ -122,18 +147,18 @@ def draw_inventory(batchId):
         aup.setMultiplyColor(Color(assets.state._color_arrow_inactive))
         hotspot2 = ArrowUpHotSpot(
             monkey2.shapes.Rect(12,8, anchor=monkey2.Vec2(0.5,0)),
-        1,
-            batchId)
+        1)
         aup.addComponent(hotspot2)
         aup.setPosition(monkey2.Vec3(160, 16, 0))
         inv_root.add(aup)
 
 def create_UI(root, verbSet: int, batchId):
+    settings.LINE_BATCH_UI = batchId
     for key, value in assets.verbs[verbSet].items():
         t = monkey2.Text('uimain/c64',
             eval_string(value.text), monkey2.Color(assets.state._color_verb_inactive))
         shape = monkey2.shapes.Rect(t.size.x, t.size.y, anchor=monkey2.Vec2(0,1))
-        hotspot = VerbHotSpot(shape, 1, key, batchId)
+        hotspot = VerbHotSpot(shape, 1, key)
         t.addComponent(hotspot)
         t.setPosition(monkey2.Vec3(*value.pos))
         #snode = monkey2.Node()
@@ -153,7 +178,7 @@ def create_UI(root, verbSet: int, batchId):
     inventory = monkey2.Node()
     root.add(inventory)
     add_tag('INVENTORY', inventory)
-    draw_inventory(batchId)
+    draw_inventory()
 
 
     # create inventory items

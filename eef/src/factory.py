@@ -171,13 +171,14 @@ def create_room():
         if ir == assets.state.room:
             print(f' -- adding dynamic item: {key}')
             node = mupack.nodeBuilder(key, source_item, lb0.id)
-            if key == mupack.assets.state.player:
-                mupack.add_tag('PLAYER', node)
-                node.addComponent(monkey2.Follow(0))
-                #mupack.assets.state.ID_PLAYER = 1
-                print(' -- this is player.')
-            mupack.add_tag(key, node)
-            game_root.add(node)
+            if node:
+                if key == mupack.assets.state.player:
+                    mupack.add_tag('PLAYER', node)
+                    node.addComponent(monkey2.Follow(0))
+                    #mupack.assets.state.ID_PLAYER = 1
+                    print(' -- this is player.')
+                mupack.add_tag(key, node)
+                game_root.add(node)
 
     scheduler = monkey2.Scheduler()
     mupack.add_tag('SCHEDULER', scheduler)

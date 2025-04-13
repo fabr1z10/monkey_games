@@ -24,5 +24,23 @@ def push_door_mat(id, _):
         script.addAction(monkey2.actions.CallFunc(lambda: hs.setShape(monkey2.shapes.Rect(88, 8))))
     play(script)
 
-def pickup_key_main(id, _):
-    pass
+
+
+def AddToInventory(id):
+    def f():
+        mupack.get_tag(id).remove()
+        mupack.assets.items[id]['active'] = False
+        mupack.assets.items[mupack.assets.state.player]['inventory'].append([id, 1])
+        mupack.lucas.draw_inventory()
+    return f
+
+
+# the basic pickup - walk to the item,
+# grab it (remove it), add to inventory
+def pickup_base(id, _):
+    script = monkey2.Script('__PLAYER')
+    walkScript(script, 'PLAYER', id)
+    script.addAction(monkey2.actions.CallFunc(AddToInventory(id)))
+    play(script)
+
+pickup_key_main = pickup_base

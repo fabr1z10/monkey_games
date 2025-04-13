@@ -34,12 +34,12 @@ items:
     #model: main/dave-body
     depth: 1
     inventory_offset: 0
-    inventory:
-      - [pippo, 2]
-      - [Pluto, 1]
-      - [Topolino,3]
-      - [Paperone,3]
-      - [ Minnie,4]
+    inventory: []
+#      - [pippo, 2]
+#      - [Pluto, 1]
+#      - [Topolino,3]
+#      - [Paperone,3]
+#      - [ Minnie,4]
 
 
     models:
@@ -86,6 +86,7 @@ items:
     room: front
     pos: [500, 42, -0.1]
     text: 23
+    active: True
     walk_to: [480, 44, 's']
     model: main/main-key
     hotspot:
