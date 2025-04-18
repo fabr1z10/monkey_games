@@ -124,6 +124,12 @@ def create_room():
     root.add(game_root)
     root.add(ui_root)
 
+    node = monkey2.TileMap(200, 200, 8, 0)
+    #model = monkey2.TiledSprite(0,2,2)
+    #model.addFrame('default', monkey2.TileMap(136, [0, 1, 8, 0x8002, 2, 0, 1, 1, 0]))
+    #node.setModel(model)
+    game_root.add(node)
+    return room
     # add mouse controller
     cursor = monkey2.Node()
     cursor.setModel(monkey2.getModel('uimain/cursor'))
@@ -138,7 +144,7 @@ def create_room():
     room.hotSpotManager = c
 
 
-    mupack.lucas.create_UI(ui_root, 0, lb1.id)
+    #mupack.lucas.create_UI(ui_root, 0, lb1.id)
 
     walkarea_node = monkey2.Node()
     i = 0

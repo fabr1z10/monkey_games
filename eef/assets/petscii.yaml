@@ -2,7 +2,7 @@ vars:
   ticks: &ticks 5
 textures:
   0: petscii.png
-  1: front.png
+  1: tile.png
 
 
 
