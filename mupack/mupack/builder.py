@@ -56,11 +56,14 @@ def nodeBuilder(key, source_item, debugBatch):
 			nodo.addAnimation(key, values)
 	elif model := item.get('model', None):
 		nodo.setModel(monkey2.getModel(model))
+	elif model := item.get('tilemap', None):
+		print(model)
+		nodo.setModel(monkey2.TileMap(assets.state.yback, model))
 	if anim := item.get('anim', None):
 		nodo.animation = anim
 
 	if item.get('depth'):
-		nodo.addComponent(monkey2.DepthScale(166, 0, settings.FLAG_WALK_BLOCK))
+		nodo.addComponent(monkey2.DepthScale(assets.state.yback, 0, settings.FLAG_WALK_BLOCK))
 
 
 	if walk := item.get('walk', None):
